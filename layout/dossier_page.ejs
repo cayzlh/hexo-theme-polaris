@@ -61,6 +61,14 @@ var bodyHtml = page.content_html || render_md(page.content);
       <div class="post-body">
         <%- bodyHtml %>
       </div>
+      <% if (page.project.firstArticleUrl) { %>
+      <div class="dossier-home-footer">
+        <a href="<%= page.project.firstArticleUrl %>" class="dossier-start-reading">
+          <%= (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_text) || '开始阅读' %>
+          <span class="start-arrow">→</span>
+        </a>
+      </div>
+      <% } %>
     <% } else { %>
       <h1 class="post-title"><%= page.title %></h1>
       <% if (page.updated) { %>
@@ -396,6 +404,47 @@ var bodyHtml = page.content_html || render_md(page.content);
   .dossier-sidebar-header {
     display: none !important;
   }
+}
+
+/* ===== Home page start reading button ===== */
+.dossier-home-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-border);
+  text-align: center;
+}
+
+.dossier-start-reading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  background: var(--c-accent, #3b82f6);
+  text-decoration: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.dossier-start-reading:hover {
+  background: #2563eb;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+html.dark .dossier-start-reading {
+  color: #fff;
+}
+
+.dossier-start-reading .start-arrow {
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.dossier-start-reading:hover .start-arrow {
+  transform: translateX(4px);
 }
 
 /* ===== Responsive ===== */

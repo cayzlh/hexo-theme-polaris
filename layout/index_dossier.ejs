@@ -30,9 +30,6 @@
       var proj = page.projects[pid];
       // Count non-index pages (use pre-computed value or fallback)
       var pageCount = (proj.pageCount !== undefined) ? proj.pageCount : (proj.flatList ? proj.flatList.filter(function(f) { return f.name !== 'index' && f.name !== 'README' && f.name !== 'readme'; }).length : 0);
-      var showStartBtn = (theme.dossier && theme.dossier.card && theme.dossier.card.show_start_button !== false);
-      var startBtnText = (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_text) || '开始阅读';
-      var startBtnStyle = (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_style) || 'default';
   %>
     <div class="project-card">
       <a href="/<%= dp %>/<%= pid %>/" class="project-card-link">
@@ -51,14 +48,6 @@
           <span class="project-count"><%= pageCount %> 篇文档</span>
         <% } %>
       </a>
-      <% if (showStartBtn) { %>
-        <div class="project-card-footer">
-          <a href="<%= proj.firstArticleUrl || ('/' + dp + '/' + pid + '/') %>" class="project-card-start project-card-start--<%= startBtnStyle %>">
-            <%= startBtnText %>
-            <span class="start-arrow">→</span>
-          </a>
-        </div>
-      <% } %>
     </div>
   <% }
   } %>
