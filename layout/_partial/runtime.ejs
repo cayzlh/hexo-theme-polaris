@@ -1,7 +1,5 @@
 <% if (theme.runtime && theme.runtime.enable) { %>
-<div id="site-runtime" class="site-runtime">
-  载入中…
-</div>
+<div id="site-runtime" class="site-runtime"></div>
 
 <script>
 (function() {
@@ -29,7 +27,7 @@
     var now = new Date();
 
     // Current time in Asia/Shanghai
-    var local = new Date(now.getTime() + (now.getTimezoneOffset() + tzOffset * 60) * 60000);
+    var local = new Date(now.getTime() + tzOffset * 3600000);
     var year = local.getUTCFullYear();
     var month = pad(local.getUTCMonth() + 1);
     var day = pad(local.getUTCDate());
@@ -46,7 +44,7 @@
 
     el.innerHTML = '现在是 ' + year + '年' + month + '月' + day + '日 '
       + hours + '时' + minutes + '分' + seconds + '秒'
-      + '，本站已经平稳运行了 ' + days + '天' + hoursUp + '小时';
+      + ' · 这串代码已默默运行了 ' + days + '天' + hoursUp + '小时';
   }
 
   update();

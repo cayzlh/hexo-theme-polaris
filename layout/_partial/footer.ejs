@@ -1,17 +1,19 @@
 <footer class="footer">
   <div class="footer-inner">
-    <% if (theme.footer && theme.footer.text) { %>
-      <div class="footer-text">
-        <%- theme.footer.text %>
-      </div>
-    <% } %>
-    <div class="footer-copy">
-      <% if (theme.footer && theme.footer.copyright) { %>
-        <%- theme.footer.copyright %>
-      <% } else { %>
-        © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
-      <% } %>
-    </div>
     <%- partial('_partial/runtime') %>
+    <div class="footer-info">
+      <% if (theme.footer && theme.footer.text) { %>
+        <span class="footer-text">
+          <%- theme.footer.text %>
+        </span>
+      <% } %>
+      <span class="footer-copy">
+        <% if (theme.footer && theme.footer.copyright) { %>
+          <%- theme.footer.copyright %>
+        <% } else { %>
+          © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
+        <% } %>
+      </span>
+    </div>
   </div>
 </footer>

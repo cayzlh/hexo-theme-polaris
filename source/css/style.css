@@ -776,16 +776,18 @@ html.dark .project-card-start--outline:hover{
 
 /* ===== Footer ===== */
 .footer{padding:2rem 1rem 4rem}
-.footer-inner{max-width:var(--mw);margin:0 auto;text-align:center;font-size:.85rem;color:var(--c-text-light)}
-.footer-text{margin-bottom:.3em}
-.footer-text a,.footer-copy a{color:var(--c-text-light)}
+.footer-inner{max-width:var(--mw);margin:0 auto;text-align:center;font-size:0.8rem;color:var(--c-text-muted)}
+.footer-info{display:flex;justify-content:center;gap:0.6em;flex-wrap:wrap;line-height:1.8}
+.footer-text,.footer-copy{display:inline}
+.footer-text a,.footer-copy a{color:var(--c-text-muted)}
 .footer-text a:hover,.footer-copy a:hover{color:var(--c-link-hover)}
 
 .site-runtime {
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 0.78rem;
   color: var(--c-text-muted);
   line-height: 1.6;
+  opacity: 0.85;
 }
 
 /* ===== Responsive ===== */
