@@ -6,29 +6,39 @@ var bodyHtml = page.content_html || render_md(page.content);
 <div class="dossier-layout">
   <!-- Left: Sidebar (nav tree) -->
   <aside class="dossier-sidebar">
-    <div class="dossier-sidebar-inner">
-      <div class="dossier-project-info">
-        <h3 class="dossier-project-title">
-          <a href="/dossier/<%= page.project_id %>/"><%= page.project.title %></a>
-        </h3>
-        <% if (page.project.description) { %>
-          <p class="dossier-project-desc"><%= page.project.description %></p>
-        <% } %>
+    <!-- 移动端折叠头部（PC 端通过 CSS 隐藏） -->
+    <div class="dossier-sidebar-header">
+      <h3 class="dossier-project-title">
+        <a href="/dossier/<%= page.project_id %>/"><%= page.project.title %></a>
+      </h3>
+      <span class="dossier-sidebar-arrow">▼</span>
+    </div>
+    <!-- 侧边栏主体（移动端可折叠，PC 端始终可见） -->
+    <div class="dossier-sidebar-body">
+      <div class="dossier-sidebar-inner">
+        <div class="dossier-project-info">
+          <h3 class="dossier-project-title">
+            <a href="/dossier/<%= page.project_id %>/"><%= page.project.title %></a>
+          </h3>
+          <% if (page.project.description) { %>
+            <p class="dossier-project-desc"><%= page.project.description %></p>
+          <% } %>
+        </div>
+        <nav class="dossier-nav">
+          <!-- 项目首页（index.md）始终置顶 -->
+          <ul class="dossier-nav-list dossier-nav-index">
+            <li class="dossier-nav-item <%= page.type === 'project_home' ? 'active' : '' %>">
+              <a href="/dossier/<%= page.project_id %>/" class="dossier-nav-link <%= page.type === 'project_home' ? 'active' : '' %>">
+                <span class="dossier-nav-icon">📖</span> <%= page.project.title || '项目概览' %>
+              </a>
+            </li>
+          </ul>
+          <!-- 分隔线 -->
+          <hr class="dossier-nav-divider">
+          <!-- 其他文档 -->
+          <%- partial('_partial/dossier_tree', { nav: page.nav, current: page.path }) %>
+        </nav>
       </div>
-      <nav class="dossier-nav">
-        <!-- 项目首页（index.md）始终置顶 -->
-        <ul class="dossier-nav-list dossier-nav-index">
-          <li class="dossier-nav-item <%= page.type === 'project_home' ? 'active' : '' %>">
-            <a href="/dossier/<%= page.project_id %>/" class="dossier-nav-link <%= page.type === 'project_home' ? 'active' : '' %>">
-              <span class="dossier-nav-icon">📖</span> <%= page.project.title || '项目概览' %>
-            </a>
-          </li>
-        </ul>
-        <!-- 分隔线 -->
-        <hr class="dossier-nav-divider">
-        <!-- 其他文档 -->
-        <%- partial('_partial/dossier_tree', { nav: page.nav, current: page.path }) %>
-      </nav>
     </div>
   </aside>
 
@@ -379,6 +389,13 @@ var bodyHtml = page.content_html || render_md(page.content);
   opacity: 0.35;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* ===== Mobile sidebar: header hidden on PC ===== */
+@media (min-width: 769px) {
+  .dossier-sidebar-header {
+    display: none !important;
+  }
 }
 
 /* ===== Responsive ===== */

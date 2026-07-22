@@ -117,25 +117,43 @@ function scanDir(basePath, relPath) {
 // ============================================
 
 function readProjectConfig(basePath, projectId, indexFm) {
-  // 1. index.md front-matter (highest priority)
+  // 1. Start with index.md front-matter (if available)
+  var config = {
+    title: projectId,
+    description: '',
+    tags: [],
+    sort: 0,
+    source: 'default'
+  };
+
   if (indexFm && indexFm.title) {
-    return {
-      title: indexFm.title,
-      description: indexFm.description || '',
-      tags: indexFm.tags || [],
-      sort: parseInt(indexFm.sort) || 0,
-      source: 'index.md'
-    };
+    config.title = indexFm.title;
+    config.description = indexFm.description || '';
+    config.tags = indexFm.tags || [];
+    config.sort = parseInt(indexFm.sort) || 0;
+    config.source = 'index.md';
   }
 
-  // 2. Check source/dossier/{project}/_config.yml
+  // 2. _config.yml overrides (project-level config takes priority)
   const cfgPath1 = path.join(basePath, projectId, '_config.yml');
   if (fs.existsSync(cfgPath1)) {
     const raw = fs.readFileSync(cfgPath1, 'utf8');
-    const config = {};
     raw.split('\n').forEach(function(line) {
       const m = line.match(/^(\w[\w_-]*):\s*(.*)/);
-      if (m) config[m[1]] = m[2].trim();
+      if (m) {
+        var key = m[1];
+        var value = m[2].trim();
+        if (key === 'tags') {
+          // Support comma-separated: "tag1, tag2"
+          config.tags = value.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+        } else if (key === 'title') {
+          config.title = value;
+        } else if (key === 'description') {
+          config.description = value;
+        } else if (key === 'sort') {
+          config.sort = parseInt(value) || 0;
+        }
+      }
     });
     config.source = '_config.yml';
     return config;
@@ -362,7 +380,7 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
             content_html: rendered,
             frontMatter: doc.frontMatter,
             nav: projects[entry].nav,
-            tags: tags.concat(typeof doc.frontMatter.tags === 'string' ? [doc.frontMatter.tags] : (doc.frontMatter.tags || [])),
+            tags: tags,
             toc: tocData,
             updated: docDate
           }
@@ -410,7 +428,7 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
   for (const tag of Object.keys(allTags)) {
     if (allTags[tag].length === 0) continue;
     routes.push({
-      path: 'dossier/tags/' + encodeURIComponent(tag) + '/index.html',
+      path: 'dossier/tags/' + tag + '/index.html',
       layout: ['index_dossier'],
       data: {
         layout: 'index_dossier',

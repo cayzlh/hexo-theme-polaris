@@ -3,18 +3,21 @@
  */
 (function() {
   // === Clone detection ===
-  var originalHost = window.__POLARIS && window.__POLARIS.originalHost || 'www.cayzlh.com';
-  var officialHosts = window.__POLARIS && window.__POLARIS.officialHosts || [];
-  var currentHost = window.location.hostname;
-  var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\]|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(currentHost);
-  if (!isLocal && currentHost !== originalHost && officialHosts.indexOf(currentHost) === -1) {
-    var banner = document.createElement('div');
-    banner.style.cssText = 'background:#fff3cd;color:#856404;text-align:center;padding:8px;font-size:14px;position:fixed;top:0;left:0;right:0;z-index:99999;border-bottom:2px solid #ffc107';
-    banner.innerHTML = '⚠ This is an unauthorized mirror of <a href="https://' + originalHost + '" style="color:#856404;text-decoration:underline">' + originalHost + '</a>. Please visit the original site.';
-    document.body.insertBefore(banner, document.body.firstChild);
-    document.body.style.paddingTop = '40px';
-    var meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex, nofollow';
-    document.head.appendChild(meta);
+  var POLARIS = window.__POLARIS;
+  if (POLARIS && POLARIS.originalHost) {
+    var originalHost = POLARIS.originalHost;
+    var officialHosts = POLARIS.officialHosts || [];
+    var currentHost = window.location.hostname;
+    var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\]|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(currentHost);
+    if (!isLocal && currentHost !== originalHost && officialHosts.indexOf(currentHost) === -1) {
+      var banner = document.createElement('div');
+      banner.style.cssText = 'background:#fff3cd;color:#856404;text-align:center;padding:8px;font-size:14px;position:fixed;top:0;left:0;right:0;z-index:99999;border-bottom:2px solid #ffc107';
+      banner.innerHTML = '⚠ This is an unauthorized mirror of <a href="https://' + originalHost + '" style="color:#856404;text-decoration:underline">' + originalHost + '</a>. Please visit the original site.';
+      document.body.insertBefore(banner, document.body.firstChild);
+      document.body.style.paddingTop = '40px';
+      var meta = document.createElement('meta'); meta.name = 'robots'; meta.content = 'noindex, nofollow';
+      document.head.appendChild(meta);
+    }
   }
 
   // === Code block copy ===

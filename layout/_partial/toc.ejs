@@ -47,6 +47,14 @@ function renderToc(items) {
   </div>
 </div>
 
+<!-- 移动端 TOC 浮动按钮 + 底部面板 -->
+<div class="toc-fab" aria-label="Open table of contents" role="button" tabindex="0">☰</div>
+<div class="toc-panel-overlay"></div>
+<div class="toc-panel">
+  <div class="toc-title">目录</div>
+  <ul class="toc-list"><%- renderToc(page.toc) %></ul>
+</div>
+
 <script>
 (function(){
   var links = document.querySelectorAll('.toc-link');

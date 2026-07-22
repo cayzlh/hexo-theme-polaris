@@ -13,5 +13,8 @@
   </main>
   <%- partial('_partial/footer') %>
   <%- partial('_partial/dark_mode') %>
+  <% if (theme.mobile && theme.mobile.enable !== false) { %>
+  <script src="<%= url_for('/js/mobile.js') %>" defer></script>
+  <% } %>
 </body>
 </html>

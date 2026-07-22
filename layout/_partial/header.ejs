@@ -8,6 +8,34 @@
       <% if (theme.dark_mode && (theme.dark_mode.mode === 'manual' || theme.dark_mode.mode === 'system')) { %>
         <%- partial('_partial/dark_toggle') %>
       <% } %>
+      <!-- 汉堡菜单按钮（移动端显示） -->
+      <button class="nav-toggle" aria-label="Toggle navigation menu">
+        <span class="nav-toggle-icon"></span>
+      </button>
     </nav>
   </div>
+
+  <!-- 移动端导航抽屉（移动端显示） -->
+  <div class="nav-drawer">
+    <% if (theme.menu) { theme.menu.forEach(function(item) { %>
+      <a href="<%= url_for(item.url) %>" class="nav-link"><%= item.name %></a>
+    <% }); } %>
+    <div class="dark-toggle-wrapper">
+      <%- partial('_partial/dark_toggle') %>
+    </div>
+  </div>
+
+  <!-- 导航遮罩层（移动端显示） -->
+  <div class="nav-overlay"></div>
 </header>
+
+<style>
+/* 移动端元素在 PC 端隐藏 */
+@media (min-width: 769px) {
+  .nav-drawer,
+  .nav-overlay,
+  .nav-toggle {
+    display: none !important;
+  }
+}
+</style>

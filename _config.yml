@@ -34,9 +34,10 @@ random_posts_count: 5
 # =============================================
 
 # Canonical URL & clone detection
+# Set originalHost to your domain to enable clone detection.
 canonical:
-  originalHost: your-domain.com
-  officialHosts: []
+  originalHost: ''            # e.g. 'www.example.com'
+  officialHosts: []           # e.g. ['example.com']
   checklink: /js/check.js
   closeEnable: true
   closeText: 关闭提示
@@ -189,6 +190,23 @@ custom_pages:
   enable: true
   dir: custom
   show_in_menu: false
+
+# =============================================
+# 移动端体验配置
+# =============================================
+mobile:
+  # 是否启用移动端优化（总开关）
+  enable: true
+  # 是否启用汉堡菜单
+  hamburger_menu: true
+  # 移动端正文字号（px）
+  body_font_size: 16
+  # 是否显示 TOC 浮动按钮
+  toc_fab: true
+  # 是否启用页面切换动画（移动端建议关闭）
+  transition_enabled: false
+  # 触控目标最小尺寸（px）
+  touch_target_size: 44
 
 # =============================================
 # Footer
