@@ -101,6 +101,7 @@
     var fab = document.querySelector('.toc-fab');
     var panel = document.querySelector('.toc-panel');
     var panelOverlay = document.querySelector('.toc-panel-overlay');
+    var closeBtn = document.querySelector('.toc-panel-close');
 
     if (!fab || !panel) return;
 
@@ -108,6 +109,8 @@
       panel.classList.add('open');
       if (panelOverlay) panelOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      // 打开面板时显示 FAB
+      fab.classList.remove('hidden');
     }
 
     function closePanel() {
@@ -129,6 +132,14 @@
       panelOverlay.addEventListener('click', closePanel);
     }
 
+    // 关闭按钮
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closePanel();
+      });
+    }
+
     // 点击 TOC 链接后关闭面板
     var tocLinks = panel.querySelectorAll('.toc-link');
     tocLinks.forEach(function (link) {
@@ -137,9 +148,41 @@
       });
     });
 
-    // 点击面板外部（但面板自身不关闭）
+    // 点击面板内部不冒泡
     panel.addEventListener('click', function (e) {
       e.stopPropagation();
+    });
+
+    // ===== FAB 滚动自动隐藏 =====
+    var lastScrollY = window.scrollY;
+    var ticking = false;
+
+    function handleScroll() {
+      var currentScrollY = window.scrollY;
+      var panelOpen = panel.classList.contains('open');
+
+      // 面板打开时始终显示 FAB
+      if (panelOpen) {
+        fab.classList.remove('hidden');
+        lastScrollY = currentScrollY;
+        ticking = false;
+        return;
+      }
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        fab.classList.add('hidden');
+      } else {
+        fab.classList.remove('hidden');
+      }
+      lastScrollY = currentScrollY;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(handleScroll);
+        ticking = true;
+      }
     });
   }
 
@@ -162,12 +205,50 @@
   }
 
   // =============================================
+  // 2.15 Dossier — 移动端顶部下拉导航
+  // =============================================
+  function initDossierMobileNav() {
+    if (!isMobileView()) return;
+
+    var navCurrent = document.querySelector('.dossier-mobile-nav-current');
+    var navList = document.querySelector('.dossier-mobile-nav-list');
+    var arrow = document.querySelector('.dossier-mobile-nav-arrow');
+
+    if (!navCurrent || !navList) return;
+
+    // 点击头部展开/收起
+    navCurrent.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = navList.classList.toggle('open');
+      if (arrow) arrow.classList.toggle('open', isOpen);
+    });
+
+    // 点击列表项后关闭
+    var navItems = navList.querySelectorAll('.dossier-mobile-nav-item');
+    navItems.forEach(function (item) {
+      item.addEventListener('click', function () {
+        navList.classList.remove('open');
+        if (arrow) arrow.classList.remove('open');
+      });
+    });
+
+    // 点击页面其他区域关闭
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.dossier-mobile-nav')) {
+        navList.classList.remove('open');
+        if (arrow) arrow.classList.remove('open');
+      }
+    });
+  }
+
+  // =============================================
   // 初始化
   // =============================================
   function init() {
     initMobileNav();
     initMobileToc();
     initDossierSidebar();
+    initDossierMobileNav();
 
     // 监听视口变化：当从移动端切换到 PC 端时，
     // 清理可能残留的移动端状态

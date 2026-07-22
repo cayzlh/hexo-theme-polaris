@@ -53,6 +53,40 @@ var bodyHtml = page.content_html || render_md(page.content);
       <% } %>
     </div>
 
+    <!-- 移动端文章导航下拉菜单（仅 ≤768px 可见, 非首页） -->
+    <% if (!isHome) { %>
+    <%
+      function flatDossierNav(items, curPath) {
+        var h = '';
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.type === 'section') {
+            if (item.children && item.children.length > 0) {
+              h += flatDossierNav(item.children, curPath);
+            }
+          } else {
+            var active = (item.url === '/' + curPath) ? ' active' : '';
+            h += '<a href="' + item.url + '" class="dossier-mobile-nav-item' + active + '">' + item.title + '</a>';
+          }
+        }
+        return h;
+      }
+      var navListHtml = flatDossierNav(page.nav, page.path);
+    %>
+    <div class="dossier-mobile-nav">
+      <div class="dossier-mobile-nav-current">
+        <div class="dossier-mobile-nav-info">
+          <span class="dossier-mobile-nav-project"><%= page.project.title %></span>
+          <span class="dossier-mobile-nav-title"><%= page.title %></span>
+        </div>
+        <span class="dossier-mobile-nav-arrow">▼</span>
+      </div>
+      <div class="dossier-mobile-nav-list">
+        <%- navListHtml %>
+      </div>
+    </div>
+    <% } %>
+
     <% if (isHome) { %>
       <h1 class="post-title"><%= page.project.title %></h1>
       <% if (page.project.description) { %>
@@ -409,6 +443,9 @@ var bodyHtml = page.content_html || render_md(page.content);
 /* ===== Mobile sidebar: header hidden on PC ===== */
 @media (min-width: 769px) {
   .dossier-sidebar-header {
+    display: none !important;
+  }
+  .dossier-mobile-nav {
     display: none !important;
   }
 }

@@ -51,8 +51,13 @@ function renderToc(items) {
 <div class="toc-fab" aria-label="Open table of contents" role="button" tabindex="0">☰</div>
 <div class="toc-panel-overlay"></div>
 <div class="toc-panel">
-  <div class="toc-title">目录</div>
-  <ul class="toc-list"><%- renderToc(page.toc) %></ul>
+  <div class="toc-panel-header">
+    <span class="toc-panel-title">目录</span>
+    <button class="toc-panel-close" aria-label="Close table of contents">✕</button>
+  </div>
+  <div class="toc-panel-body">
+    <ul class="toc-list"><%- renderToc(page.toc) %></ul>
+  </div>
 </div>
 
 <script>
