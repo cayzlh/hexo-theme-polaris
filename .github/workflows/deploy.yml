@@ -1,0 +1,23 @@
+name: cayzlh.com
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Deploy cayzlh.com.
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node_version: [18.12.1]
+
+    steps:
+      - name: request github action api.
+        run: |
+          curl -X POST https://api.github.com/repos/cayzlh/blog-framework/dispatches \
+              -H "Accept: application/vnd.github.everest-preview+json" \
+              -H "Authorization: token ${{secrets.ACTIONS_TRIGGER_TOKEN}}" \
+              --data '{"event_type": "Hexo"}'
