@@ -10,7 +10,7 @@
   --c-link:#8B6B4D;--c-link-hover:#6D4F3A;--c-accent:#8B6B4D;
   --c-border:#E5E2DC;--c-code-bg:#EDECE8;--c-hover-bg:#EDECE8;
   --c-sel:#E5E2DC;
-  --fs:17px;--lh:1.75;--mw:680px;
+  --fs:18px;--lh:1.75;--mw:680px;
 }
 
 /* ===== Variables (Dark) ===== */
@@ -73,15 +73,15 @@ html.dark .dark-toggle .icon-dark{display:inline}
 .home-hr{border:none;border-top:1px solid var(--c-border);margin:2em 0}
 
 /* ===== Section Headings ===== */
-.section-title{font-size:1.5rem;font-weight:400;color:var(--c-text);margin-bottom:1em}
+.section-title{font-size:1.25rem;font-weight:400;color:var(--c-text);margin-bottom:1em}
 
 /* ===== Post List ===== */
 .post-list{list-style:none;padding:0;margin:0 0 2em}
 .post-list li{margin-bottom:.6em}
-.post-list a{display:inline;color:var(--c-text);font-size:1rem}
+.post-list a{display:inline;color:var(--c-text);font-size:1.1rem}
 .post-list a:hover{color:var(--c-link-hover)}
 .post-list-date{font-size:.9rem;color:var(--c-text-light);font-variant-numeric:tabular-nums}
-.post-list-title{font-size:1rem}
+.post-list-title{font-size:1.1rem}
 
 /* ===== Archive / Category / Tag ===== */
 .page-heading{font-size:1.5rem;font-weight:400;margin-bottom:1.5em;color:var(--c-text)}
@@ -779,11 +779,11 @@ html.dark .project-card-start--outline:hover{
 
 /* ===== Responsive ===== */
 @media(max-width:600px){
-  :root{--fs:16px}
+  :root{--fs:17px}
   .header{padding-top:2rem}
   .header-top{gap:8px}
   .post-title{font-size:1.6rem}
-  .section-title{font-size:1.3rem}
+  .section-title{font-size:1.15rem}
   .intro p{margin-bottom:.8em}
 }
 
