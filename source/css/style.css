@@ -781,6 +781,13 @@ html.dark .project-card-start--outline:hover{
 .footer-text a,.footer-copy a{color:var(--c-text-light)}
 .footer-text a:hover,.footer-copy a:hover{color:var(--c-link-hover)}
 
+.site-runtime {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--c-text-muted);
+  line-height: 1.6;
+}
+
 /* ===== Responsive ===== */
 @media(max-width:600px){
   :root{--fs:17px}

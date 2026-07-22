@@ -12,5 +12,6 @@
         © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
       <% } %>
     </div>
+    <%- partial('_partial/runtime') %>
   </div>
 </footer>
