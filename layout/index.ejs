@@ -37,7 +37,7 @@ var randomPosts = pool.slice(0, randomCount);
 <hr class="home-hr">
 
 <!-- Recent Posts -->
-<h2 class="section-title">Recent Posts:</h2>
+<h2 class="section-title"><%= theme.recent_posts_title || 'Recent Posts:' %></h2>
 <ul class="post-list">
   <% recentPosts.forEach(function(post) { %>
     <li>
@@ -52,7 +52,7 @@ var randomPosts = pool.slice(0, randomCount);
 </ul>
 
 <% if (randomPosts.length > 0) { %>
-  <h2 class="section-title">Random posts:</h2>
+  <h2 class="section-title"><%= theme.random_posts_title || 'Random posts:' %></h2>
   <ul class="post-list">
     <% randomPosts.forEach(function(post) { %>
       <li>

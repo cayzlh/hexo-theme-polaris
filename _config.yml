@@ -60,7 +60,9 @@ intro: |
   — Your Name
 
 recent_posts_count: 5
+recent_posts_title: 'Recent Posts:'
 random_posts_count: 5
+random_posts_title: 'Random posts:'
 
 # =============================================
 # SEO
