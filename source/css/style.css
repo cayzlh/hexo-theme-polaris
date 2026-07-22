@@ -266,13 +266,19 @@ html.dark .post-meta a:hover {
 .footer a {
   color: #A09C96;
   text-decoration: none;
-  transition: color 0.2s;
+  border-bottom: 1px solid rgba(160, 156, 150, 0.25);
+  transition: color 0.2s, border-color 0.2s;
 }
 .footer a:hover {
   color: #8B6B4D;
+  border-bottom-color: #8B6B4D;
+}
+html.dark .footer a {
+  border-bottom-color: rgba(176, 176, 176, 0.2);
 }
 html.dark .footer a:hover {
   color: #60a5fa;
+  border-bottom-color: #60a5fa;
 }
 
 /* ===== Post / Page ===== */
