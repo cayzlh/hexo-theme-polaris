@@ -5,7 +5,20 @@ info:
   name: Polaris
   version: 3.0.0
 
+# 主标题 & 副标题（来自站点 _config.yml 的 title / subtitle）
+# title 显示在 header 左侧，subtitle 显示在 header 右侧
+
 # Navigation links
+# ========================================
+# 导航菜单配置（支持下拉菜单）
+# ========================================
+# 字段说明：
+#   name     - 菜单显示名称
+#   url      - 链接地址（内部路径或完整 URL），有 children 时可省略
+#   icon     - 可选，菜单项图标或指示符
+#   children - 子菜单列表，有此字段则表示为下拉菜单
+#   divider  - boolean，是否为分割线（仅用于 children 中）
+#   target   - '_self'（同窗口）/ '_blank'（新窗口），默认 '_self'
 menu:
   - name: Home
     url: /
@@ -13,6 +26,26 @@ menu:
     url: /archives/
   - name: Dossier
     url: /dossier/
+  - name: Tools
+    children:
+      - name: 标签
+        url: /tags/
+      - name: 分类
+        url: /categories/
+      - name: 归档
+        url: /archives/
+      - name: ───────
+        divider: true
+      - name: 打印数独
+        url: /custom/sudoku/
+        target: _self
+      - name: 在线工具
+        url: /custom/demo.html
+        target: _self
+      - name: 作品集
+        url: /custom/workspace.html
+  - name: About
+    url: /about/
 
 # =============================================
 # Homepage
@@ -59,30 +92,36 @@ structured_data:
 # =============================================
 
 color:
-  text: '#1a1a1a'
-  text-light: '#999999'
-  background: '#ffffff'
-  link: '#1a1a1a'
-  link-hover: '#3b82f6'
-  border: '#eeeeee'
-  code-bg: '#f5f5f5'
-  selection: '#f0f0f0'
+  text: '#2C2A28'
+  text-light: '#A09C96'
+  text-muted: '#6B6864'
+  background: '#F4F3EF'
+  background-secondary: '#FAFAF7'
+  background-tertiary: '#F0EFEB'
+  link: '#8B6B4D'
+  link-hover: '#6D4F3A'
+  accent: '#8B6B4D'
+  border: '#E5E2DC'
+  border-dark: '#D4CEC6'
+  code-bg: '#EDECE8'
+  code-border: '#E0DED9'
+  selection: '#E5E2DC'
 
 # =============================================
 # 链接样式配置
 # =============================================
 link:
-  color: '#3b82f6'
-  hover_color: '#2563eb'
+  color: '#8B6B4D'
+  hover_color: '#6D4F3A'
   visited_color: '#7c3aed'
   underline: true
   underline_style: solid
-  underline_opacity: 0.3
+  underline_opacity: 0.25
 
 # Typography
-font_size: 18px
-line_height: 1.8
-max_width: 720px
+font_size: 17px
+line_height: 1.75
+max_width: 680px
 
 # =============================================
 # Dark Mode
@@ -215,3 +254,18 @@ footer:
   text: |
     Stay in touch — subscribe via <a href="/atom.xml">RSS</a>, or send comments by email to <a href="mailto:hello@example.com">hello@example.com</a>
   # copyright: '© 2020–2026 Your Name'   # Uncomment to override the auto-generated © {year} {author}
+
+# =============================================
+# Archive 归档页搜索
+# =============================================
+archive:
+  # 是否启用搜索功能
+  search_enable: true
+  # 搜索框占位文字
+  search_placeholder: 搜索文章标题...
+  # 搜索防抖延迟（毫秒）
+  search_debounce: 200
+  # 是否高亮匹配关键词
+  highlight_match: true
+  # 是否显示搜索匹配数量
+  show_match_count: true

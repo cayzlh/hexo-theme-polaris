@@ -1,6 +1,4 @@
 <% var dp = theme.dossier.path || 'dossier'; %>
-<h1 class="page-heading"><%= page.filter && page.tagName ? page.tagName : 'Dossier' %></h1>
-
 <nav class="dossier-tabs">
   <a href="/<%= dp %>/" class="dossier-tab <%= !page.filter ? 'active' : '' %>">All</a>
   <% if (page.allTags) {

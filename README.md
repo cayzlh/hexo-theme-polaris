@@ -76,6 +76,7 @@ Key configuration is in `themes/polaris/_config.yml`. Below are the main section
 | `transition` | Page transition animation settings |
 | `toc` | Table of contents sidebar |
 | `dossier` | Project archive system |
+| `archive` | Archive page search configuration |
 | `custom_pages` | Extra pages from `custom/` directory |
 | `footer` | Footer text & copyright |
 
@@ -112,18 +113,30 @@ Override any color variable in `_config.yml`:
 
 ```yaml
 color:
-  text: '#1a1a1a'
-  background: '#ffffff'
-  link: '#1a1a1a'
-  link-hover: '#3b82f6'
+  text: '#2C2A28'
+  text-light: '#A09C96'
+  text-muted: '#6B6864'
+  background: '#F4F3EF'
+  background-secondary: '#FAFAF7'
+  background-tertiary: '#F0EFEB'
+  link: '#8B6B4D'
+  link-hover: '#6D4F3A'
+  accent: '#8B6B4D'
+  border: '#E5E2DC'
+  border-dark: '#D4CEC6'
+  code-bg: '#EDECE8'
+  code-border: '#E0DED9'
+  selection: '#E5E2DC'
 ```
+
+> The default light mode uses a warm off-white background (`#F4F3EF`) with an earthy brown accent palette (`#8B6B4D`) for a comfortable reading experience. Dark mode is unaffected.
 
 ### Typography
 
 ```yaml
-font_size: 18px
-line_height: 1.8
-max_width: 720px
+font_size: 17px
+line_height: 1.75
+max_width: 680px
 ```
 
 ### Add custom CSS/JS

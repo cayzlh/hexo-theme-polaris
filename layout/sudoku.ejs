@@ -1,0 +1,13 @@
+<%# sudoku.ejs — 数独题目生成与打印页面专用视图模板 %>
+<%# 覆盖主题默认 content 宽度（680px→800px），适应数独控件栏布局 %>
+<style>
+.content {
+  max-width: 800px;
+}
+@media (max-width: 640px) {
+  .content {
+    max-width: 100%;
+  }
+}
+</style>
+<%- page.content %>

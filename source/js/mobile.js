@@ -70,6 +70,20 @@
       link.addEventListener('click', closeDrawer);
     });
 
+    // 移动端子菜单切换
+    var subToggles = drawer.querySelectorAll('.drawer-sub-toggle');
+    subToggles.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var submenu = this.parentElement.nextElementSibling;
+        if (submenu && submenu.classList.contains('drawer-submenu')) {
+          submenu.classList.toggle('open');
+          this.classList.toggle('open');
+        }
+      });
+    });
+
     // 按 ESC 关闭
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && drawer.classList.contains('open')) {

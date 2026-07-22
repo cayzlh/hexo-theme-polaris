@@ -1,10 +1,12 @@
 <%
 // Homepage: Intro + Recent Posts + Random Posts
 
-var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function fmtDate(d) {
   var dt = new Date(d);
-  return months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+  var y = dt.getFullYear();
+  var m = ('0' + (dt.getMonth() + 1)).slice(-2);
+  var day = ('0' + dt.getDate()).slice(-2);
+  return y + '-' + m + '-' + day;
 }
 
 var introLines = (theme.intro || '').split('\n').filter(function(l){ return l.trim() !== '' });

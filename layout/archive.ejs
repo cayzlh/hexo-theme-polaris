@@ -1,7 +1,38 @@
-<h1 class="page-heading">Archive</h1>
+<%# 归档页面 - 文章列表 + 搜索功能 %>
+
+<%# 搜索框 %>
+<% if (theme.archive && theme.archive.search_enable !== false) { %>
+  <div class="archive-search">
+    <span class="archive-search-icon">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+    </span>
+    <input
+      type="text"
+      class="archive-search-input"
+      placeholder="<%= theme.archive.search_placeholder || '搜索文章标题...' %>"
+      aria-label="搜索文章"
+      autocomplete="off"
+      data-debounce="<%= theme.archive.search_debounce || 200 %>"
+      data-highlight="<%= theme.archive.highlight_match !== false ? 'true' : 'false' %>"
+    >
+  </div>
+  <% if (theme.archive.show_match_count !== false) { %>
+    <div class="archive-search-count">共 <%= page.posts.length %> 篇文章</div>
+  <% } %>
+<% } %>
+
+<%# 文章列表 %>
 <ul class="archive-list">
   <% page.posts.each(function(post) { %>
-    <li>
+    <li
+      data-title="<%= post.title %>"
+      data-tags="<%= post.tags ? post.tags.map(function(t) { return t.name; }).join(',') : '' %>"
+      data-categories="<%= post.categories ? post.categories.map(function(c) { return c.name; }).join(',') : '' %>"
+      data-content="<%= (post.excerpt || post.content.replace(/<[^>]*>/g, '')).substring(0, 200).replace(/"/g, '&quot;') %>"
+    >
       <a href="<%= url_for(post.path) %>">
         <time class="archive-date" datetime="<%= date_xml(post.date) %>">
           <%= date(post.date, 'YYYY-MM-DD') %>
@@ -11,4 +42,25 @@
     </li>
   <% }); %>
 </ul>
+
+<%# 空状态 %>
+<% if (theme.archive && theme.archive.search_enable !== false) { %>
+  <div class="archive-empty" style="display: none;">
+    <div class="archive-empty-icon">
+      <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </div>
+    <p class="archive-empty-text">没有找到匹配的文章</p>
+    <p class="archive-empty-hint">试试其他关键词吧</p>
+  </div>
+<% } %>
+
 <%- partial('_partial/paginator') %>
+
+<%# 搜索 JS（仅在启用搜索时加载） %>
+<% if (theme.archive && theme.archive.search_enable !== false) { %>
+  <script src="<%= url_for('/js/search.js') %>" defer></script>
+<% } %>

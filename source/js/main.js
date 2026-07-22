@@ -75,4 +75,94 @@
     header.appendChild(copyBtn);
     wrap.insertBefore(header, block);
   });
+
+  // === Dropdown Menu ===
+  (function() {
+    var isDesktop = window.matchMedia('(min-width: 768px)');
+    var CLOSE_DELAY = 150;
+    var closeTimer = null;
+
+    function initDropdown() {
+      var dropdowns = document.querySelectorAll('.nav .dropdown');
+
+      // 先清理所有已绑定的事件
+      dropdowns.forEach(function(dd) {
+        dd.removeEventListener('mouseenter', onMouseEnter);
+        dd.removeEventListener('mouseleave', onMouseLeave);
+        dd.removeEventListener('click', onToggleClick);
+      });
+
+      if (isDesktop.matches) {
+        // 桌面端：hover 展开/收起
+        dropdowns.forEach(function(dd) {
+          dd.addEventListener('mouseenter', onMouseEnter);
+          dd.addEventListener('mouseleave', onMouseLeave);
+        });
+      } else {
+        // 移动端由 mobile.js 处理，这里仅确保用 click 兜底
+        dropdowns.forEach(function(dd) {
+          dd.addEventListener('click', onToggleClick);
+        });
+      }
+    }
+
+    function onMouseEnter() {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      // 关闭其他下拉菜单
+      document.querySelectorAll('.nav .dropdown.open').forEach(function(d) {
+        if (d !== this) d.classList.remove('open');
+      }.bind(this));
+      this.classList.add('open');
+    }
+
+    function onMouseLeave() {
+      var self = this;
+      closeTimer = setTimeout(function() {
+        self.classList.remove('open');
+        closeTimer = null;
+      }, CLOSE_DELAY);
+    }
+
+    function onToggleClick(e) {
+      var dd = this;
+      // 如果点击的是链接且不是 dropdown-toggle，让它正常跳转
+      if (e.target.closest('.dropdown-item')) return;
+      if (e.target.closest('.dropdown-toggle') || dd.contains(e.target)) {
+        e.preventDefault();
+        dd.classList.toggle('open');
+      }
+    }
+
+    // 点击页面其他区域关闭所有下拉菜单
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.nav .dropdown.open').forEach(function(dd) {
+          dd.classList.remove('open');
+        });
+      }
+    });
+
+    // 监听窗口大小变化，重新绑定事件
+    isDesktop.addEventListener('change', function() {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      // 切换时关闭所有下拉
+      document.querySelectorAll('.nav .dropdown.open').forEach(function(dd) {
+        dd.classList.remove('open');
+      });
+      initDropdown();
+    });
+
+    // 页面加载后初始化
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDropdown);
+    } else {
+      initDropdown();
+    }
+  })();
 })();

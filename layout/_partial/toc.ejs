@@ -33,7 +33,7 @@ function renderToc(items) {
 <!-- Desktop TOC -->
 <div class="toc">
   <div class="toc-fixed">
-    <div class="toc-wrapper toc-auto-collapse-disabled<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
+    <div class="toc-wrapper<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
       <div class="toc-title">目录</div>
       <ul class="toc-list"><%- renderToc(page.toc) %></ul>
       <% if (theme.toc.show_back_to_top !== false) { %>
@@ -57,81 +57,130 @@ function renderToc(items) {
 
 <script>
 (function(){
-  var links = document.querySelectorAll('.toc-link');
-  if (links.length === 0) return;
-
-  // Build heading map
-  var headings = [];
-  links.forEach(function(l) {
-    var id = l.getAttribute('data-toc');
-    var el = document.getElementById(id);
-    if (el) headings.push({ el: el, link: l });
-  });
-  if (headings.length === 0) return;
+  var tocLinks = document.querySelectorAll('.toc .toc-link');
+  if (tocLinks.length === 0) return;
 
   var highlightOnScroll = <%= theme.toc && theme.toc.highlight_on_scroll !== false ? 'true' : 'false' %>;
   var autoCollapse = <%= theme.toc && theme.toc.auto_collapse !== false ? 'true' : 'false' %>;
-
-  if (highlightOnScroll && autoCollapse) {
-    // Disable CSS auto-collapse for JS-controlled tracking mode
-    document.querySelector('.toc-wrapper') && document.querySelector('.toc-wrapper').classList.remove('toc-auto-collapse-disabled');
-
-    function getParentH2(item) {
-      var el = item;
-      while (el && !el.classList.contains('toc-level-2')) el = el.parentElement;
-      return el;
-    }
-
-    var currentSection = null;
-    var tocObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting) {
-          var link = document.querySelector('.toc-link[data-toc="' + e.target.id + '"]');
-          if (!link) return;
-
-          // Highlight — cursor following
-          document.querySelectorAll('.toc-link.active').forEach(function(l) { l.classList.remove('active'); });
-          link.classList.add('active');
-
-          // Expand children of current h2 section
-          var h2Parent = getParentH2(link);
-          if (h2Parent && h2Parent !== currentSection) {
-            // Collapse previous
-            if (currentSection) {
-              currentSection.classList.remove('expanded');
-            }
-            // Expand current
-            h2Parent.classList.add('expanded');
-            currentSection = h2Parent;
-          }
-        }
-      });
-    }, { rootMargin: '-80px 0px -70% 0px' });
-    headings.forEach(function(h) { tocObserver.observe(h.el); });
-
-    // Initial state: collapse all, expand first h2 if any
-    var allH2 = document.querySelectorAll('.toc-level-2');
-    allH2.forEach(function(h2) { h2.classList.remove('expanded'); });
-    if (allH2.length > 0) {
-      allH2[0].classList.add('expanded');
-      currentSection = allH2[0];
-    }
-  } else if (highlightOnScroll) {
-    // Simple active tracking without auto-collapse
-    var simpleObserver = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        var link = document.querySelector('.toc-link[data-toc="' + e.target.id + '"]');
-        if (link) {
-          if (e.isIntersecting) link.classList.add('active');
-          else link.classList.remove('active');
-        }
-      });
-    }, { rootMargin: '-80px 0px -70% 0px' });
-    headings.forEach(function(h) { simpleObserver.observe(h.el); });
+  if (!highlightOnScroll && !autoCollapse) {
+    // 两者均禁用：显示所有层级
+    var tocWrapper = document.querySelector('.toc .toc-wrapper');
+    if (tocWrapper) tocWrapper.classList.add('toc-auto-collapse-disabled');
+    return;
   }
 
-  // Smooth scroll + close mobile TOC on click (always active)
-  links.forEach(function(l) {
+  // Build heading positions
+  var headingPositions = [];
+  tocLinks.forEach(function(l) {
+    var id = l.getAttribute('data-toc');
+    var el = document.getElementById(id);
+    if (el) headingPositions.push({ el: el, link: l, id: id });
+  });
+  if (headingPositions.length === 0) return;
+
+  // Auto-collapse: disable if user turned it off (show all)
+  var tocWrapper = document.querySelector('.toc .toc-wrapper');
+  if (tocWrapper && !autoCollapse) {
+    tocWrapper.classList.add('toc-auto-collapse-disabled');
+  }
+
+  function getParentH2(item) {
+    var el = item;
+    while (el && !el.classList.contains('toc-level-2')) el = el.parentElement;
+    return el;
+  }
+
+  // ===== 位置追踪 — 始终高亮"距离视口顶部最近的标题" =====
+  function getActiveHeading() {
+    if (headingPositions.length === 0) return null;
+    var headerOffset = 80;
+    var best = null;
+    var bestDist = Infinity;
+    for (var i = 0; i < headingPositions.length; i++) {
+      var top = headingPositions[i].el.getBoundingClientRect().top;
+      var dist = Math.abs(top - headerOffset);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = headingPositions[i];
+      }
+    }
+    return best;
+  }
+
+  var currentSection = null;
+  var activeHeading = null;
+
+  function updateHighlight() {
+    var heading = getActiveHeading();
+    if (!heading) return;
+    if (heading.link.classList.contains('active')) return;
+
+    // 移除所有高亮
+    document.querySelectorAll('.toc .toc-link.active').forEach(function(l) {
+      l.classList.remove('active');
+    });
+
+    // 高亮新标题
+    heading.link.classList.add('active');
+
+    // TOC 容器滚动到高亮标题可见
+    heading.link.scrollIntoView({ block: 'nearest' });
+
+    // 自动折叠展开
+    if (autoCollapse) {
+      var h2Parent = getParentH2(heading.link);
+      if (h2Parent && h2Parent !== currentSection) {
+        if (currentSection) currentSection.classList.remove('expanded');
+        h2Parent.classList.add('expanded');
+        currentSection = h2Parent;
+      }
+    }
+  }
+
+  // IntersectionObserver 触发位置重算（多阈值，确保及时响应）
+  var observer = new IntersectionObserver(function() {
+    updateHighlight();
+  }, { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] });
+
+  tocLinks.forEach(function(l) {
+    var id = l.getAttribute('data-toc');
+    var el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  // 滚动事件监听（requestAnimationFrame 节流）
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        updateHighlight();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // 初始状态：折叠所有，展开第一个 h2
+  if (autoCollapse) {
+    var h2s = document.querySelectorAll('.toc .toc-level-2');
+    if (h2s.length > 0) {
+      h2s.forEach(function(h2) { h2.classList.remove('expanded'); });
+      h2s[0].classList.add('expanded');
+      currentSection = h2s[0];
+    } else {
+      // 无 h2（仅 h3+）时跳过折叠，显示所有层级
+      var wrapper = document.querySelector('.toc .toc-wrapper');
+      if (wrapper) wrapper.classList.add('toc-auto-collapse-disabled');
+    }
+  }
+
+  // 初始高亮（下一帧执行，确保 DOM 布局完成）
+  requestAnimationFrame(function() {
+    updateHighlight();
+  });
+
+  // 平滑滚动跳转 + 关闭移动端面板（始终生效）
+  tocLinks.forEach(function(l) {
     l.addEventListener('click', function(e) {
       e.preventDefault();
       var id = this.getAttribute('data-toc');
@@ -140,7 +189,6 @@ function renderToc(items) {
         var top = el.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top: top, behavior: 'smooth' });
       }
-      // Close mobile menu
       var mobile = document.querySelector('.toc-mobile');
       if (mobile) mobile.classList.add('toc-mobile-collapsed');
     });
