@@ -302,8 +302,15 @@ var bodyHtml = page.content_html || render_md(page.content);
 }
 .dossier-nav-divider {
   border: none;
-  border-top: 1px solid var(--c-border);
-  margin: 0.5em 0;
+  border-top: 0.5px solid var(--c-hr-weak);
+  margin: 0.6em 0;
+  position: relative;
+}
+.dossier-nav-divider::after {
+  content: '';
+  display: block;
+  border-top: 0.5px solid var(--c-hr-weak);
+  margin-top: 3px;
 }
 .dossier-nav-index {
   margin-bottom: 0;

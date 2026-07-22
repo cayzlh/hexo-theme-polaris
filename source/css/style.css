@@ -10,6 +10,7 @@
   --c-link:#8B6B4D;--c-link-hover:#6D4F3A;--c-accent:#8B6B4D;
   --c-border:#E5E2DC;--c-code-bg:#EDECE8;--c-hover-bg:#EDECE8;
   --c-sel:#E5E2DC;
+  --c-hr:rgba(44,42,40,0.15);--c-hr-strong:rgba(44,42,40,0.25);--c-hr-weak:rgba(44,42,40,0.08);
   --fs:18px;--lh:1.75;--mw:680px;
 }
 
@@ -20,6 +21,7 @@ html.dark{
   --c-link:#e8e8e8;--c-link-hover:#5b9aff;--c-accent:#5b9aff;
   --c-border:#333;--c-code-bg:#2d2d2d;--c-hover-bg:#2d2d2d;
   --c-sel:#333;
+  --c-hr:rgba(232,232,232,0.12);--c-hr-strong:rgba(232,232,232,0.2);--c-hr-weak:rgba(232,232,232,0.06);
 }
 
 /* ===== Reset ===== */
@@ -70,7 +72,69 @@ html.dark .dark-toggle .icon-dark{display:inline}
 .intro p{margin-bottom:1em}
 .intro a{color:var(--c-link)}
 .intro a:hover{color:var(--c-link-hover)}
-.home-hr{border:none;border-top:1px solid var(--c-border);margin:2em 0}
+.home-hr{border:none;height:1px;background:linear-gradient(to right,transparent,var(--c-hr),transparent);width:70%;margin:2.5em auto}
+
+/* ========================================
+   分割线体系 — HR Styles
+   ======================================== */
+
+/* 方案一：渐变消退式 — 两端渐隐，中间清晰 */
+hr.gradient,hr.style-gradient{
+  border:none;height:1px;
+  background:linear-gradient(to right,transparent,var(--c-hr),transparent);
+  width:70%;margin:2.5em auto
+}
+
+/* 方案二：短横线式 — 克制的章节停顿 */
+hr.short,hr.style-short{
+  border:none;border-top:1.5px solid var(--c-hr-strong);
+  width:64px;margin:2em auto
+}
+
+/* 方案三：点线组合式 — 有仪式感的节奏停顿 */
+hr.dotted,hr.style-dotted{
+  border:none;text-align:center;margin:2em auto;
+  font-size:14px;color:var(--c-hr);letter-spacing:8px
+}
+hr.dotted::before,hr.style-dotted::before{
+  content:"· — · — ·";display:block
+}
+
+/* 方案四：超细双线式 — 极淡，不喧宾夺主 */
+hr.double,hr.style-double{
+  border:none;border-top:0.5px solid var(--c-hr-weak);
+  margin:2em auto;position:relative
+}
+hr.double::after,hr.style-double::after{
+  content:'';display:block;
+  border-top:0.5px solid var(--c-hr-weak);margin-top:4px
+}
+
+/* 方案五：花饰分隔符 — 特定场景的精致点缀 */
+hr.ornament,hr.style-ornament{
+  border:none;text-align:center;margin:2.5em auto;
+  font-size:20px;color:var(--c-hr);letter-spacing:12px
+}
+hr.ornament::before,hr.style-ornament::before{
+  content:"✦ ✦ ✦";display:block
+}
+
+/* 备用：点线花饰变体 */
+hr.dash-dot,hr.style-dash-dot{
+  border:none;text-align:center;margin:2em auto;
+  font-size:14px;color:var(--c-hr);letter-spacing:6px
+}
+hr.dash-dot::before,hr.style-dash-dot::before{
+  content:"— · — · —";display:block
+}
+
+/* 各方案在文章正文内的间距适配 */
+.post-body hr.gradient,.post-body hr.style-gradient{margin:2.5em auto}
+.post-body hr.short,.post-body hr.style-short{margin:2em auto}
+.post-body hr.dotted,.post-body hr.style-dotted{margin:2em auto}
+.post-body hr.double,.post-body hr.style-double{margin:2em auto}
+.post-body hr.ornament,.post-body hr.style-ornament{margin:2.5em auto}
+.post-body hr.dash-dot,.post-body hr.style-dash-dot{margin:2em auto}
 
 /* ===== Section Headings ===== */
 .section-title{font-size:1.25rem;font-weight:400;color:var(--c-text);margin-bottom:1em}
@@ -297,7 +361,7 @@ html.dark .footer a:hover {
 .post-body blockquote cite{display:block;margin-top:.5em;font-size:.85rem;color:#8B6B4D;font-style:normal}
 .post-body ul,.post-body ol{margin:.8em 0 1.2em;padding-left:1.5em}
 .post-body li{margin-bottom:.3em;color:var(--c-text)}
-.post-body hr{border:none;border-top:1px solid var(--c-border);margin:2em 0}
+.post-body hr{border:none;border-top:1.5px solid var(--c-hr-strong);width:64px;margin:2em auto}
 
 /* ===== Code ===== */
 .post-body code{font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:.85em;background:var(--c-code-bg);color:#4A4744;padding:.15em .4em;word-break:break-word;border-radius:3px;border:1px solid #E0DED9}

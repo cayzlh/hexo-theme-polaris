@@ -79,8 +79,56 @@ Key configuration is in `themes/polaris/_config.yml`. Below are the main section
 | `archive` | Archive page search configuration |
 | `custom_pages` | Extra pages from `custom/` directory |
 | `footer` | Footer text & copyright |
+| `hr` | Horizontal rule styles (gradient / short / dotted / double / ornament) |
 
 See the [full `_config.yml`](_config.yml) for all options and defaults.
+
+---
+
+## Horizontal Rules (分割线体系)
+
+Polaris transforms `<hr>` from a functional divider into a **visual breathing pause** — each variant becomes part of the page's design language.
+
+### Available Styles
+
+| Style | CSS Class | Preview | Best For |
+|-------|-----------|---------|----------|
+| Gradient | `hr.gradient` or `hr.style-gradient` | 两端渐隐，中间清晰 | Homepage post separators |
+| Short | `hr.short` or `hr.style-short` | 64px 居中短横线 | In-post section breaks |
+| Dotted | `hr.dotted` or `hr.style-dotted` | `· — · — ·` | Article endings |
+| Double | `hr.double` or `hr.style-double` | 超细双平行线 | Sidebar / card dividers |
+| Ornament | `hr.ornament` or `hr.style-ornament` | `✦ ✦ ✦` | About page, footer |
+| Dash‑dot | `hr.dash-dot` | `— · — · —` | Alternative ornament |
+
+### Usage
+
+In Markdown content, add a classed `<hr>`:
+
+```html
+<hr class="short">
+<hr class="dotted">
+<hr class="ornament">
+```
+
+Or use the `style-` prefixed variant for compatibility:
+
+```html
+<hr class="style-gradient">
+<hr class="style-short">
+```
+
+### Scene Mapping
+
+```yaml
+hr:
+  home_style: gradient    # homepage post separators
+  post_style: short       # in-post section breaks
+  footer_style: ornament  # page footer
+  sidebar_style: double   # sidebar/card dividers
+  page_style: ornament    # About / standalone pages
+```
+
+All styles respect **dark mode** automatically via CSS custom properties.
 
 ---
 
