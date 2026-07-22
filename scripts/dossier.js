@@ -1,0 +1,488 @@
+'use strict';
+/**
+ * Polaris Dossier System v4
+ * Auto-scans source/dossier/ directory tree, registers routes, builds nav tree.
+ * Features:
+ * - index.md as project README (required, supplies project config via front-matter)
+ * - Multi-level sorting: index.md first → sort → date → title
+ * - Front-matter title display (fallback to formatted filename)
+ * - Backward compatible: _config.yml and _data/dossier/*.yml still supported
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+// ============================================
+// Front-matter Parser
+// ============================================
+
+function parseFrontMatter(raw) {
+  const fm = { title: '', description: '', tags: [], sort: undefined, date: '' };
+  const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  let content = raw;
+  if (fmMatch) {
+    content = fmMatch[2];
+    const lines = fmMatch[1].split('\n');
+    let inArr = false, arrKey = '';
+    for (const line of lines) {
+      if (inArr) {
+        if (line.trim().startsWith('- ')) {
+          fm[arrKey].push(line.trim().substring(2).trim());
+          continue;
+        } else { inArr = false; }
+      }
+      const kv = line.match(/^(\w[\w_-]*):\s*(.*)/);
+      if (kv) {
+        const k = kv[1], v = kv[2].trim();
+        if (v === '') { inArr = true; arrKey = k; if (!fm[k]) fm[k] = []; }
+        else fm[k] = v;
+      }
+    }
+  }
+  return { frontMatter: fm, content };
+}
+
+function readFile(fullPath) {
+  const raw = fs.readFileSync(fullPath, 'utf8');
+  return parseFrontMatter(raw);
+}
+
+// ============================================
+// Title helper: from front-matter or formatted filename
+// ============================================
+
+function formatFileNameToTitle(name) {
+  return name
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+}
+
+function getPageTitle(frontMatter, fileName) {
+  if (frontMatter && frontMatter.title) {
+    return frontMatter.title;
+  }
+  return formatFileNameToTitle(fileName);
+}
+
+// ============================================
+// File System Scanner (reads front-matter for titles)
+// ============================================
+
+function scanDir(basePath, relPath) {
+  const fullPath = path.join(basePath, relPath);
+  if (!fs.existsSync(fullPath)) return { dirs: [], files: [] };
+  const entries = fs.readdirSync(fullPath);
+  const dirs = [], files = [];
+  for (const name of entries) {
+    if (name.startsWith('.') || name === '_config.yml') continue;
+    const itemPath = path.join(fullPath, name);
+    const rel = relPath ? path.join(relPath, name) : name;
+    if (fs.statSync(itemPath).isDirectory()) {
+      const children = scanDir(basePath, rel);
+      if (children.files.length > 0 || children.dirs.length > 0) {
+        const indexFile = children.files.find(function(f) { return f.isIndex; });
+        dirs.push({
+          name: name,
+          path: rel,
+          children: children,
+          title: indexFile ? indexFile.title : formatFileNameToTitle(name),
+          url: '/dossier/' + rel.replace(/\\/g, '/') + '/'
+        });
+      }
+    } else if (name.endsWith('.md')) {
+      const fileName = name.replace('.md', '');
+      const isIndex = (fileName === 'index' || fileName === 'README' || fileName === 'readme');
+      // Read front-matter for title
+      var fm = { title: '' };
+      try {
+        var parsed = readFile(itemPath);
+        fm = parsed.frontMatter;
+      } catch (e) { /* use defaults */ }
+      files.push({
+        name: fileName,
+        path: rel.replace(/\\/g, '/'),
+        title: getPageTitle(fm, fileName),
+        isIndex: isIndex,
+        sort: fm.sort !== undefined ? (Number(fm.sort) || 0) : undefined,
+        date: fm.date || fm.updated || '',
+        frontMatter: fm
+      });
+    }
+  }
+  return { dirs, files };
+}
+
+// ============================================
+// Project Config Reader (index.md first, then _config.yml, then _data/*.yml)
+// ============================================
+
+function readProjectConfig(basePath, projectId, indexFm) {
+  // 1. index.md front-matter (highest priority)
+  if (indexFm && indexFm.title) {
+    return {
+      title: indexFm.title,
+      description: indexFm.description || '',
+      tags: indexFm.tags || [],
+      sort: parseInt(indexFm.sort) || 0,
+      source: 'index.md'
+    };
+  }
+
+  // 2. Check source/dossier/{project}/_config.yml
+  const cfgPath1 = path.join(basePath, projectId, '_config.yml');
+  if (fs.existsSync(cfgPath1)) {
+    const raw = fs.readFileSync(cfgPath1, 'utf8');
+    const config = {};
+    raw.split('\n').forEach(function(line) {
+      const m = line.match(/^(\w[\w_-]*):\s*(.*)/);
+      if (m) config[m[1]] = m[2].trim();
+    });
+    config.source = '_config.yml';
+    return config;
+  }
+
+  // 3. Fallback: _data/dossier/{project}.yml
+  try {
+    const data = hexo.locals.get ? hexo.locals.get('data') : {};
+    const yd = data['dossier/' + projectId];
+    if (yd) {
+      if (typeof yd.tags === 'string') yd.tags = [yd.tags];
+      yd.title = yd.title || yd.name || projectId;
+      yd.source = '_data/dossier/*.yml';
+      return yd;
+    }
+  } catch (e) { /* ignore */ }
+
+  // 4. Empty fallback
+  return { title: projectId, description: '', tags: [], sort: 0, source: 'default' };
+}
+
+// ============================================
+// Multi-level Sort for Dossier Pages
+// ============================================
+
+function isIndexPage(page) {
+  return page.name === 'index' || page.name === 'README' || page.name === 'readme';
+}
+
+function sortDossierPages(pages) {
+  return pages.sort(function(a, b) {
+    // 1. index.md / README.md always first
+    var aIsIndex = isIndexPage(a);
+    var bIsIndex = isIndexPage(b);
+    if (aIsIndex && !bIsIndex) return -1;
+    if (!aIsIndex && bIsIndex) return 1;
+
+    // 2. By sort field (small → large)
+    var aSort = (a.sort !== undefined && !isNaN(a.sort)) ? a.sort : Number.MAX_SAFE_INTEGER;
+    var bSort = (b.sort !== undefined && !isNaN(b.sort)) ? b.sort : Number.MAX_SAFE_INTEGER;
+    if (aSort !== bSort) return aSort - bSort;
+
+    // 3. By date (new → old)
+    var aTime = a.date ? new Date(a.date).getTime() : NaN;
+    var bTime = b.date ? new Date(b.date).getTime() : NaN;
+    if (!isNaN(aTime) && !isNaN(bTime)) {
+      var dateCmp = bTime - aTime;
+      if (dateCmp !== 0) return dateCmp;
+    }
+    if (!isNaN(aTime) && isNaN(bTime)) return -1;
+    if (isNaN(aTime) && !isNaN(bTime)) return 1;
+
+    // 4. By title alphabetically
+    var aTitle = a.title || a.name || '';
+    var bTitle = b.title || b.name || '';
+    return aTitle.localeCompare(bTitle, 'zh-CN');
+  });
+}
+
+// ============================================
+// Nav Tree Builder (with front-matter titles)
+// ============================================
+
+function buildNavTree(scan, projectId, prefix) {
+  prefix = prefix || ('/' + projectId + '/');
+  const children = [];
+
+  // Add files in this dir (sorted)
+  var sortedFiles = sortDossierPages(scan.files.slice());
+  sortedFiles.forEach(function(f) {
+    var url = '/dossier/' + prefix.replace(/\/+$/, '') + '/' + f.name + '.html';
+    children.push({ title: f.title || f.name, url: url, type: 'page', name: f.name });
+  });
+
+  // Add sub-dirs recursively
+  scan.dirs.forEach(function(d) {
+    var subPrefix = prefix + d.name + '/';
+    var sub = buildNavTree(d.children, projectId, subPrefix);
+    children.push({ title: d.title || d.name, url: '/dossier/' + subPrefix, type: 'section', children: sub });
+  });
+
+  return children;
+}
+
+function flattenNav(nav) {
+  const result = [];
+  nav.forEach(function(item) {
+    if (item.type === 'page') result.push(item);
+    if (item.children) result.push.apply(result, flattenNav(item.children));
+  });
+  return result;
+}
+
+// ============================================
+// Custom Generator — registers all dossier routes
+// ============================================
+
+hexo.extend.generator.register('dossier_routes', function(locals) {
+  const src = hexo.source_dir;
+  const dossierPath = path.join(src, 'dossier');
+  const theme = hexo.theme.config;
+  const dossierCfg = theme.dossier || {};
+  if (!dossierCfg.enable) return [];
+
+  const routes = [];
+  const projects = {};
+  const allTags = {};
+
+  // --- 1. Scan filesystem projects ---
+  if (fs.existsSync(dossierPath)) {
+    const entries = fs.readdirSync(dossierPath);
+    for (const entry of entries) {
+      const projPath = path.join(dossierPath, entry);
+      if (!fs.statSync(projPath).isDirectory()) continue;
+
+      // Require index.md — warn if missing
+      const indexPath = path.join(projPath, 'index.md');
+      const readmePath = path.join(projPath, 'README.md');
+      var indexFilePath = null;
+      if (fs.existsSync(indexPath)) {
+        indexFilePath = indexPath;
+      } else if (fs.existsSync(readmePath)) {
+        indexFilePath = readmePath;
+      } else {
+        hexo.log.warn('[Dossier] Project "' + entry + '" is missing index.md or README.md. Skipping.');
+        continue;
+      }
+
+      // Read index.md front-matter as project config
+      const indexSrc = readFile(indexFilePath);
+      const indexFm = indexSrc.frontMatter;
+
+      // Read project config (priority: index.md > _config.yml > _data/dossier/*.yml)
+      const projCfg = readProjectConfig(dossierPath, entry, indexFm);
+      if (projCfg.enable === 'false') continue;
+
+      const scan = scanDir(dossierPath, entry);
+      if (scan.files.length === 0 && scan.dirs.length === 0) continue;
+
+      const title = projCfg.title || entry;
+      var tags = projCfg.tags || [];
+      if (typeof tags === 'string') tags = [tags];
+      const nav = buildNavTree(scan, entry, entry + '/');
+      const flatList = flattenNav(nav);
+
+      // Find the first non-index article for "开始阅读" button
+      var firstNonIndex = flatList.find(function(f) { return !isIndexPage(f); });
+      var firstArticleUrl = firstNonIndex ? firstNonIndex.url : null;
+      if (!firstArticleUrl) {
+        firstArticleUrl = '/dossier/' + entry + '/';
+      }
+
+      projects[entry] = {
+        id: entry,
+        title: title,
+        name: entry,
+        description: projCfg.description || '',
+        tags: tags,
+        sort: parseInt(projCfg.sort) || 0,
+        nav: nav,
+        flatList: flatList,
+        scan: scan,
+        source: projCfg.source || 'fs',
+        firstArticleUrl: firstArticleUrl,
+        pageCount: flatList.filter(function(f) { return !isIndexPage(f); }).length
+      };
+
+      // Collect tags
+      tags.forEach(function(t) {
+        if (!allTags[t]) allTags[t] = [];
+        if (allTags[t].indexOf(entry) === -1) allTags[t].push(entry);
+      });
+
+      // --- Project homepage (index page) ---
+      routes.push({
+        path: 'dossier/' + entry + '/index.html',
+        layout: ['dossier_page'],
+        data: {
+          layout: 'dossier_page',
+          type: 'project_home',
+          title: title,
+          project_id: entry,
+          project: projects[entry],
+          content: indexSrc.content,
+          frontMatter: indexFm,
+          nav: projects[entry].nav,
+          tags: tags,
+          toc: null,
+          updated: indexFm.updated || indexFm.date || '',
+          prev: null,
+          next: null
+        }
+      });
+
+      // --- Individual doc pages (excluding index/README) ---
+      const docPages = [];
+      for (var fi = 0; fi < flatList.length; fi++) {
+        var f = flatList[fi];
+        // Skip index/readme pages (handled as project home above)
+        if (isIndexPage(f)) continue;
+
+        const filePath = path.join(dossierPath, entry, f.url.replace('/dossier/' + entry + '/', '').replace('.html', '.md'));
+        if (!fs.existsSync(filePath)) continue;
+        const doc = readFile(filePath);
+        const rendered = hexo.render.renderSync({ text: doc.content, engine: 'markdown' });
+        const tocData = extractToc(rendered);
+
+        var docSort = doc.frontMatter.sort !== undefined ? parseInt(doc.frontMatter.sort) : undefined;
+        var docDate = doc.frontMatter.updated || doc.frontMatter.date || '';
+
+        docPages.push({
+          url: f.url,
+          title: doc.frontMatter.title || f.title || f.name,
+          sort: docSort,
+          date: docDate,
+          name: f.name,
+          routeData: {
+            layout: 'dossier_page',
+            type: 'doc',
+            title: doc.frontMatter.title || f.title || f.name,
+            project_id: entry,
+            project: projects[entry],
+            content: doc.content,
+            content_html: rendered,
+            frontMatter: doc.frontMatter,
+            nav: projects[entry].nav,
+            tags: tags.concat(typeof doc.frontMatter.tags === 'string' ? [doc.frontMatter.tags] : (doc.frontMatter.tags || [])),
+            toc: tocData,
+            updated: docDate
+          }
+        });
+      }
+
+      // Multi-level sort: index first → sort → date → title
+      sortDossierPages(docPages);
+
+      // Assign prev/next pagination
+      for (var pi = 0; pi < docPages.length; pi++) {
+        docPages[pi].routeData.prev = pi > 0
+          ? { url: docPages[pi - 1].url, title: docPages[pi - 1].title }
+          : null;
+        docPages[pi].routeData.next = pi < docPages.length - 1
+          ? { url: docPages[pi + 1].url, title: docPages[pi + 1].title }
+          : null;
+      }
+
+      // Push paginated doc routes
+      docPages.forEach(function(dp) {
+        routes.push({
+          path: dp.url.replace(/^\//, ''),
+          layout: ['dossier_page'],
+          data: dp.routeData
+        });
+      });
+    }
+  }
+
+  // --- 3. Dossier home ---
+  routes.push({
+    path: 'dossier/index.html',
+    layout: ['index_dossier'],
+    data: {
+      layout: 'index_dossier',
+      title: 'Dossier',
+      projects: projects,
+      allTags: allTags,
+      filter: false
+    }
+  });
+
+  // --- 4. Tag pages ---
+  for (const tag of Object.keys(allTags)) {
+    if (allTags[tag].length === 0) continue;
+    routes.push({
+      path: 'dossier/tags/' + encodeURIComponent(tag) + '/index.html',
+      layout: ['index_dossier'],
+      data: {
+        layout: 'index_dossier',
+        title: tag,
+        projects: projects,
+        allTags: allTags,
+        filter: true,
+        tagName: tag
+      }
+    });
+  }
+
+  // Store on theme.config for template access
+  hexo.theme.config.dossier = Object.assign({}, dossierCfg, {
+    projects: projects,
+    allTags: allTags,
+    tree: projects,
+    shelf: Object.keys(projects),
+    path: dossierCfg.path || 'dossier'
+  });
+
+  return routes;
+});
+
+// ============================================
+// Render markdown helper
+// ============================================
+hexo.extend.helper.register('render_md', function(content) {
+  if (!content) return '';
+  try {
+    return hexo.render.renderSync({ text: content, engine: 'markdown' });
+  } catch (e) {
+    return '<p>' + content + '</p>';
+  }
+});
+
+// ============================================
+// TOC extractor for dossier pages
+// ============================================
+function extractToc(html) {
+  if (!html) return [];
+  var maxDepth = (hexo.theme.config.toc && hexo.theme.config.toc.max_depth) || 3;
+  var toc = [];
+  var stack = [{ children: toc, level: 0 }];
+  var re = /<h([1-6])\s+id="([^"]*)"[^>]*>(.*?)<\/h\1>/gi;
+  var m;
+  while ((m = re.exec(html)) !== null) {
+    var lvl = parseInt(m[1]);
+    if (lvl > maxDepth) continue;
+    var item = { level: lvl, id: m[2], text: m[3].replace(/<[^>]*>/g, '').trim(), children: [] };
+    while (stack.length > 1 && stack[stack.length - 1].level >= lvl) stack.pop();
+    if (stack[stack.length - 1].level < lvl) {
+      stack[stack.length - 1].children.push(item);
+      stack.push(item);
+    }
+  }
+  return toc;
+}
+
+// Helper to render TOC HTML (unified structure)
+hexo.extend.helper.register('render_toc', function(toc) {
+  if (!toc || toc.length === 0) return '';
+  function render(items) {
+    var h = '<ul class="toc-list">';
+    items.forEach(function(item) {
+      h += '<li class="toc-item toc-level-' + item.level + '">';
+      h += '<a href="#' + item.id + '" class="toc-link" data-toc="' + item.id + '">' + item.text + '</a>';
+      if (item.children && item.children.length > 0) h += render(item.children);
+      h += '</li>';
+    });
+    h += '</ul>';
+    return h;
+  }
+  return render(toc);
+});

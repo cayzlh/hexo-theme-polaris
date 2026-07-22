@@ -1,0 +1,31 @@
+<%
+function isIndexPage(item) {
+  return item.name === 'index' || item.name === 'README' || item.name === 'readme';
+}
+
+function renderTree(items, depth) {
+  depth = depth || 0;
+  var html = '<ul class="dossier-tree' + (depth > 0 ? ' tree-children' : '') + '">';
+  items.forEach(function(item) {
+    // Skip index/README pages (rendered separately in sidebar)
+    if (isIndexPage(item)) return;
+
+    if (item.type === 'section') {
+      html += '<li class="tree-parent">';
+      html += '<a href="' + item.url + '">' + item.title + '</a>';
+      if (item.children && item.children.length > 0) {
+        html += renderTree(item.children, depth + 1);
+      }
+      html += '</li>';
+    } else {
+      html += '<li class="tree-page">';
+      var cls = (current && item.url === '/' + current) ? ' active' : '';
+      html += '<a href="' + item.url + '" class="' + cls + '">' + item.title + '</a>';
+      html += '</li>';
+    }
+  });
+  html += '</ul>';
+  return html;
+}
+%>
+<%- renderTree(nav) %>

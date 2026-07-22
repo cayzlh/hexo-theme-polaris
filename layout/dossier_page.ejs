@@ -1,0 +1,641 @@
+<% var isHome = (page.type === 'project_home');
+var bodyHtml = page.content_html || render_md(page.content);
+%>
+
+<!-- Dossier layout: centered three-column (sidebar + content + TOC) -->
+<div class="dossier-layout">
+  <!-- Left: Sidebar (nav tree) -->
+  <aside class="dossier-sidebar">
+    <div class="dossier-sidebar-inner">
+      <div class="dossier-project-info">
+        <h3 class="dossier-project-title">
+          <a href="/dossier/<%= page.project_id %>/"><%= page.project.title %></a>
+        </h3>
+        <% if (page.project.description) { %>
+          <p class="dossier-project-desc"><%= page.project.description %></p>
+        <% } %>
+      </div>
+      <nav class="dossier-nav">
+        <!-- 项目首页（index.md）始终置顶 -->
+        <ul class="dossier-nav-list dossier-nav-index">
+          <li class="dossier-nav-item <%= page.type === 'project_home' ? 'active' : '' %>">
+            <a href="/dossier/<%= page.project_id %>/" class="dossier-nav-link <%= page.type === 'project_home' ? 'active' : '' %>">
+              <span class="dossier-nav-icon">📖</span> <%= page.project.title || '项目概览' %>
+            </a>
+          </li>
+        </ul>
+        <!-- 分隔线 -->
+        <hr class="dossier-nav-divider">
+        <!-- 其他文档 -->
+        <%- partial('_partial/dossier_tree', { nav: page.nav, current: page.path }) %>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Center: Content -->
+  <main class="dossier-content">
+    <!-- Breadcrumb (inside content area, aligns with content text) -->
+    <div class="dossier-bread">
+      <a href="/dossier/">Dossier</a>
+      &nbsp;&raquo;&nbsp;<a href="/dossier/<%= page.project_id %>/"><%= page.project.title %></a>
+      <% if (!isHome && page.title) { %>
+        &nbsp;&raquo;&nbsp;<%= page.title %>
+      <% } %>
+    </div>
+
+    <% if (isHome) { %>
+      <h1 class="post-title"><%= page.project.title %></h1>
+      <% if (page.project.description) { %>
+        <p class="dossier-project-desc"><%= page.project.description %></p>
+      <% } %>
+      <div class="post-body">
+        <%- bodyHtml %>
+      </div>
+    <% } else { %>
+      <h1 class="post-title"><%= page.title %></h1>
+      <% if (page.updated) { %>
+        <div class="dossier-page-meta">
+          <span class="dossier-page-updated">更新于：<%= page.updated %></span>
+        </div>
+      <% } %>
+      <div class="post-body">
+        <%- bodyHtml %>
+      </div>
+
+      <!-- Tags -->
+      <% if (page.tags && page.tags.length > 0) { %>
+        <div class="post-meta">
+          <% page.tags.forEach(function(t) { %>
+            <a href="/dossier/tags/<%= encodeURIComponent(t) %>/">#<%= t %></a>
+          <% }); %>
+        </div>
+      <% } %>
+    <% } %>
+
+    <!-- Bottom pagination: prev / next (doc pages only) -->
+    <% if (!isHome && theme.dossier.show_pagination !== false) { %>
+    <nav class="dossier-pagination">
+      <% if (page.prev) { %>
+        <a href="<%= page.prev.url %>" class="dossier-prev">
+          <span class="nav-label">← 上一篇</span>
+          <span class="nav-title"><%= page.prev.title %></span>
+        </a>
+      <% } else { %>
+        <span class="dossier-prev disabled">
+          <span class="nav-label">← 上一篇</span>
+          <span class="nav-title">没有了</span>
+        </span>
+      <% } %>
+
+      <% if (page.next) { %>
+        <a href="<%= page.next.url %>" class="dossier-next">
+          <span class="nav-label">下一篇 →</span>
+          <span class="nav-title"><%= page.next.title %></span>
+        </a>
+      <% } else { %>
+        <span class="dossier-next disabled">
+          <span class="nav-label">下一篇 →</span>
+          <span class="nav-title">没有了</span>
+        </span>
+      <% } %>
+    </nav>
+    <% } %>
+  </main>
+
+  <!-- Right: TOC -->
+  <aside class="dossier-toc" id="dossier-toc">
+    <div class="toc-fixed">
+      <div class="toc-wrapper<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
+        <div class="toc-title">目录</div>
+        <% if (!isHome && page.toc && page.toc.length > 0) { %>
+          <%- render_toc(page.toc) %>
+          <div class="toc-footer">
+            <button class="toc-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'});var tc=document.querySelector('.dossier-toc .toc-fixed');if(tc)tc.scrollTop=0;return false">
+              <span class="toc-back-icon">↑</span> 回到顶部
+            </button>
+          </div>
+        <% } else { %>
+          <div class="toc-empty">— 暂无目录 —</div>
+        <% } %>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<style>
+/* ============================================
+   Dossier Layout — Centered Three-Column
+   ============================================ */
+
+/* Main container: centered, flex, fixed column widths */
+.dossier-layout {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+/* ===== Sidebar (240px fixed) ===== */
+.dossier-sidebar {
+  flex: 0 0 240px;
+  width: 240px;
+  position: sticky;
+  top: 4rem;
+  height: calc(100vh - 6rem);
+  overflow-y: auto;
+  padding-right: 24px;
+  border-right: 1px solid var(--c-border);
+  -ms-overflow-style: none;
+  scrollbar-width: thin;
+}
+.dossier-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.dossier-sidebar-inner {
+  padding-top: 0.5em;
+}
+
+/* Project info */
+.dossier-project-info {
+  margin-bottom: 1.5em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid var(--c-border);
+}
+.dossier-project-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+.dossier-project-title a {
+  color: var(--c-text);
+  text-decoration: none;
+}
+.dossier-project-title a:hover {
+  color: var(--c-accent);
+}
+.dossier-project-desc {
+  font-size: 0.8rem;
+  color: var(--c-text-light);
+  margin-top: 0.3em;
+  line-height: 1.5;
+}
+
+/* Breadcrumb (inside content area) */
+.dossier-bread {
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  margin-bottom: 1.5em;
+}
+.dossier-bread a {
+  color: var(--c-text-light);
+}
+.dossier-bread a:hover {
+  color: var(--c-accent);
+}
+
+/* ===== Content (720px fixed) ===== */
+.dossier-content {
+  flex: 0 0 720px;
+  width: 720px;
+  padding: 0 48px;
+  min-height: 60vh;
+}
+
+/* Page meta */
+.dossier-page-meta {
+  margin-bottom: 1em;
+}
+.dossier-page-updated {
+  font-size: 0.8rem;
+  color: var(--c-text-light);
+}
+
+/* ===== TOC ===== */
+.dossier-toc {
+  /* flex 占位容器，保持三栏布局稳定 */
+  flex: 0 0 200px;
+  width: 200px;
+  padding-left: 24px;
+  border-left: 1px solid var(--c-border);
+  /* 覆盖 style.css 中的 mask-image，避免裁剪 position:fixed 的子元素 */
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  visibility: hidden;
+}
+.dossier-toc .toc-fixed {
+  /* position: fixed — 与 blog TOC 一致，始终可见 */
+  position: fixed;
+  top: 5rem;
+  width: 200px;
+  max-height: calc(100vh - 9rem);
+  overflow-y: auto;
+  padding-top: 2rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  visibility: visible;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* 右边缘位置与 blog TOC 公式一致 */
+  right: calc(50vw - 600px);
+  z-index: 10;
+}
+.dossier-toc .toc-fixed::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== Nav Tree (sidebar) ===== */
+.dossier-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dossier-nav-item {
+  margin-bottom: 0.15em;
+}
+.dossier-nav-item.active {
+  font-weight: 500;
+}
+.dossier-nav-link {
+  display: block;
+  padding: 0.2em 0;
+  font-size: 0.88rem;
+  color: var(--c-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  padding-left: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.dossier-nav-link:hover {
+  color: var(--c-accent);
+}
+.dossier-nav-link.active {
+  color: var(--c-accent);
+  border-left-color: var(--c-accent);
+  font-weight: 500;
+}
+.dossier-nav-icon {
+  margin-right: 4px;
+}
+.dossier-nav-divider {
+  border: none;
+  border-top: 1px solid var(--c-border);
+  margin: 0.5em 0;
+}
+.dossier-nav-index {
+  margin-bottom: 0;
+}
+
+.dossier-tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dossier-tree li {
+  margin-bottom: 0.15em;
+}
+.dossier-tree a {
+  display: block;
+  padding: 0.2em 0;
+  font-size: 0.88rem;
+  color: var(--c-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  padding-left: 8px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.dossier-tree a:hover {
+  color: var(--c-accent);
+}
+.dossier-tree a.active {
+  color: var(--c-accent);
+  border-left-color: var(--c-accent);
+  font-weight: 500;
+}
+.dossier-tree .tree-parent > a {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--c-text-muted);
+  margin-top: 0.6em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-left: none;
+  padding-left: 0;
+}
+.dossier-tree .tree-children {
+  padding-left: 12px;
+}
+
+/* ===== Bottom Pagination ===== */
+.dossier-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--c-border);
+  gap: 12px;
+}
+.dossier-prev,
+.dossier-next {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--c-text);
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  min-width: 0;
+  flex: 1;
+}
+.dossier-prev:hover,
+.dossier-next:hover {
+  background: var(--c-hover-bg);
+}
+.dossier-prev .nav-label,
+.dossier-next .nav-label {
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+}
+.dossier-prev .nav-title,
+.dossier-next .nav-title {
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dossier-prev.disabled,
+.dossier-next.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ===== Responsive ===== */
+
+/* Medium screens (1024px – 1280px): narrower columns */
+@media (max-width: 1280px) {
+  .dossier-content {
+    flex: 0 0 600px;
+    width: 600px;
+    padding: 0 32px;
+  }
+  .dossier-sidebar {
+    flex: 0 0 200px;
+    width: 200px;
+    padding-right: 16px;
+  }
+  .dossier-toc {
+    flex: 0 0 180px;
+    width: 180px;
+    padding-left: 16px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
+/* Tablet (768px – 1024px): single column, sidebar on top */
+@media (max-width: 1024px) {
+  .dossier-layout {
+    flex-direction: column;
+    padding: 0 16px;
+    max-width: 100%;
+  }
+  .dossier-sidebar {
+    flex: none;
+    width: 100%;
+    position: relative;
+    top: 0;
+    height: auto;
+    max-height: 320px;
+    border-right: none;
+    border-bottom: 1px solid var(--c-border);
+    padding-right: 0;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    overflow-y: auto;
+  }
+  .dossier-sidebar-inner {
+    padding-top: 0;
+  }
+  .dossier-project-info {
+    margin-bottom: 0.8em;
+    padding-bottom: 0.8em;
+  }
+  .dossier-content {
+    flex: none;
+    width: 100%;
+    padding: 0;
+    min-height: auto;
+  }
+  .dossier-toc {
+    display: none;
+  }
+}
+
+/* Mobile (<768px): tighter spacing, stacked pagination */
+@media (max-width: 768px) {
+  .dossier-layout {
+    padding: 0 12px;
+  }
+  .dossier-sidebar {
+    max-height: 240px;
+  }
+  .dossier-content {
+    padding: 0;
+  }
+  .dossier-pagination {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .dossier-prev,
+  .dossier-next {
+    align-items: center;
+    padding: 6px 12px;
+  }
+}
+</style>
+
+<script>
+(function() {
+  const isHome = <%= isHome ? 'true' : 'false' %>;
+
+  // --- Sidebar: highlight current article + auto-scroll ---
+  const sidebar = document.querySelector('.dossier-sidebar');
+  const currentPath = window.location.pathname;
+  const navLinks = document.querySelectorAll('.dossier-nav-link');
+
+  navLinks.forEach(function(link) {
+    var href = link.getAttribute('href');
+    if (!href) return;
+    // Normalize trailing slash for comparison
+    if (href === currentPath || href.replace(/\/$/, '') === currentPath.replace(/\/$/, '')) {
+      link.classList.add('active');
+      // Expand parent tree sections
+      var parent = link.closest('li');
+      while (parent) {
+        parent.classList.add('expanded');
+        parent = parent.parentElement ? parent.parentElement.closest('li') : null;
+      }
+    }
+  });
+
+  // Scroll sidebar to show active link
+  var activeLink = document.querySelector('.dossier-nav-link.active');
+  if (activeLink && sidebar) {
+    var linkTop = activeLink.offsetTop;
+    var sidebarHeight = sidebar.clientHeight;
+    if (linkTop > sidebarHeight) {
+      sidebar.scrollTop = linkTop - sidebarHeight / 2;
+    }
+  }
+
+  // --- TOC: smooth scroll + IntersectionObserver tracking + auto-collapse ---
+  if (!isHome) {
+    var tocLinks = document.querySelectorAll('#dossier-toc .toc-link');
+    if (tocLinks.length) {
+      tocLinks.forEach(function(l) {
+        l.addEventListener('click', function(e) {
+          e.preventDefault();
+          var id = this.getAttribute('data-toc');
+          var el = document.getElementById(id);
+          if (el) {
+            window.scrollTo({
+              top: el.getBoundingClientRect().top + window.pageYOffset - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      var dossierHighlightOnScroll = <%= theme.toc && theme.toc.highlight_on_scroll !== false ? 'true' : 'false' %>;
+      var dossierAutoCollapse = <%= theme.toc && theme.toc.auto_collapse !== false ? 'true' : 'false' %>;
+
+      if (dossierHighlightOnScroll) {
+        // Auto-collapse: 仅在禁用折叠（show all）时才需要添加类
+        var dossierTocWrapper = document.querySelector('#dossier-toc .toc-wrapper');
+        if (dossierTocWrapper && !dossierAutoCollapse) {
+          dossierTocWrapper.classList.add('toc-auto-collapse-disabled');
+        }
+
+        function getParentH2(item) {
+          var el = item;
+          while (el && !el.classList.contains('toc-level-2')) el = el.parentElement;
+          return el;
+        }
+
+        // ===== 位置追踪 — 始终高亮"距离视口顶部最近的标题" =====
+        var dossierHeadingPositions = [];
+        tocLinks.forEach(function(l) {
+          var id = l.getAttribute('data-toc');
+          var el = document.getElementById(id);
+          if (el) {
+            dossierHeadingPositions.push({ el: el, link: l, id: id });
+          }
+        });
+
+        // 计算应该高亮哪个标题（距离视口顶部最近的）
+        function dossierGetActiveHeading() {
+          if (dossierHeadingPositions.length === 0) return null;
+          var headerOffset = 80; // 与 smooth scroll 偏移量一致
+          var best = null;
+          var bestDist = Infinity;
+          for (var i = 0; i < dossierHeadingPositions.length; i++) {
+            var top = dossierHeadingPositions[i].el.getBoundingClientRect().top;
+            var dist = Math.abs(top - headerOffset);
+            if (dist < bestDist) {
+              bestDist = dist;
+              best = dossierHeadingPositions[i];
+            }
+          }
+          return best;
+        }
+
+        var dossierCurrentSection = null;
+        var dossierActiveHeading = null;
+
+        function dossierUpdateHighlight() {
+          var heading = dossierGetActiveHeading();
+          if (!heading) return;
+          // 相同标题重复高亮则跳过
+          if (heading.link.classList.contains('active')) return;
+
+          // 移除所有高亮
+          document.querySelectorAll('#dossier-toc .toc-link.active').forEach(function(l) {
+            l.classList.remove('active');
+          });
+
+          // 高亮新标题
+          heading.link.classList.add('active');
+
+          // TOC 容器滚动到高亮标题可见
+          heading.link.scrollIntoView({ block: 'nearest' });
+
+          // 自动折叠展开
+          if (dossierAutoCollapse) {
+            var h2Parent = getParentH2(heading.link);
+            if (h2Parent && h2Parent !== dossierCurrentSection) {
+              if (dossierCurrentSection) dossierCurrentSection.classList.remove('expanded');
+              h2Parent.classList.add('expanded');
+              dossierCurrentSection = h2Parent;
+            }
+          }
+        }
+
+        // IntersectionObserver 触发位置重算（仅触发，不依赖 isIntersecting）
+        var dossierObserver = new IntersectionObserver(function() {
+          dossierUpdateHighlight();
+        }, { threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1] });
+
+        tocLinks.forEach(function(l) {
+          var id = l.getAttribute('data-toc');
+          var el = document.getElementById(id);
+          if (el) dossierObserver.observe(el);
+        });
+
+        // 滚动事件监听（requestAnimationFrame 节流）
+        var dossierTicking = false;
+        window.addEventListener('scroll', function() {
+          if (!dossierTicking) {
+            window.requestAnimationFrame(function() {
+              dossierUpdateHighlight();
+              dossierTicking = false;
+            });
+            dossierTicking = true;
+          }
+        });
+
+        // 初始状态：折叠所有，展开第一个 h2
+        if (dossierAutoCollapse) {
+          var dossierH2s = document.querySelectorAll('#dossier-toc .toc-level-2');
+          if (dossierH2s.length > 0) {
+            dossierH2s.forEach(function(h2) { h2.classList.remove('expanded'); });
+            dossierH2s[0].classList.add('expanded');
+            dossierCurrentSection = dossierH2s[0];
+          } else {
+            // 无 h2（仅 h3+）时跳过折叠，显示所有层级
+            var wrapper = document.querySelector('#dossier-toc .toc-wrapper');
+            if (wrapper) wrapper.classList.add('toc-auto-collapse-disabled');
+          }
+        }
+
+        // 初始高亮（下一帧执行，确保 DOM 布局完成）
+        requestAnimationFrame(function() {
+          dossierUpdateHighlight();
+        });
+      }
+    }
+  }
+})();
+</script>

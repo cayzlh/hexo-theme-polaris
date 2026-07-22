@@ -1,0 +1,65 @@
+<% var dp = theme.dossier.path || 'dossier'; %>
+<h1 class="page-heading"><%= page.filter && page.tagName ? page.tagName : 'Dossier' %></h1>
+
+<nav class="dossier-tabs">
+  <a href="/<%= dp %>/" class="dossier-tab <%= !page.filter ? 'active' : '' %>">All</a>
+  <% if (page.allTags) {
+    var sorted = Object.keys(page.allTags).sort();
+    for (var t = 0; t < sorted.length; t++) {
+      var tagName = sorted[t];
+      var items = page.allTags[tagName];
+      if (items && items.length > 0) { %>
+        <a href="/<%= dp %>/tags/<%= encodeURIComponent(tagName) %>/" class="dossier-tab <%= page.filter && page.tagName === tagName ? 'active' : '' %>"><%= tagName %></a>
+  <%   }
+    }
+  } %>
+</nav>
+
+<div class="project-list">
+  <% if (page.projects) {
+    var projKeys = Object.keys(page.projects).filter(function(k) {
+      if (!page.filter) return true;
+      var p = page.projects[k];
+      return p.tags && p.tags.includes(page.tagName);
+    }).sort(function(a, b) {
+      return (page.projects[b].sort || 0) - (page.projects[a].sort || 0);
+    });
+
+    for (var i = 0; i < projKeys.length; i++) {
+      var pid = projKeys[i];
+      var proj = page.projects[pid];
+      // Count non-index pages (use pre-computed value or fallback)
+      var pageCount = (proj.pageCount !== undefined) ? proj.pageCount : (proj.flatList ? proj.flatList.filter(function(f) { return f.name !== 'index' && f.name !== 'README' && f.name !== 'readme'; }).length : 0);
+      var showStartBtn = (theme.dossier && theme.dossier.card && theme.dossier.card.show_start_button !== false);
+      var startBtnText = (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_text) || '开始阅读';
+      var startBtnStyle = (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_style) || 'default';
+  %>
+    <div class="project-card">
+      <a href="/<%= dp %>/<%= pid %>/" class="project-card-link">
+        <% if (proj.tags && proj.tags.length > 0) { %>
+          <div class="project-tags">
+            <% proj.tags.forEach(function(t) { %>
+              <span class="project-tag"><%= t %></span>
+            <% }); %>
+          </div>
+        <% } %>
+        <div class="project-title"><%= proj.title || proj.name %></div>
+        <% if (proj.description) { %>
+          <p class="project-desc"><%= proj.description %></p>
+        <% } %>
+        <% if (pageCount > 0) { %>
+          <span class="project-count"><%= pageCount %> 篇文档</span>
+        <% } %>
+      </a>
+      <% if (showStartBtn) { %>
+        <div class="project-card-footer">
+          <a href="<%= proj.firstArticleUrl || ('/' + dp + '/' + pid + '/') %>" class="project-card-start project-card-start--<%= startBtnStyle %>">
+            <%= startBtnText %>
+            <span class="start-arrow">→</span>
+          </a>
+        </div>
+      <% } %>
+    </div>
+  <% }
+  } %>
+</div>

@@ -1,0 +1,81 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Hexo">
+
+  <!-- Title -->
+  <title><%- seo_title(page) %></title>
+
+  <!-- Robots -->
+  <% if (!page.__index) {
+    var robots = page.robots || '';
+    var canon = theme.canonical;
+    if (canon && canon.originalHost) {
+      var backupEnv = 'IS_BACKUP'; /* set via env var IS_BACKUP=true */
+      if (robots) { %><meta name="robots" content="<%= robots %>"><% }
+    } else if (robots) { %><meta name="robots" content="<%= robots %>"><% }
+  } %>
+
+  <!-- Description -->
+  <% var seoDesc = seo_description(page); %>
+  <% if (seoDesc) { %><meta name="description" content="<%= safe_meta(seoDesc) %>"><% } %>
+
+  <!-- Keywords -->
+  <% var seoKw = seo_keywords(page); %>
+  <% if (seoKw) { %><meta name="keywords" content="<%= seoKw %>"><% } %>
+
+  <!-- Canonical -->
+  <% var canonUrl = canonical_url(page); %>
+  <% if (canonUrl) { %><link rel="canonical" href="<%= canonUrl %>"><% } %>
+
+  <!-- Open Graph -->
+  <% if (theme.open_graph && theme.open_graph.enable) {
+    var ogTitle = page.seo_title || page.title || config.title;
+    var ogDesc = seoDesc || config.description;
+    var ogUrl = config.url + '/' + (page.path || '');
+    var ogImage = page.cover || page.banner || config.avatar;
+    var ogType = page.layout === 'post' ? 'article' : 'website';
+  %>
+    <meta property="og:title" content="<%= safe_meta(ogTitle) %>">
+    <meta property="og:description" content="<%= safe_meta(ogDesc) %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:type" content="<%= ogType %>">
+    <meta property="og:site_name" content="<%= config.title %>">
+    <% if (ogImage) { %><meta property="og:image" content="<%= ogImage %>"><% } %>
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="<%= theme.open_graph.twitter_card || 'summary_large_image' %>">
+    <% if (theme.open_graph.twitter_id) { %><meta name="twitter:site" content="@<%= theme.open_graph.twitter_id %>"><% } %>
+    <% if (theme.open_graph.twitter_id) { %><meta name="twitter:creator" content="@<%= theme.open_graph.twitter_id %>"><% } %>
+    <meta name="twitter:title" content="<%= safe_meta(ogTitle) %>">
+    <meta name="twitter:description" content="<%= safe_meta(ogDesc) %>">
+    <% if (ogImage) { %><meta name="twitter:image" content="<%= ogImage %>"><% } %>
+  <% } %>
+
+  <!-- Structured Data (JSON-LD) -->
+  <% var ld = json_ld(page, config); %>
+  <% if (ld) { %><script type="application/ld+json"><%- ld %></script><% } %>
+
+  <!-- Feed -->
+  <% if (config.feed && config.feed.path) { %>
+    <link rel="alternate" href="<%= url_for(config.feed.path) %>" type="application/atom+xml" title="<%= config.title %>">
+  <% } %>
+
+  <!-- Preconnect / DNS Prefetch -->
+  <link rel="dns-prefetch" href="//cdn-cf.cayzlh.com">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
+
+  <!-- Favicon -->
+  <link rel="icon" href="<%= url_for(config.avatar || '/favicon.ico') %>">
+
+  <!-- Custom head inject -->
+  <% if (config.inject && config.inject.head) { %><%- config.inject.head.join('\n') %><% } %>
+  <% if (theme.inject && theme.inject.head) { %><%- theme.inject.head.join('\n') %><% } %>
+
+  <!-- Clone detection & utilities -->
+  <script src="<%= url_for('/js/main.js') %>" defer></script>
+  <% if (theme.transition && theme.transition.enable !== false) { %>
+  <script src="<%= url_for('/js/transition.js') %>" defer></script>
+  <% } %>
+</head>

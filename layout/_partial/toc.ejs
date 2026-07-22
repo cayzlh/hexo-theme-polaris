@@ -1,0 +1,141 @@
+<%
+function renderToc(items) {
+  var html = '';
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    html += '<li class="toc-item toc-level-' + item.level + '">';
+    html += '<a href="#' + item.id + '" class="toc-link" data-toc="' + item.id + '">' + item.text + '</a>';
+    // Children nested inside the list item
+    if (item.children && item.children.length > 0) {
+      html += '<ul class="toc-list">';
+      html += renderToc(item.children);
+      html += '</ul>';
+    }
+    html += '</li>';
+  }
+  return html;
+}
+%>
+
+<!-- Mobile TOC toggle -->
+<div class="toc-mobile<%= theme.toc.mobile_default === 'collapsed' ? ' toc-mobile-collapsed' : '' %>">
+  <button class="toc-toggle" onclick="this.parentElement.classList.toggle('toc-mobile-collapsed')">
+    📑 目录
+  </button>
+  <div class="toc-mobile-body">
+    <div class="toc-wrapper">
+      <div class="toc-title">目录</div>
+      <ul class="toc-list"><%- renderToc(page.toc) %></ul>
+    </div>
+  </div>
+</div>
+
+<!-- Desktop TOC -->
+<div class="toc">
+  <div class="toc-fixed">
+    <div class="toc-wrapper toc-auto-collapse-disabled<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
+      <div class="toc-title">目录</div>
+      <ul class="toc-list"><%- renderToc(page.toc) %></ul>
+      <% if (theme.toc.show_back_to_top !== false) { %>
+      <div class="toc-footer">
+        <button class="toc-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">
+          <span class="toc-back-icon">↑</span> <%= theme.toc.back_to_top_text || '回到顶部' %>
+        </button>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.toc-link');
+  if (links.length === 0) return;
+
+  // Build heading map
+  var headings = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('data-toc');
+    var el = document.getElementById(id);
+    if (el) headings.push({ el: el, link: l });
+  });
+  if (headings.length === 0) return;
+
+  var highlightOnScroll = <%= theme.toc && theme.toc.highlight_on_scroll !== false ? 'true' : 'false' %>;
+  var autoCollapse = <%= theme.toc && theme.toc.auto_collapse !== false ? 'true' : 'false' %>;
+
+  if (highlightOnScroll && autoCollapse) {
+    // Disable CSS auto-collapse for JS-controlled tracking mode
+    document.querySelector('.toc-wrapper') && document.querySelector('.toc-wrapper').classList.remove('toc-auto-collapse-disabled');
+
+    function getParentH2(item) {
+      var el = item;
+      while (el && !el.classList.contains('toc-level-2')) el = el.parentElement;
+      return el;
+    }
+
+    var currentSection = null;
+    var tocObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          var link = document.querySelector('.toc-link[data-toc="' + e.target.id + '"]');
+          if (!link) return;
+
+          // Highlight — cursor following
+          document.querySelectorAll('.toc-link.active').forEach(function(l) { l.classList.remove('active'); });
+          link.classList.add('active');
+
+          // Expand children of current h2 section
+          var h2Parent = getParentH2(link);
+          if (h2Parent && h2Parent !== currentSection) {
+            // Collapse previous
+            if (currentSection) {
+              currentSection.classList.remove('expanded');
+            }
+            // Expand current
+            h2Parent.classList.add('expanded');
+            currentSection = h2Parent;
+          }
+        }
+      });
+    }, { rootMargin: '-80px 0px -70% 0px' });
+    headings.forEach(function(h) { tocObserver.observe(h.el); });
+
+    // Initial state: collapse all, expand first h2 if any
+    var allH2 = document.querySelectorAll('.toc-level-2');
+    allH2.forEach(function(h2) { h2.classList.remove('expanded'); });
+    if (allH2.length > 0) {
+      allH2[0].classList.add('expanded');
+      currentSection = allH2[0];
+    }
+  } else if (highlightOnScroll) {
+    // Simple active tracking without auto-collapse
+    var simpleObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        var link = document.querySelector('.toc-link[data-toc="' + e.target.id + '"]');
+        if (link) {
+          if (e.isIntersecting) link.classList.add('active');
+          else link.classList.remove('active');
+        }
+      });
+    }, { rootMargin: '-80px 0px -70% 0px' });
+    headings.forEach(function(h) { simpleObserver.observe(h.el); });
+  }
+
+  // Smooth scroll + close mobile TOC on click (always active)
+  links.forEach(function(l) {
+    l.addEventListener('click', function(e) {
+      e.preventDefault();
+      var id = this.getAttribute('data-toc');
+      var el = document.getElementById(id);
+      if (el) {
+        var top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+      // Close mobile menu
+      var mobile = document.querySelector('.toc-mobile');
+      if (mobile) mobile.classList.add('toc-mobile-collapsed');
+    });
+  });
+})();
+</script>

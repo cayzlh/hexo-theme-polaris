@@ -1,0 +1,201 @@
+# Polaris Theme — Minimal and elegant Hexo theme
+# https://cayzlh.com/
+
+info:
+  name: Polaris
+  version: 3.0.0
+
+# Navigation links
+menu:
+  - name: Home
+    url: /
+  - name: Blog
+    url: /archives/
+  - name: Dossier
+    url: /dossier/
+
+# =============================================
+# Homepage
+# =============================================
+
+# Homepage intro
+intro: |
+  Bruce Lee 说：Be water, my friend.
+
+  水无形，随物赋形。水无界，可纳百川。水无争，却穿石裂岩。
+
+  这里，我在信息洪流中截取的一瓢。不设边界，不定形态，只是流动。
+
+  Hi，我是 Ant丶，欢迎你，停泊片刻。
+
+recent_posts_count: 5
+random_posts_count: 5
+
+# =============================================
+# SEO
+# =============================================
+
+# Canonical URL & clone detection
+canonical:
+  originalHost: www.cayzlh.com
+  officialHosts: []
+  checklink: /js/check.js
+  closeEnable: true
+  closeText: 关闭提示
+
+# Open Graph (social sharing)
+open_graph:
+  enable: true
+  twitter_id: ''
+  twitter_card: summary_large_image
+
+# Structured data (JSON-LD)
+structured_data:
+  enable: true
+  site_type: Person
+  logo: ''
+
+# =============================================
+# Colors
+# =============================================
+
+color:
+  text: '#1a1a1a'
+  text-light: '#999999'
+  background: '#ffffff'
+  link: '#1a1a1a'
+  link-hover: '#3b82f6'
+  border: '#eeeeee'
+  code-bg: '#f5f5f5'
+  selection: '#f0f0f0'
+
+# =============================================
+# 链接样式配置
+# =============================================
+link:
+  color: '#3b82f6'
+  hover_color: '#2563eb'
+  visited_color: '#7c3aed'
+  underline: true
+  underline_style: solid
+  underline_opacity: 0.3
+
+# Typography
+font_size: 18px
+line_height: 1.8
+max_width: 720px
+
+# =============================================
+# Dark Mode
+# =============================================
+dark_mode:
+  mode: auto                # auto | manual | system
+  sunset: '19:00'
+  sunrise: '06:00'
+  switch_position: header
+
+dark:
+  text: '#e8e8e8'
+  text-light: '#b0b0b0'
+  text-muted: '#777777'
+  background: '#1a1a1a'
+  background-secondary: '#242424'
+  background-tertiary: '#2d2d2d'
+  link: '#e8e8e8'
+  link-hover: '#5b9aff'
+  border: '#333333'
+  code-bg: '#2d2d2d'
+  hover-bg: '#2d2d2d'
+  accent: '#5b9aff'
+  selection: '#333333'
+
+# =============================================
+# 页面过渡动画配置
+# =============================================
+transition:
+  enable: true
+  # 降级方案类型：'view-transition' | 'fade'
+  # view-transition: 优先使用 View Transitions API（浏览器原生），不支持时自动降级为 fade
+  # fade: 始终使用 JS 淡入淡出
+  type: view-transition
+  # 动画时长（毫秒），与 CSS animation-duration 一致
+  duration: 350
+
+# =============================================
+# TOC (Table of Contents)
+# =============================================
+toc:
+  enable: true
+  max_depth: 3                       # max heading depth (1-6)
+  position: right                    # desktop position: right | left
+  show_number: false                 # show heading numbers
+  mobile_default: collapsed          # collapsed | expanded
+  show_back_to_top: true             # show "back to top" button
+  back_to_top_text: 回到顶部          # back to top button text
+  auto_collapse: true                # auto collapse sub-headings, expand only current section
+  # 光标跟随：滚动时高亮当前阅读标题
+  highlight_on_scroll: true
+  # 是否显示层级连接线（树形可视化）
+  show_tree_line: true
+  # 滚动条样式：'custom' | 'hidden' | 'default'
+  scrollbar_style: custom
+  # 是否启用渐变遮罩（顶部/底部渐变透明，暗示可滚动）
+  gradient_mask: true
+  threshold: 0.3
+  font_size_base: 0.85rem
+  width: 200px
+  content_padding_right: 240px
+
+# =============================================
+# Dossier 档案系统（精简版—约定优于配置）
+# =============================================
+#
+# 每个 Dossier 项目是一个目录，必须包含 index.md 作为项目首页。
+# index.md 的 front-matter 提供项目配置（title / description / tags / sort）。
+# 无需在 source/_data/dossier/ 下创建 YAML 配置文件。
+#
+# 配置优先级：index.md front-matter > _config.yml > _data/dossier/*.yml
+#
+dossier:
+  enable: true
+  path: dossier                        # URL 路径
+  root_dir: dossier                    # 源文件目录
+  # 菜单与导航
+  show_in_menu: true                   # 是否显示在导航菜单中
+  menu_name: 档案                       # 菜单名称
+  # TOC
+  show_toc: true                       # 是否显示 TOC
+  toc_depth: 3                         # TOC 最大层级
+  # 分页导航
+  show_pagination: true                # 是否显示底部导航（上一篇/下一篇）
+  # 排序（全局默认，单个页面可用 front-matter sort 覆盖）
+  sort_by: sort                        # 'sort' | 'title' | 'date' | 'filename'
+  sort_order: asc                      # 'asc' | 'desc'
+  # 显示选项
+  show_description: true               # 是否显示项目描述
+  # 卡片显示配置
+  card:
+    show_tags: true
+    show_description: true
+    show_count: true
+    description_lines: 2
+    # 「开始阅读」入口
+    show_start_button: true            # 是否显示「开始阅读」按钮
+    start_button_text: 开始阅读         # 按钮文字
+    start_button_style: default        # 按钮样式：'default' | 'minimal' | 'outline'
+
+# =============================================
+# Custom pages
+# =============================================
+custom_pages:
+  enable: true
+  dir: custom
+  show_in_menu: false
+
+# =============================================
+# Footer
+# =============================================
+footer:
+  text: |
+    Stay in touch — subscribe via <a href="/atom.xml">RSS</a>, or send comments by email to <a href="mailto:mail@cayzlh.com">mail@cayzlh.com</a>
+  copyright: '© 2018–2026 Ant丶'

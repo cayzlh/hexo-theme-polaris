@@ -1,0 +1,54 @@
+<% if (page.layout === 'post') { %>
+  <h1 class="post-title"><%= page.title %></h1>
+<% } else if (page.dossier) { %>
+  <% var dkey = page.dossier; %>
+  <% var proj = theme.dossier && theme.dossier.tree ? theme.dossier.tree[dkey] : null; %>
+  <% if (proj) { %>
+    <div class="dossier-bread">
+      <a href="<%= url_for('/' + (theme.dossier.path || 'dossier') + '/') %>">Dossier</a>
+      &nbsp;&raquo;&nbsp;<%= proj.name || dkey %>
+    </div>
+  <% } %>
+  <% if (page.title) { %>
+    <h1 class="post-title"><%= page.title %></h1>
+  <% } %>
+<% } else if (page.layout === 'page') { %>
+  <% if (page.title) { %>
+    <h1 class="post-title"><%= page.title %></h1>
+  <% } %>
+<% } %>
+
+<div class="post-body">
+  <%- page.content %>
+</div>
+
+<div class="post-meta">
+  <% if (page.layout === 'post' && page.date) { %>
+    <% var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var d=page.date.toDate(); %>
+    <time datetime="<%= date_xml(page.date) %>"><%= m[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() %></time>
+    <% if (page.categories && page.categories.length) { %>
+      &nbsp;/&nbsp;
+      <% page.categories.forEach(function(cat, i) { %>
+        <a href="<%= url_for(cat.path) %>"><%= cat.name %></a><%= i < page.categories.length - 1 ? ', ' : '' %>
+      <% }); %>
+    <% } %>
+  <% } %>
+  <% if (page.tags && page.tags.length) { %>
+    <br><span class="post-tags">
+      <% page.tags.forEach(function(tag, i) { %>
+        <a href="<%= url_for(tag.path) %>">#<%= tag.name %></a><%= i < page.tags.length - 1 ? ' ' : '' %>
+      <% }); %>
+    </span>
+  <% } %>
+</div>
+
+<% if (page.layout === 'post') { %>
+  <div class="post-nav">
+    <% if (page.prev) { %>
+      <a href="<%= url_for(page.prev.path) %>">&larr; <%= page.prev.title %></a>
+    <% } %>
+    <% if (page.next) { %>
+      <a href="<%= url_for(page.next.path) %>"><%= page.next.title %> &rarr;</a>
+    <% } %>
+  </div>
+<% } %>

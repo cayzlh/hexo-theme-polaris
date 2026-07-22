@@ -1,0 +1,54 @@
+<script>
+(function(){
+  var dm = <%- JSON.stringify(theme.dark_mode || {}) %>;
+  var root = document.documentElement;
+  var toggle = document.getElementById('dm-toggle');
+
+  function setDark(on) {
+    if (on) root.classList.add('dark'); else root.classList.remove('dark');
+  }
+
+  if (dm.mode === 'auto') {
+    // Time-based, no toggle
+    function checkTime() {
+      var now = new Date();
+      var h = now.getHours(), m = now.getMinutes();
+      var current = h * 60 + m;
+      var sunsetParts = (dm.sunset || '19:00').split(':').map(Number);
+      var sunriseParts = (dm.sunrise || '06:00').split(':').map(Number);
+      var sunset = sunsetParts[0] * 60 + (sunsetParts[1] || 0);
+      var sunrise = sunriseParts[0] * 60 + (sunriseParts[1] || 0);
+      setDark(current >= sunset || current < sunrise);
+    }
+    checkTime();
+    setInterval(checkTime, 60000);
+  } else if (dm.mode === 'manual') {
+    // Toggle with localStorage
+    var stored = localStorage.getItem('polaris-theme');
+    var isDark = stored === 'dark';
+    setDark(isDark);
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        root.classList.toggle('dark');
+        localStorage.setItem('polaris-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      });
+    }
+  } else if (dm.mode === 'system') {
+    // System + toggle override
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var override = localStorage.getItem('polaris-theme');
+    var isDark = override ? override === 'dark' : mq.matches;
+    setDark(isDark);
+    mq.addEventListener('change', function(e) {
+      if (!localStorage.getItem('polaris-theme')) setDark(e.matches);
+    });
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        root.classList.toggle('dark');
+        var now = root.classList.contains('dark') ? 'dark' : 'light';
+        localStorage.setItem('polaris-theme', now);
+      });
+    }
+  }
+})();
+</script>

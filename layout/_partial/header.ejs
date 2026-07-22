@@ -1,0 +1,13 @@
+<header class="header">
+  <div class="header-inner">
+    <a href="<%= url_for('/') %>" class="logo"><%= config.title %></a>
+    <nav class="nav">
+      <% if (theme.menu) { theme.menu.forEach(function(item) { %>
+        <a href="<%= url_for(item.url) %>" class="nav-link"><%= item.name %></a>
+      <% }); } %>
+      <% if (theme.dark_mode && (theme.dark_mode.mode === 'manual' || theme.dark_mode.mode === 'system')) { %>
+        <%- partial('_partial/dark_toggle') %>
+      <% } %>
+    </nav>
+  </div>
+</header>

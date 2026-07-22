@@ -1,0 +1,66 @@
+<%
+// Homepage: Intro + Recent Posts + Random Posts
+
+var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtDate(d) {
+  var dt = new Date(d);
+  return months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+}
+
+var introLines = (theme.intro || '').split('\n').filter(function(l){ return l.trim() !== '' });
+
+// Recent 5 posts
+var recentCount = theme.recent_posts_count || 5;
+var allPosts = site.posts.sort('date', -1).toArray();
+var recentPosts = allPosts.slice(0, recentCount);
+
+// Random 5 posts (exclude the recent ones)
+var randomCount = theme.random_posts_count || 5;
+var pool = allPosts.slice(recentCount);
+// Fisher-Yates shuffle
+for (var i = pool.length - 1; i > 0; i--) {
+  var j = Math.floor(Math.random() * (i + 1));
+  var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+}
+var randomPosts = pool.slice(0, randomCount);
+%>
+
+<!-- Intro -->
+<div class="intro">
+  <% introLines.forEach(function(line) { %>
+    <p><%= line %></p>
+  <% }); %>
+</div>
+
+<hr class="home-hr">
+
+<!-- Recent Posts -->
+<h2 class="section-title">Recent Posts:</h2>
+<ul class="post-list">
+  <% recentPosts.forEach(function(post) { %>
+    <li>
+      <a href="<%= url_for(post.path) %>">
+        <time class="post-list-date" datetime="<%= date_xml(post.date) %>">
+          <%= fmtDate(post.date) %>
+        </time>
+        &nbsp;<span class="post-list-title"><%= post.title %></span>
+      </a>
+    </li>
+  <% }); %>
+</ul>
+
+<% if (randomPosts.length > 0) { %>
+  <h2 class="section-title">Random posts:</h2>
+  <ul class="post-list">
+    <% randomPosts.forEach(function(post) { %>
+      <li>
+        <a href="<%= url_for(post.path) %>">
+          <time class="post-list-date" datetime="<%= date_xml(post.date) %>">
+            <%= fmtDate(post.date) %>
+          </time>
+          &nbsp;<span class="post-list-title"><%= post.title %></span>
+        </a>
+      </li>
+    <% }); %>
+  </ul>
+<% } %>
