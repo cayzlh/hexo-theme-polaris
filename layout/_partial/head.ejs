@@ -77,13 +77,13 @@
   <% if (theme.inject && theme.inject.head) { %><%- theme.inject.head.join('\n') %><% } %>
 
   <!-- Clone detection & utilities -->
-  <% if (theme.canonical && theme.canonical.originalHost) { %>
   <script>
     window.__POLARIS = window.__POLARIS || {};
+    <% if (theme.canonical && theme.canonical.originalHost) { %>
     window.__POLARIS.originalHost = '<%= theme.canonical.originalHost %>';
     window.__POLARIS.officialHosts = <%- JSON.stringify(theme.canonical.officialHosts || []) %>;
+    <% } %>
   </script>
-  <% } %>
   <script src="<%= url_for('/js/main.js') %>" defer></script>
   <% if (theme.transition && theme.transition.enable !== false) { %>
   <script src="<%= url_for('/js/transition.js') %>" defer></script>
