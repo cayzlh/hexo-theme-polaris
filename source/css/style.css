@@ -607,6 +607,10 @@ html.dark .toc-back-top:hover { color: #5b9aff; }
 
 /* ===== Mobile TOC ===== */
 .toc-mobile{display:none;margin-bottom:1em}
+/* 浮动按钮 + 底部面板（仅移动端可见，由 mobile.css 控制） */
+.toc-fab,
+.toc-panel-overlay,
+.toc-panel{display:none}
 @media(max-width:1023px){
   .toc{display:none}
   .toc-mobile{display:block}
@@ -874,4 +878,95 @@ html.dark .project-card-start--outline:hover{
 html.dark .search-highlight {
   background: #5b4a1a;
   color: #f0e6b0;
+}
+
+/* ==========================================
+   Friend Links (About 页面友链卡片)
+   ========================================== */
+.friend-links {
+  margin: 3em 0 0;
+  padding-top: 2em;
+  border-top: 1px solid var(--c-border);
+}
+
+.friend-links-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--c-text);
+  margin-bottom: 1.2em;
+  letter-spacing: 0.3px;
+}
+
+.friend-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.friend-link-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--c-text);
+  transition: background 0.2s, border-color 0.2s;
+  background: transparent;
+}
+
+.friend-link-card:hover {
+  background: var(--c-hover-bg);
+  border-color: var(--c-border);
+  color: var(--c-text);
+}
+
+.friend-link-icon {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  width: 32px;
+  text-align: center;
+  line-height: 1;
+}
+
+.friend-link-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.friend-link-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--c-text);
+  line-height: 1.4;
+}
+
+.friend-link-desc {
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friend-links-category {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--c-text-light);
+  margin: 1.4em 0 0.6em;
+  padding-left: 2px;
+  letter-spacing: 0.5px;
+}
+
+.friend-links-category:first-of-type {
+  margin-top: 0;
+}
+
+@media (max-width: 480px) {
+  .friend-links-grid {
+    grid-template-columns: 1fr;
+  }
 }

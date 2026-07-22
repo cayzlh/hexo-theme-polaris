@@ -370,6 +370,7 @@
 
   /* TOC 底部面板 */
   .toc-panel {
+    display: block;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -428,6 +429,7 @@
 
   /* 遮罩层 */
   .toc-panel-overlay {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;

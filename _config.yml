@@ -26,6 +26,8 @@ menu:
     url: /archives/
   - name: Dossier
     url: /dossier/
+  - name: About
+    url: /about/
   - name: Tools
     children:
       - name: 标签
@@ -44,8 +46,6 @@ menu:
         target: _self
       - name: 作品集
         url: /custom/workspace.html
-  - name: About
-    url: /about/
 
 # =============================================
 # Homepage

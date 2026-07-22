@@ -13,7 +13,7 @@
     <h1 class="post-title"><%= page.title %></h1>
   <% } %>
 <% } else if (page.layout === 'page') { %>
-  <% if (page.title) { %>
+  <% if (page.title && !page.hide_title) { %>
     <h1 class="post-title"><%= page.title %></h1>
   <% } %>
 <% } %>
@@ -21,6 +21,10 @@
 <div class="post-body">
   <%- page.content %>
 </div>
+
+<% if (page.show_links) { %>
+  <%- partial('_partial/friend_links') %>
+<% } %>
 
 <div class="post-meta">
   <% if (page.layout === 'post' && page.date) { %>

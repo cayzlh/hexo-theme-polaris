@@ -1,0 +1,40 @@
+<% if (site.data.links && site.data.links.length) { %>
+<div class="friend-links">
+  <h2 class="friend-links-title">收藏站点</h2>
+
+  <% var isGrouped = site.data.links[0] && site.data.links[0].category; %>
+
+  <% if (isGrouped) { %>
+    <% site.data.links.forEach(function(group) { %>
+    <h3 class="friend-links-category"><%= group.category %></h3>
+    <div class="friend-links-grid">
+      <% group.items.forEach(function(link) { %>
+      <a href="<%= link.url %>" class="friend-link-card" target="_blank" rel="noopener noreferrer">
+        <span class="friend-link-icon"><%= link.icon || '🌐' %></span>
+        <div class="friend-link-info">
+          <span class="friend-link-name"><%= link.name %></span>
+          <% if (link.description) { %>
+          <span class="friend-link-desc"><%= link.description %></span>
+          <% } %>
+        </div>
+      </a>
+      <% }); %>
+    </div>
+    <% }); %>
+  <% } else { %>
+    <div class="friend-links-grid">
+    <% site.data.links.forEach(function(link) { %>
+      <a href="<%= link.url %>" class="friend-link-card" target="_blank" rel="noopener noreferrer">
+        <span class="friend-link-icon"><%= link.icon || '🌐' %></span>
+        <div class="friend-link-info">
+          <span class="friend-link-name"><%= link.name %></span>
+          <% if (link.description) { %>
+          <span class="friend-link-desc"><%= link.description %></span>
+          <% } %>
+        </div>
+      </a>
+    <% }); %>
+    </div>
+  <% } %>
+</div>
+<% } %>
