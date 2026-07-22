@@ -64,7 +64,7 @@ var bodyHtml = page.content_html || render_md(page.content);
       <% if (page.project.firstArticleUrl) { %>
       <div class="dossier-home-footer">
         <a href="<%= page.project.firstArticleUrl %>" class="dossier-start-reading">
-          <%= (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_text) || '开始阅读' %>
+          <span class="start-label"><%= (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_text) || '开始阅读' %></span>
           <span class="start-arrow">→</span>
         </a>
       </div>
@@ -408,43 +408,51 @@ var bodyHtml = page.content_html || render_md(page.content);
 
 /* ===== Home page start reading button ===== */
 .dossier-home-footer {
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid var(--c-border);
-  text-align: center;
+  margin-top: 36px;
+  padding-top: 0;
+  border-top: none;
 }
 
 .dossier-start-reading {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.9rem;
+  gap: 10px;
+  font-size: 0.92rem;
   font-weight: 500;
-  color: #fff;
-  background: var(--c-accent, #3b82f6);
+  color: var(--c-accent, #3b82f6);
   text-decoration: none;
-  padding: 10px 24px;
-  border-radius: 6px;
-  transition: background 0.2s, transform 0.15s;
+  padding: 10px 0 10px 16px;
+  border-left: 3px solid var(--c-border);
+  transition: border-color 0.25s, color 0.25s;
+  line-height: 1.4;
 }
 
 .dossier-start-reading:hover {
-  background: #2563eb;
-  color: #fff;
-  transform: translateY(-1px);
+  color: var(--c-accent, #3b82f6);
+  border-left-color: var(--c-accent, #3b82f6);
 }
 
 html.dark .dossier-start-reading {
-  color: #fff;
+  color: var(--c-accent, #5b9aff);
 }
 
 .dossier-start-reading .start-arrow {
-  transition: transform 0.2s;
+  font-size: 1.1rem;
+  transition: transform 0.25s ease;
   display: inline-block;
+  line-height: 1;
 }
 
 .dossier-start-reading:hover .start-arrow {
-  transform: translateX(4px);
+  transform: translateX(5px);
+}
+
+/* Subtle hint text */
+.dossier-start-reading .start-label {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--c-text-light);
+  display: block;
 }
 
 /* ===== Responsive ===== */
