@@ -3,6 +3,18 @@
 /* ===== ZFont ===== */
 @font-face{font-family:'ZFont';src:url('https://cdn-cf.cayzlh.com/font/zfont/ZFonts.woff2') format('woff2');font-display:swap;font-weight:normal;font-style:normal}
 
+/* ===== JetBrains Mono (self-hosted CDN) ===== */
+@font-face{font-family:'JetBrains Mono';src:url('https://cdn-cf.cayzlh.com/font/JetBrainsMono/fonts/webfonts/JetBrainsMono-Regular.woff2') format('woff2');font-display:swap;font-weight:400;font-style:normal}
+@font-face{font-family:'JetBrains Mono';src:url('https://cdn-cf.cayzlh.com/font/JetBrainsMono/fonts/webfonts/JetBrainsMono-Italic.woff2') format('woff2');font-display:swap;font-weight:400;font-style:italic}
+@font-face{font-family:'JetBrains Mono';src:url('https://cdn-cf.cayzlh.com/font/JetBrainsMono/fonts/webfonts/JetBrainsMono-Medium.woff2') format('woff2');font-display:swap;font-weight:500;font-style:normal}
+@font-face{font-family:'JetBrains Mono';src:url('https://cdn-cf.cayzlh.com/font/JetBrainsMono/fonts/webfonts/JetBrainsMono-MediumItalic.woff2') format('woff2');font-display:swap;font-weight:500;font-style:italic}
+@font-face{font-family:'JetBrains Mono';src:url('https://cdn-cf.cayzlh.com/font/JetBrainsMono/fonts/webfonts/JetBrainsMono-SemiBold.woff2') format('woff2');font-display:swap;font-weight:600;font-style:normal}
+@font-face{font-family:'JetBrains Mono';src:url('https://cdn-cf.cayzlh.com/font/JetBrainsMono/fonts/webfonts/JetBrainsMono-Bold.woff2') format('woff2');font-display:swap;font-weight:700;font-style:normal}
+
+/* ===== Inter (self-hosted CDN) ===== */
+@font-face{font-family:'Inter';src:url('https://cdn-cf.cayzlh.com/font/Inter/web/Inter-Regular.woff2') format('woff2');font-display:swap;font-weight:400;font-style:normal}
+@font-face{font-family:'Inter';src:url('https://cdn-cf.cayzlh.com/font/Inter/web/Inter-Bold.woff2') format('woff2');font-display:swap;font-weight:700;font-style:normal}
+
 /* ===== Variables (Light) ===== */
 :root{
   --c-text:#2C2A28;--c-text-light:#A09C96;--c-text-muted:#6B6864;
@@ -16,18 +28,18 @@
 
 /* ===== Variables (Dark) ===== */
 html.dark{
-  --c-text:#e8e8e8;--c-text-light:#b0b0b0;--c-text-muted:#777;
-  --c-bg:#1a1a1a;--c-bg-secondary:#242424;--c-bg-tertiary:#2d2d2d;
-  --c-link:#e8e8e8;--c-link-hover:#5b9aff;--c-accent:#5b9aff;
-  --c-border:#333;--c-code-bg:#2d2d2d;--c-hover-bg:#2d2d2d;
-  --c-sel:#333;
-  --c-hr:rgba(232,232,232,0.12);--c-hr-strong:rgba(232,232,232,0.2);--c-hr-weak:rgba(232,232,232,0.06);
+  --c-text:#EEEEEE;--c-text-light:#C0C0C0;--c-text-muted:#888;
+  --c-bg:#252525;--c-bg-secondary:#2D2D2D;--c-bg-tertiary:#1E1E1E;
+  --c-link:#6BB5FF;--c-link-hover:#A0CCFF;--c-accent:#6BB5FF;
+  --c-border:#3D3D3D;--c-code-bg:#2D2D2D;--c-hover-bg:#2D2D2D;
+  --c-sel:#3D3D3D;
+  --c-hr:rgba(238,238,238,0.12);--c-hr-strong:rgba(238,238,238,0.2);--c-hr-weak:rgba(238,238,238,0.06);
 }
 
 /* ===== Reset ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{font-family:'ZFont',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:var(--fs);line-height:var(--lh);color:var(--c-text);background:var(--c-bg);min-height:100vh;display:flex;flex-direction:column}
+body{font-family:'ZFont','Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:var(--fs);line-height:var(--lh);color:var(--c-text);background:var(--c-bg);min-height:100vh;display:flex;flex-direction:column}
 ::selection{background:var(--c-sel)}
 a{color:var(--c-link);text-decoration:none;transition:color .2s}
 a:hover{color:var(--c-link-hover)}
@@ -173,8 +185,8 @@ hr.dash-dot::before,hr.style-dash-dot::before{
   transition: color 0.2s, border-color 0.2s;
 }
 html.dark .post-body a {
-  color: #60a5fa;
-  border-bottom-color: rgba(96, 165, 250, 0.25);
+  color: #6BB5FF;
+  border-bottom-color: rgba(107, 181, 255, 0.25);
 }
 
 .post-body a:hover {
@@ -182,8 +194,8 @@ html.dark .post-body a {
   border-bottom-color: #6D4F3A;
 }
 html.dark .post-body a:hover {
-  color: #93bbfc;
-  border-bottom-color: #93bbfc;
+  color: #A0CCFF;
+  border-bottom-color: #A0CCFF;
 }
 
 .post-body a:visited {
@@ -205,7 +217,7 @@ html.dark .post-body a:visited {
   color: #8B6B4D;
 }
 html.dark .nav-link:hover {
-  color: #60a5fa;
+  color: #6BB5FF;
 }
 .nav-link.active {
   color: #8B6B4D;
@@ -222,10 +234,10 @@ html.dark .nav-link:hover {
   border-radius: 1px;
 }
 html.dark .nav-link.active {
-  color: #60a5fa;
+  color: #6BB5FF;
 }
 html.dark .nav-link.active::after {
-  background: #60a5fa;
+  background: #6BB5FF;
 }
 
 /* ===== Dropdown Menu ===== */
@@ -296,21 +308,21 @@ html.dark .nav-link.active::after {
 
 /* Dark mode */
 html.dark .dropdown-menu {
-  background: #1A1A1A;
-  border-color: #333;
+  background: #2D2D2D;
+  border-color: #3D3D3D;
 }
 
 html.dark .dropdown-divider {
-  background: #333;
+  background: #3D3D3D;
 }
 
 html.dark .dropdown-item {
-  color: #E8E8E8;
+  color: #EEEEEE;
 }
 
 html.dark .dropdown-item:hover {
-  background: #2A2A2A;
-  color: #E8E8E8;
+  background: #3A3A3A;
+  color: #EEEEEE;
 }
 
 /* 文章元信息链接 */
@@ -323,7 +335,7 @@ html.dark .dropdown-item:hover {
   color: #8B6B4D;
 }
 html.dark .post-meta a:hover {
-  color: #60a5fa;
+  color: #6BB5FF;
 }
 
 /* Footer 链接 */
@@ -338,15 +350,16 @@ html.dark .post-meta a:hover {
   border-bottom-color: #8B6B4D;
 }
 html.dark .footer a {
-  border-bottom-color: rgba(176, 176, 176, 0.2);
+  border-bottom-color: rgba(192, 192, 192, 0.2);
 }
 html.dark .footer a:hover {
-  color: #60a5fa;
-  border-bottom-color: #60a5fa;
+  color: #6BB5FF;
+  border-bottom-color: #6BB5FF;
 }
 
 /* ===== Post / Page ===== */
 .post-title{font-size:2rem;font-weight:650;line-height:1.3;margin-bottom:.8em;color:#1a1816;letter-spacing:-.5px}
+html.dark .post-title{color:#F5F5F5}
 .post-body{font-size:1em;line-height:var(--lh);color:var(--c-text)}
 .post-body p{margin-bottom:1.4em}
 /* post-body a styles are now defined in the Link Styles section above */
@@ -354,36 +367,124 @@ html.dark .footer a:hover {
 .post-body h2{font-size:1.6rem;font-weight:600;color:#1a1816;margin:1.8em 0 .5em;letter-spacing:-.3px}
 .post-body h3{font-size:1.25rem;font-weight:500;color:var(--c-text);margin:1.5em 0 .4em}
 .post-body h4{font-size:1.05rem;font-weight:600;color:var(--c-text);margin:1.2em 0 .3em}
+/* Dark mode: headings — lighter colors for contrast on dark background */
+html.dark .post-body h1{color:#F5F5F5}
+html.dark .post-body h2{color:#EEEEEE}
+html.dark .post-body h3{color:#E8E8E8}
+html.dark .post-body h4{color:#DDDDDD}
+html.dark .post-body h5{color:#D0D0D0}
+html.dark .post-body h6{color:#C0C0C0}
 .post-body strong{color:#1a1816;font-weight:600}
+html.dark .post-body strong{color:#EEEEEE}
 .post-body em{color:#4A4744}
+html.dark .post-body em{color:#D0D0D0}
 .post-body blockquote{margin:1.5em 0;padding:.8em 1.2em;background:#F0EFEB;border-left:3px solid #D4CEC6;color:#4A4744;font-style:italic;border-radius:0 4px 4px 0}
+html.dark .post-body blockquote{background:#2A2A2A;border-left-color:#666;color:#D0D0D0}
 .post-body blockquote p{margin-bottom:0}
 .post-body blockquote cite{display:block;margin-top:.5em;font-size:.85rem;color:#8B6B4D;font-style:normal}
+html.dark .post-body blockquote cite{color:#6BB5FF}
 .post-body ul,.post-body ol{margin:.8em 0 1.2em;padding-left:1.5em}
 .post-body li{margin-bottom:.3em;color:var(--c-text)}
 .post-body hr{border:none;border-top:1.5px solid var(--c-hr-strong);width:64px;margin:2em auto}
 
 /* ===== Code ===== */
-.post-body code{font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:.85em;background:var(--c-code-bg);color:#4A4744;padding:.15em .4em;word-break:break-word;border-radius:3px;border:1px solid #E0DED9}
+.post-body code{font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:.85em;background:var(--c-code-bg);color:#8B6B4D;padding:.2em .5em;word-break:break-word;border-radius:3px /*border:1px solid #E0DED9*/}
+html.dark .post-body code{color:#EEEEEE}
 
-/* Code block wrapper */
-.code-block-wrap{margin:1.5em 0;border-radius:4px;overflow:hidden;background:#EDECE8;border:1px solid #E0DED9}
-html.dark .code-block-wrap{background:#1e1e1e;border-color:transparent}
+/* ===== Code Block ===== */
+.code-block-wrap{margin:1.5em 0;border-radius:4px;overflow:hidden;background:#EDECE8}
+html.dark .code-block-wrap{background:#1E1E1E}
 
-/* Code header */
+/* Code header bar */
 .code-header{display:flex;justify-content:space-between;align-items:center;padding:6px 16px;background:#E5E2DC;border-bottom:1px solid #D4CEC6;font-size:12px}
-html.dark .code-header{background:rgba(255,255,255,.04);border-bottom-color:rgba(255,255,255,.06)}
-.code-lang{color:var(--c-text-light);text-transform:lowercase}
-.code-copy-btn{cursor:pointer;background:none;border:none;color:var(--c-text-light);font-size:12px;padding:2px 6px;border-radius:3px;font-family:inherit}
-.code-copy-btn:hover{color:var(--c-accent)}
+html.dark .code-header{background:#2A2A2A;border-bottom-color:#3D3D3D}
+
+/* Language label */
+.code-lang{font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:11px;font-weight:500;color:#6B6864;text-transform:lowercase;letter-spacing:.3px}
+html.dark .code-lang{color:#6BB5FF}
+
+/* Copy button */
+.code-copy-btn{cursor:pointer;background:none;border:none;color:#6B6864;font-size:12px;padding:4px 8px;border-radius:3px;transition:color .15s,background .15s;display:inline-flex;align-items:center;gap:4px;font-family:inherit;line-height:1.5}
+.code-copy-btn:hover{color:#8B6B4D;background:#EDECE8}
+html.dark .code-copy-btn{color:#C0C0C0}
+html.dark .code-copy-btn:hover{color:#6BB5FF;background:#1E1E1E}
 .code-copy-btn.copied{color:#22c55e}
+html.dark .code-copy-btn.copied{color:#4ADE80}
 
 /* Code content */
 .code-block-wrap pre,.code-block-wrap .highlight{margin:0;padding:14px 18px;overflow-x:auto;background:transparent;font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:var(--c-text)}
-.code-block-wrap code{background:none;padding:0;font-size:inherit;color:inherit}
+html.dark .code-block-wrap pre,html.dark .code-block-wrap .highlight{color:#EEEEEE;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.code-block-wrap code{background:none;padding:0;font-size:inherit;font-family:inherit;color:inherit}
+
+/* Reset table inside code blocks */
+.code-block-wrap table,.code-block-wrap tbody,.code-block-wrap tr,
+.code-block-wrap td,.code-block-wrap th{margin:0;padding:0;border:none;background:transparent;width:auto;overflow:visible;font-size:inherit}
+.code-block-wrap td{padding:0;vertical-align:top}
+
+/* Code block scrollbar (dark mode) */
+html.dark .code-block-wrap pre::-webkit-scrollbar,
+html.dark .code-block-wrap .highlight::-webkit-scrollbar{height:6px}
+html.dark .code-block-wrap pre::-webkit-scrollbar-track,
+html.dark .code-block-wrap .highlight::-webkit-scrollbar-track{background:#1E1E1E}
+html.dark .code-block-wrap pre::-webkit-scrollbar-thumb,
+html.dark .code-block-wrap .highlight::-webkit-scrollbar-thumb{background:#3D3D3D;border-radius:3px}
+html.dark .code-block-wrap pre::-webkit-scrollbar-thumb:hover,
+html.dark .code-block-wrap .highlight::-webkit-scrollbar-thumb:hover{background:#5A5A5A}
+
+/* ===== Syntax Highlighting (Night) — One Dark inspired ===== */
+html.dark .code-block-wrap .highlight .comment,
+html.dark .code-block-wrap .highlight .meta,
+html.dark .code-block-wrap .highlight .quote{color:#546E7A;font-style:italic}
+
+html.dark .code-block-wrap .highlight .keyword,
+html.dark .code-block-wrap .highlight .selector-tag,
+html.dark .code-block-wrap .highlight .meta-keyword,
+html.dark .code-block-wrap .highlight .doctag,
+html.dark .code-block-wrap .highlight .strong{color:#C792EA}
+
+html.dark .code-block-wrap .highlight .string,
+html.dark .code-block-wrap .highlight .meta-string,
+html.dark .code-block-wrap .highlight .subst,
+html.dark .code-block-wrap .highlight .addition,
+html.dark .code-block-wrap .highlight .attr,
+html.dark .code-block-wrap .highlight .attribute{color:#C3E88D}
+
+html.dark .code-block-wrap .highlight .number,
+html.dark .code-block-wrap .highlight .literal,
+html.dark .code-block-wrap .highlight .variable,
+html.dark .code-block-wrap .highlight .constant,
+html.dark .code-block-wrap .highlight .deletion,
+html.dark .code-block-wrap .highlight .bullet{color:#F78C6C}
+
+html.dark .code-block-wrap .highlight .title,
+html.dark .code-block-wrap .highlight .name,
+html.dark .code-block-wrap .highlight .function,
+html.dark .code-block-wrap .highlight .section{color:#82AAFF}
+
+html.dark .code-block-wrap .highlight .built_in,
+html.dark .code-block-wrap .highlight .type,
+html.dark .code-block-wrap .highlight .class,
+html.dark .code-block-wrap .highlight .title.class_{color:#FFCB6B}
+
+html.dark .code-block-wrap .highlight .tag,
+html.dark .code-block-wrap .highlight .selector-class,
+html.dark .code-block-wrap .highlight .selector-id,
+html.dark .code-block-wrap .highlight .template-tag{color:#F07178}
+
+html.dark .code-block-wrap .highlight .regexp,
+html.dark .code-block-wrap .highlight .symbol,
+html.dark .code-block-wrap .highlight .link{color:#89DDFF}
+
+html.dark .code-block-wrap .highlight .params,
+html.dark .code-block-wrap .highlight .formula{color:#EEEEEE}
+
+/* Gutter (line numbers) */
+html.dark .code-block-wrap .highlight .gutter pre .line{color:#555}
+html.dark .code-block-wrap .highlight .gutter{margin-right:0}
 
 /* Fallback: raw pre without highlight class */
 .post-body pre:not(.highlight):not(.code-block-wrap pre){background:#EDECE8;color:var(--c-text);padding:14px 18px;overflow-x:auto;margin:1.5em 0;font-size:13.5px;line-height:1.6;border-radius:4px;font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;border:1px solid #E0DED9}
+html.dark .post-body pre:not(.highlight):not(.code-block-wrap pre){background:#1E1E1E;border-color:#3D3D3D}
 
 /* ===== Tables ===== */
 .post-body table{width:100%;border-collapse:collapse;margin:1.5em 0;font-size:.9em}
@@ -467,8 +568,8 @@ html.dark .code-header{background:rgba(255,255,255,.04);border-bottom-color:rgba
 }
 
 html.dark .toc-title {
-  border-bottom-color: #333;
-  color: #777;
+  border-bottom-color: #3D3D3D;
+  color: #888;
 }
 
 /* ===== TOC List — 树形结构 ===== */
@@ -495,9 +596,9 @@ html.dark .toc-title {
 .toc-level-6 .toc-link { font-size: 0.7rem; font-weight: 400; }
 .toc-level-6 { padding-left: 64px; font-weight: 400; }
 
-html.dark .toc-level-4 { color: #999; }
+html.dark .toc-level-4 { color: #AAA; }
 html.dark .toc-level-5,
-html.dark .toc-level-6 { color: #777; }
+html.dark .toc-level-6 { color: #888; }
 
 /* ===== TOC Link ===== */
 .toc-link {
@@ -510,14 +611,14 @@ html.dark .toc-level-6 { color: #777; }
   position: relative;
 }
 
-html.dark .toc-link { color: #bbb; }
+html.dark .toc-link { color: #C0C0C0; }
 
 .toc-link:hover { color: #8B6B4D; }
-html.dark .toc-link:hover { color: #5b9aff; }
+html.dark .toc-link:hover { color: #6BB5FF; }
 
 /* 当前激活的标题（光标跟随效果） */
 .toc-link.active { color: #8B6B4D; font-weight: 600; }
-html.dark .toc-link.active { color: #5b9aff; }
+html.dark .toc-link.active { color: #6BB5FF; }
 
 /* 激活状态的左侧指示条 — 光标效果 */
 .toc-link.active::before {
@@ -532,7 +633,7 @@ html.dark .toc-link.active { color: #5b9aff; }
   transition: opacity 0.2s;
 }
 html.dark .toc-link.active::before {
-  background: #5b9aff;
+  background: #6BB5FF;
 }
 
 /* ===== TOC 滚动条（优雅化 + 渐变遮罩） ===== */
@@ -553,7 +654,7 @@ html.dark .toc-link.active::before {
   -webkit-mask-size: 100% 100%;
 }
 html.dark .dossier-toc {
-  scrollbar-color: #3d3d3d transparent;
+  scrollbar-color: #4A4A4A transparent;
 }
 
 .toc-fixed::-webkit-scrollbar {
@@ -570,13 +671,13 @@ html.dark .dossier-toc {
   border-radius: 3px;
 }
 html.dark .dossier-toc::-webkit-scrollbar-thumb {
-  background: #3d3d3d;
+  background: #4A4A4A;
 }
 .dossier-toc::-webkit-scrollbar-thumb:hover {
   background: #bbb;
 }
 html.dark .dossier-toc::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #5A5A5A;
 }
 
 /* ===== 层级连接线（树形可视化） ===== */
@@ -587,7 +688,7 @@ html.dark .dossier-toc::-webkit-scrollbar-thumb:hover {
 }
 
 html.dark .toc-item .toc-list {
-  border-left-color: #2d2d2d;
+  border-left-color: #3A3A3A;
 }
 
 /* 禁用连接线 */
@@ -603,7 +704,7 @@ html.dark .toc-item .toc-list {
 }
 
 html.dark .toc-footer {
-  border-top-color: #333;
+  border-top-color: #3D3D3D;
 }
 
 .toc-back-top {
@@ -621,7 +722,7 @@ html.dark .toc-footer {
 }
 
 .toc-back-top:hover { color: #8B6B4D; }
-html.dark .toc-back-top:hover { color: #5b9aff; }
+html.dark .toc-back-top:hover { color: #6BB5FF; }
 
 .toc-back-icon {
   font-size: 0.9rem;
@@ -742,7 +843,7 @@ html.dark .toc-back-top:hover { color: #5b9aff; }
   line-height:1.6;
 }
 html.dark .project-tag{
-  color:#60a5fa;
+  color:#6BB5FF;
   background:#1e293b;
 }
 
@@ -759,7 +860,7 @@ html.dark .project-tag{
   margin:4px 0 0 0;
 }
 html.dark .project-desc{
-  color:#aaa;
+  color:#C0C0C0;
 }
 
 /* 文档数量 */
@@ -781,7 +882,7 @@ html.dark .project-desc{
   justify-content:flex-end;
 }
 html.dark .project-card-footer{
-  border-top-color:#2a2a2a;
+  border-top-color:#3A3A3A;
 }
 
 /* 开始阅读按钮 — 默认样式 */
@@ -798,7 +899,7 @@ html.dark .project-card-footer{
   transition:background 0.2s, color 0.2s;
 }
 html.dark .project-card-start{
-  color:#60a5fa;
+  color:#6BB5FF;
 }
 .project-card-start:hover{
   background:#EDECE8;
@@ -806,7 +907,7 @@ html.dark .project-card-start{
 }
 html.dark .project-card-start:hover{
   background:#1e293b;
-  color:#93bbfc;
+  color:#A0CCFF;
 }
 
 .start-arrow{
@@ -840,8 +941,8 @@ html.dark .project-card-start--outline{
   background:#FAFAF7;
 }
 html.dark .project-card-start--outline:hover{
-  border-color:#60a5fa;
-  background:#1a1a2e;
+  border-color:#6BB5FF;
+  background:#2D2D2D;
 }
 
 /* ===== Footer ===== */

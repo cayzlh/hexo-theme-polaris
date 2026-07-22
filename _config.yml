@@ -158,25 +158,25 @@ max_width: 680px
 # Dark Mode
 # =============================================
 dark_mode:
-  mode: auto                # auto | manual | system
+  mode: manual                # auto | manual | system
   sunset: '19:00'
   sunrise: '06:00'
   switch_position: header
 
 dark:
-  text: '#e8e8e8'
-  text-light: '#b0b0b0'
-  text-muted: '#777777'
-  background: '#1a1a1a'
-  background-secondary: '#242424'
-  background-tertiary: '#2d2d2d'
-  link: '#e8e8e8'
-  link-hover: '#5b9aff'
-  border: '#333333'
-  code-bg: '#2d2d2d'
-  hover-bg: '#2d2d2d'
-  accent: '#5b9aff'
-  selection: '#333333'
+  text: '#EEEEEE'
+  text-light: '#C0C0C0'
+  text-muted: '#888888'
+  background: '#252525'
+  background-secondary: '#2D2D2D'
+  background-tertiary: '#1E1E1E'
+  link: '#6BB5FF'
+  link-hover: '#A0CCFF'
+  border: '#3D3D3D'
+  code-bg: '#2D2D2D'
+  hover-bg: '#2D2D2D'
+  accent: '#6BB5FF'
+  selection: '#3D3D3D'
 
 # =============================================
 # 页面过渡动画配置

@@ -51,21 +51,21 @@
     langSpan.textContent = lang;
     var copyBtn = document.createElement('button');
     copyBtn.className = 'code-copy-btn';
-    copyBtn.textContent = 'Copy';
+    copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">📋</span> Copy';
     copyBtn.addEventListener('click', function() {
       var text = (block.querySelector('code') || block).textContent || '';
       var doCopy = function(t) {
         navigator.clipboard.writeText(t).then(function() {
-          copyBtn.textContent = 'Copied!';
+          copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">✓</span> Copied!';
           copyBtn.classList.add('copied');
-          setTimeout(function() { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 2000);
+          setTimeout(function() { copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">📋</span> Copy'; copyBtn.classList.remove('copied'); }, 2000);
         }).catch(function() {
           var ta = document.createElement('textarea');
           ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
           document.body.appendChild(ta); ta.select();
-          try { document.execCommand('copy'); copyBtn.textContent = 'Copied!'; }
-          catch(e) { copyBtn.textContent = 'Failed'; }
-          setTimeout(function() { copyBtn.textContent = 'Copy'; }, 2000);
+          try { document.execCommand('copy'); copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">✓</span> Copied!'; }
+          catch(e) { copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">✗</span> Failed'; }
+          setTimeout(function() { copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">📋</span> Copy'; }, 2000);
           document.body.removeChild(ta);
         });
       };
