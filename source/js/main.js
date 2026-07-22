@@ -3,8 +3,8 @@
  */
 (function() {
   // === Clone detection ===
-  var originalHost = 'www.cayzlh.com';
-  var officialHosts = [];
+  var originalHost = window.__POLARIS && window.__POLARIS.originalHost || 'www.cayzlh.com';
+  var officialHosts = window.__POLARIS && window.__POLARIS.officialHosts || [];
   var currentHost = window.location.hostname;
   var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\]|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(currentHost);
   if (!isLocal && currentHost !== originalHost && officialHosts.indexOf(currentHost) === -1) {
