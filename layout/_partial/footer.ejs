@@ -6,9 +6,10 @@
       </div>
     <% } %>
     <div class="footer-copy">
-      © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
       <% if (theme.footer && theme.footer.copyright) { %>
-        · <%- theme.footer.copyright %>
+        <%- theme.footer.copyright %>
+      <% } else { %>
+        © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
       <% } %>
     </div>
   </div>

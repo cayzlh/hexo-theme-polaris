@@ -1,5 +1,5 @@
 # Polaris Theme — Minimal and elegant Hexo theme
-# https://cayzlh.com/
+# https://github.com/cayzlh/hexo-theme-polaris
 
 info:
   name: Polaris
@@ -20,13 +20,11 @@ menu:
 
 # Homepage intro
 intro: |
-  Bruce Lee 说：Be water, my friend.
+  A brief introduction about yourself or your blog.
 
-  水无形，随物赋形。水无界，可纳百川。水无争，却穿石裂岩。
+  Supports **Markdown** formatting. This text appears on the homepage.
 
-  这里，我在信息洪流中截取的一瓢。不设边界，不定形态，只是流动。
-
-  Hi，我是 Ant丶，欢迎你，停泊片刻。
+  — Your Name
 
 recent_posts_count: 5
 random_posts_count: 5
@@ -37,7 +35,7 @@ random_posts_count: 5
 
 # Canonical URL & clone detection
 canonical:
-  originalHost: www.cayzlh.com
+  originalHost: your-domain.com
   officialHosts: []
   checklink: /js/check.js
   closeEnable: true
@@ -197,5 +195,5 @@ custom_pages:
 # =============================================
 footer:
   text: |
-    Stay in touch — subscribe via <a href="/atom.xml">RSS</a>, or send comments by email to <a href="mailto:mail@cayzlh.com">mail@cayzlh.com</a>
-  copyright: '© 2018–2026 Ant丶'
+    Stay in touch — subscribe via <a href="/atom.xml">RSS</a>, or send comments by email to <a href="mailto:hello@example.com">hello@example.com</a>
+  # copyright: '© 2020–2026 Your Name'   # Uncomment to override the auto-generated © {year} {author}

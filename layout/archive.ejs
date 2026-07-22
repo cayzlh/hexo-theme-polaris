@@ -4,7 +4,7 @@
     <li>
       <a href="<%= url_for(post.path) %>">
         <time class="archive-date" datetime="<%= date_xml(post.date) %>">
-          <% var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var d=post.date.toDate(); %><%= m[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() %>
+          <%= date(post.date, 'YYYY-MM-DD') %>
         </time>
         &nbsp;<span class="archive-title"><%= post.title %></span>
       </a>

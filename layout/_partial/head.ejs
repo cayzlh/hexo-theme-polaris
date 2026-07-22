@@ -66,8 +66,8 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
 
-  <!-- Favicon -->
-  <link rel="icon" href="<%= url_for(config.avatar || '/favicon.ico') %>">
+  <!-- Favicon (theme.favicon > config.avatar > /favicon.ico) -->
+  <link rel="icon" href="<%= theme.favicon || url_for(config.avatar || '/favicon.ico') %>">
 
   <!-- Custom head inject -->
   <% if (config.inject && config.inject.head) { %><%- config.inject.head.join('\n') %><% } %>
