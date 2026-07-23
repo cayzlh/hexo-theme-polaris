@@ -1,10 +1,9 @@
 <!-- Daily News Page — Polaris theme -->
-<!-- Data sourced from alapi.cn zaobao API during hexo generate -->
+<!-- Three tabs: zaobao / zhihu / weibo -->
 
-<%# Format date into Chinese style, extract time from updateTime %>
+<%# Format date %>
 <%
 var displayDate = '';
-var displayTime = '';
 if (page.newsDate) {
   var s = String(page.newsDate);
   var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -14,46 +13,113 @@ if (page.newsDate) {
     displayDate = s;
   }
 }
-if (page.updateTime) {
-  var t = String(page.updateTime).match(/(\d{2}):(\d{2})$/);
-  if (t) {
-    displayTime = '更新于 ' + t[1] + ':' + t[2];
-  }
+
+function fmtHot(n) {
+  if (n === null || n === undefined || n === '') return '';
+  n = Number(n);
+  if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '\u4E07';
+  return String(n);
 }
+
+var hasZaobao = page.zaobao && page.zaobao.news && page.zaobao.news.length > 0;
+var hasZhihu  = page.zhihu  && page.zhihu.news  && page.zhihu.news.length > 0;
+var hasWeibo  = page.weibo  && page.weibo.news  && page.weibo.news.length > 0;
+var anyData = hasZaobao || hasZhihu || hasWeibo;
 %>
 
 <div class="daily-page">
   <h1 class="daily-title">
     <span class="daily-date"><%= displayDate || '—' %></span>
-    <% if (displayTime) { %>
-      <span class="daily-updatetime"><%= displayTime %></span>
-    <% } %>
   </h1>
 
-  <hr class="daily-divider">
+  <% if (anyData) { %>
 
-  <% if (page.news && page.news.length > 0) { %>
-    <ol class="daily-list">
-      <% for (var i = 0; i < page.news.length; i++) {
-        var item = page.news[i];
-        var hasUrl = item.url && item.url.length > 0;
-      %>
-        <li class="daily-item">
-          <% if (hasUrl) { %>
-            <a href="<%= item.url %>" target="_blank" rel="noopener noreferrer"><%= item.title %></a>
-          <% } else { %>
-            <span class="daily-item-text"><%= item.title %></span>
+    <!-- Tab Navigation -->
+    <div class="daily-tabs" id="dailyTabs">
+      <button class="daily-tab active" data-tab="zaobao" onclick="switchTab('zaobao')">每日早报</button>
+      <button class="daily-tab" data-tab="zhihu" onclick="switchTab('zhihu')">知乎日报</button>
+      <button class="daily-tab" data-tab="weibo" onclick="switchTab('weibo')">微博热搜</button>
+    </div>
+
+    <!-- ====== 每日早报 ====== -->
+    <div class="daily-tab-content active" id="tab-zaobao">
+      <% if (hasZaobao) { %>
+        <ol class="daily-list">
+          <% for (var i = 0; i < page.zaobao.news.length; i++) {
+            var item = page.zaobao.news[i];
+          %>
+            <li class="daily-item">
+              <% if (item.url) { %>
+                <a href="<%= item.url %>" target="_blank" rel="noopener"><%= item.title %></a>
+              <% } else { %>
+                <span class="daily-item-text"><%= item.title %></span>
+              <% } %>
+            </li>
           <% } %>
-        </li>
+        </ol>
+        <% if (page.zaobao.motto) { %>
+          <hr class="daily-divider">
+          <blockquote class="daily-motto">&ldquo;<%= page.zaobao.motto %>&rdquo;</blockquote>
+        <% } %>
+      <% } else { %>
+        <div class="daily-tab-empty">早报暂无数据</div>
       <% } %>
-    </ol>
+    </div>
 
-    <% if (page.motto) { %>
-      <hr class="daily-divider">
-      <blockquote class="daily-motto">&ldquo;<%= page.motto %>&rdquo;</blockquote>
-    <% } %>
+    <!-- ====== 知乎日报 ====== -->
+    <div class="daily-tab-content" id="tab-zhihu">
+      <% if (hasZhihu) { %>
+        <div class="zhihu-cards">
+          <% for (var i = 0; i < page.zhihu.news.length; i++) {
+            var item = page.zhihu.news[i];
+          %>
+            <a class="zhihu-card" href="<%= item.url %>" target="_blank" rel="noopener">
+              <div class="zhihu-card-body">
+                <% if (item.image) { %>
+                  <div class="zhihu-card-img-wrap">
+                    <img class="zhihu-card-img" src="<%= item.image %>" alt="" loading="lazy">
+                  </div>
+                <% } else { %>
+                  <span class="zhihu-card-num"><%= i + 1 %></span>
+                <% } %>
+                <div class="zhihu-card-text">
+                  <span class="zhihu-card-title"><%= item.title %></span>
+                  <span class="zhihu-card-hint"><%= item.hint %></span>
+                </div>
+              </div>
+            </a>
+          <% } %>
+        </div>
+      <% } else { %>
+        <div class="daily-tab-empty">知乎暂无数据</div>
+      <% } %>
+    </div>
+
+    <!-- ====== 微博热搜 ====== -->
+    <div class="daily-tab-content" id="tab-weibo">
+      <% if (hasWeibo) { %>
+        <ol class="daily-list weibo-list">
+          <% for (var i = 0; i < page.weibo.news.length; i++) {
+            var item = page.weibo.news[i];
+            var hot = fmtHot(item.hot);
+          %>
+            <li class="daily-item weibo-item">
+              <a href="<%= item.url %>" target="_blank" rel="noopener" class="weibo-link">
+                <span class="weibo-title"><%= item.title %></span>
+                <% if (hot) { %>
+                  <span class="weibo-hot"><%= hot %></span>
+                <% } %>
+              </a>
+            </li>
+          <% } %>
+        </ol>
+      <% } else { %>
+        <div class="daily-tab-empty">热搜暂无数据</div>
+      <% } %>
+    </div>
 
   <% } else { %>
+    <!-- Empty State -->
     <div class="daily-empty">
       <div class="daily-empty-icon">&#128235;</div>
       <p class="daily-empty-text">今日资讯加载中…</p>
@@ -61,3 +127,16 @@ if (page.updateTime) {
     </div>
   <% } %>
 </div>
+
+<script>
+function switchTab(name) {
+  var tabs = document.querySelectorAll('.daily-tab');
+  var contents = document.querySelectorAll('.daily-tab-content');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  contents.forEach(function(c) { c.classList.remove('active'); });
+  var tab = document.querySelector('.daily-tab[data-tab="' + name + '"]');
+  var content = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+  if (content) content.classList.add('active');
+}
+</script>

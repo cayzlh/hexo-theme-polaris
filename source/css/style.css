@@ -1278,4 +1278,171 @@ html.dark .search-highlight {
     font-size: 0.95rem;
     padding: 4px 0;
   }
+  .zhihu-card {
+    padding: 14px 16px;
+  }
+  .zhihu-card-title {
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== Daily News — Tab Navigation ===== */
+.daily-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 0 0 0 0;
+}
+
+.daily-tab {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  color: var(--c-text-light);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+  font-family: inherit;
+}
+
+.daily-tab:hover {
+  color: var(--c-text);
+}
+
+.daily-tab.active {
+  color: var(--c-text);
+  border-bottom-color: var(--c-link);
+  font-weight: 500;
+}
+
+.daily-tab-content {
+  display: none;
+}
+
+.daily-tab-content.active {
+  display: block;
+}
+
+.daily-tab-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--c-text-light);
+  font-size: 0.9rem;
+}
+
+/* ===== Daily News — Zhihu Cards ===== */
+.zhihu-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.zhihu-card {
+  display: block;
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-border);
+  padding: 16px 0;
+  transition: opacity 0.2s;
+}
+
+.zhihu-card:last-child {
+  border-bottom: none;
+}
+
+.zhihu-card:hover {
+  opacity: 0.75;
+}
+
+.zhihu-card-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.zhihu-card-img-wrap {
+  flex-shrink: 0;
+  width: 80px;
+  height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--c-bg-tertiary);
+}
+
+.zhihu-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.zhihu-card-num {
+  flex-shrink: 0;
+  width: 24px;
+  font-size: 0.85rem;
+  color: var(--c-link);
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: right;
+}
+
+.zhihu-card-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
+
+.zhihu-card-title {
+  font-size: 0.95rem;
+  color: var(--c-text);
+  line-height: 1.6;
+  transition: color 0.2s;
+}
+
+.zhihu-card:hover .zhihu-card-title {
+  color: var(--c-link);
+}
+
+.zhihu-card-hint {
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+  line-height: 1.4;
+}
+
+/* ===== Daily News — Weibo Hot Search ===== */
+.weibo-item::before {
+  min-width: 28px;
+  font-weight: 500;
+}
+
+/* Highlight top 3 */
+.weibo-item:nth-child(1)::before,
+.weibo-item:nth-child(2)::before,
+.weibo-item:nth-child(3)::before {
+  color: var(--c-accent);
+  font-weight: 600;
+}
+
+.weibo-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.weibo-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.weibo-hot {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+  white-space: nowrap;
 }
