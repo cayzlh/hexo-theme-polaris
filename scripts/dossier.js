@@ -359,6 +359,11 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
         if (!fs.existsSync(filePath)) continue;
         const doc = readFile(filePath);
         const rendered = hexo.render.renderSync({ text: doc.content, engine: 'markdown' });
+        // 对代码块应用 DeepSeek 风格转换
+        var transformed = rendered;
+        if (typeof global.__transformCodeBlocks === 'function') {
+          transformed = global.__transformCodeBlocks(rendered, true);
+        }
         const tocData = extractToc(rendered);
 
         var docSort = doc.frontMatter.sort !== undefined ? parseInt(doc.frontMatter.sort) : undefined;
@@ -377,7 +382,7 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
             project_id: entry,
             project: projects[entry],
             content: doc.content,
-            content_html: rendered,
+            content_html: transformed,
             frontMatter: doc.frontMatter,
             nav: projects[entry].nav,
             tags: tags,
@@ -459,7 +464,12 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
 hexo.extend.helper.register('render_md', function(content) {
   if (!content) return '';
   try {
-    return hexo.render.renderSync({ text: content, engine: 'markdown' });
+    var html = hexo.render.renderSync({ text: content, engine: 'markdown' });
+    // 对代码块应用 DeepSeek 风格转换
+    if (typeof global.__transformCodeBlocks === 'function') {
+      html = global.__transformCodeBlocks(html, true);
+    }
+    return html;
   } catch (e) {
     return '<p>' + content + '</p>';
   }

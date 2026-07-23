@@ -387,104 +387,394 @@ html.dark .post-body blockquote cite{color:#6BB5FF}
 .post-body li{margin-bottom:.3em;color:var(--c-text)}
 .post-body hr{border:none;border-top:1.5px solid var(--c-hr-strong);width:64px;margin:2em auto}
 
-/* ===== Code ===== */
-.post-body code{font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:.85em;background:var(--c-code-bg);color:#8B6B4D;padding:.2em .5em;word-break:break-word;border-radius:3px /*border:1px solid #E0DED9*/}
-html.dark .post-body code{color:#EEEEEE}
+ 
+/* ========================================
+   代码 / 行内代码 — Inline Code
+   ======================================== */
+.post-body code {
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  background: var(--c-code-bg);
+  color: #C0392B;
+  padding: 0.15em 0.45em;
+  border-radius: 4px;
+  word-break: break-word;
+}
+html.dark .post-body code {
+  color: #E8E8E8;
+}
 
-/* ===== Code Block ===== */
-.code-block-wrap{margin:1.5em 0;border-radius:4px;overflow:hidden;background:#EDECE8}
-html.dark .code-block-wrap{background:#1E1E1E}
+/* ========================================
+   代码块 — Code Block (DeepSeek 风格)
+   ======================================== */
 
-/* Code header bar */
-.code-header{display:flex;justify-content:space-between;align-items:center;padding:6px 16px;background:#E5E2DC;border-bottom:1px solid #D4CEC6;font-size:12px}
-html.dark .code-header{background:#2A2A2A;border-bottom-color:#3D3D3D}
+/* ===== 日间模式（默认） ===== */
 
-/* Language label */
-.code-lang{font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:11px;font-weight:500;color:#6B6864;text-transform:lowercase;letter-spacing:.3px}
-html.dark .code-lang{color:#6BB5FF}
+/* 代码块容器 */
+.code-block {
+  margin: 1.5em 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F0EFEB;
+  border: 1px solid #D4CEC6;
+}
 
-/* Copy button */
-.code-copy-btn{cursor:pointer;background:none;border:none;color:#6B6864;font-size:12px;padding:4px 8px;border-radius:3px;transition:color .15s,background .15s;display:inline-flex;align-items:center;gap:4px;font-family:inherit;line-height:1.5}
-.code-copy-btn:hover{color:#8B6B4D;background:#EDECE8}
-html.dark .code-copy-btn{color:#C0C0C0}
-html.dark .code-copy-btn:hover{color:#6BB5FF;background:#1E1E1E}
-.code-copy-btn.copied{color:#22c55e}
-html.dark .code-copy-btn.copied{color:#4ADE80}
+/* 代码块头部 — 文件名 + 语言标签 + 复制按钮 */
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: #E5E2DC;
+  border-bottom: 1px solid #D4CEC6;
+  font-size: 13px;
+  min-height: 40px;
+}
 
-/* Code content */
-.code-block-wrap pre,.code-block-wrap .highlight{margin:0;padding:14px 18px;overflow-x:auto;background:transparent;font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;font-size:13.5px;line-height:1.6;color:var(--c-text)}
-html.dark .code-block-wrap pre,html.dark .code-block-wrap .highlight{color:#EEEEEE;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.code-block-wrap code{background:none;padding:0;font-size:inherit;font-family:inherit;color:inherit}
+.code-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-/* Reset table inside code blocks */
-.code-block-wrap table,.code-block-wrap tbody,.code-block-wrap tr,
-.code-block-wrap td,.code-block-wrap th{margin:0;padding:0;border:none;background:transparent;width:auto;overflow:visible;font-size:inherit}
-.code-block-wrap td{padding:0;vertical-align:top}
+/* 文件名 */
+.code-filename {
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: #6B6864;
+  line-height: 1.5;
+}
 
-/* Code block scrollbar (dark mode) */
-html.dark .code-block-wrap pre::-webkit-scrollbar,
-html.dark .code-block-wrap .highlight::-webkit-scrollbar{height:6px}
-html.dark .code-block-wrap pre::-webkit-scrollbar-track,
-html.dark .code-block-wrap .highlight::-webkit-scrollbar-track{background:#1E1E1E}
-html.dark .code-block-wrap pre::-webkit-scrollbar-thumb,
-html.dark .code-block-wrap .highlight::-webkit-scrollbar-thumb{background:#3D3D3D;border-radius:3px}
-html.dark .code-block-wrap pre::-webkit-scrollbar-thumb:hover,
-html.dark .code-block-wrap .highlight::-webkit-scrollbar-thumb:hover{background:#5A5A5A}
+/* 语言标签 */
+.code-lang-badge {
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: #6B6864;
+  background: #D4CEC6;
+  padding: 2px 10px;
+  border-radius: 4px;
+  text-transform: lowercase;
+  line-height: 1.5;
+}
 
-/* ===== Syntax Highlighting (Night) — One Dark inspired ===== */
-html.dark .code-block-wrap .highlight .comment,
-html.dark .code-block-wrap .highlight .meta,
-html.dark .code-block-wrap .highlight .quote{color:#546E7A;font-style:italic}
+/* 复制按钮 */
+.code-copy-btn {
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  color: #A09C96;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+.code-copy-btn:hover {
+  color: #8B6B4D;
+  background: #EDECE8;
+  border-color: #D4CEC6;
+}
+.code-copy-btn.copied {
+  color: #22c55e;
+}
+.code-copy-btn .copy-icon {
+  font-size: 13px;
+  line-height: 1;
+}
 
-html.dark .code-block-wrap .highlight .keyword,
-html.dark .code-block-wrap .highlight .selector-tag,
-html.dark .code-block-wrap .highlight .meta-keyword,
-html.dark .code-block-wrap .highlight .doctag,
-html.dark .code-block-wrap .highlight .strong{color:#C792EA}
+/* 代码内容区 */
+.code-body {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-html.dark .code-block-wrap .highlight .string,
-html.dark .code-block-wrap .highlight .meta-string,
-html.dark .code-block-wrap .highlight .subst,
-html.dark .code-block-wrap .highlight .addition,
-html.dark .code-block-wrap .highlight .attr,
-html.dark .code-block-wrap .highlight .attribute{color:#C3E88D}
+.code-body pre {
+  margin: 0;
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #2C2A28;
+  background: transparent;
+}
 
-html.dark .code-block-wrap .highlight .number,
-html.dark .code-block-wrap .highlight .literal,
-html.dark .code-block-wrap .highlight .variable,
-html.dark .code-block-wrap .highlight .constant,
-html.dark .code-block-wrap .highlight .deletion,
-html.dark .code-block-wrap .highlight .bullet{color:#F78C6C}
+.code-body code {
+  background: none !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+  font-family: inherit !important;
+  color: inherit !important;
+  border-radius: 0 !important;
+  word-break: normal !important;
+}
 
-html.dark .code-block-wrap .highlight .title,
-html.dark .code-block-wrap .highlight .name,
-html.dark .code-block-wrap .highlight .function,
-html.dark .code-block-wrap .highlight .section{color:#82AAFF}
+/* 代码块滚动条（日间） */
+.code-body::-webkit-scrollbar {
+  height: 6px;
+}
+.code-body::-webkit-scrollbar-track {
+  background: #F0EFEB;
+}
+.code-body::-webkit-scrollbar-thumb {
+  background: #D4CEC6;
+  border-radius: 3px;
+}
+.code-body::-webkit-scrollbar-thumb:hover {
+  background: #B8B2AA;
+}
 
-html.dark .code-block-wrap .highlight .built_in,
-html.dark .code-block-wrap .highlight .type,
-html.dark .code-block-wrap .highlight .class,
-html.dark .code-block-wrap .highlight .title.class_{color:#FFCB6B}
+/* ===== 语法高亮 — 日间（GitHub 风格） ===== */
 
-html.dark .code-block-wrap .highlight .tag,
-html.dark .code-block-wrap .highlight .selector-class,
-html.dark .code-block-wrap .highlight .selector-id,
-html.dark .code-block-wrap .highlight .template-tag{color:#F07178}
+/* 注释 */
+.code-body .comment,
+.code-body .meta,
+.code-body .quote {
+  color: #6e7781;
+  font-style: italic;
+}
 
-html.dark .code-block-wrap .highlight .regexp,
-html.dark .code-block-wrap .highlight .symbol,
-html.dark .code-block-wrap .highlight .link{color:#89DDFF}
+/* 关键词 */
+.code-body .keyword,
+.code-body .selector-tag,
+.code-body .meta-keyword,
+.code-body .doctag,
+.code-body .strong {
+  color: #cf222e;
+}
 
-html.dark .code-block-wrap .highlight .params,
-html.dark .code-block-wrap .highlight .formula{color:#EEEEEE}
+/* 字符串 */
+.code-body .string,
+.code-body .meta-string,
+.code-body .subst,
+.code-body .addition,
+.code-body .attr,
+.code-body .attribute {
+  color: #0a3069;
+}
 
-/* Gutter (line numbers) */
-html.dark .code-block-wrap .highlight .gutter pre .line{color:#555}
-html.dark .code-block-wrap .highlight .gutter{margin-right:0}
+/* 数字 / 常量 */
+.code-body .number,
+.code-body .literal,
+.code-body .variable,
+.code-body .constant,
+.code-body .deletion,
+.code-body .bullet {
+  color: #0550ae;
+}
 
-/* Fallback: raw pre without highlight class */
-.post-body pre:not(.highlight):not(.code-block-wrap pre){background:#EDECE8;color:var(--c-text);padding:14px 18px;overflow-x:auto;margin:1.5em 0;font-size:13.5px;line-height:1.6;border-radius:4px;font-family:'JetBrains Mono','Fira Code',Menlo,Consolas,monospace;border:1px solid #E0DED9}
-html.dark .post-body pre:not(.highlight):not(.code-block-wrap pre){background:#1E1E1E;border-color:#3D3D3D}
+/* 函数名 */
+.code-body .title,
+.code-body .name,
+.code-body .function,
+.code-body .section {
+  color: #8250df;
+}
+
+/* 内置类型 / 类名 */
+.code-body .built_in,
+.code-body .type,
+.code-body .class,
+.code-body .title.class_ {
+  color: #953800;
+}
+
+/* HTML 标签 */
+.code-body .tag,
+.code-body .selector-class,
+.code-body .selector-id,
+.code-body .template-tag {
+  color: #116329;
+}
+
+/* 正则 / 符号 */
+.code-body .regexp,
+.code-body .symbol,
+.code-body .link {
+  color: #0550ae;
+}
+
+/* 参数 */
+.code-body .params,
+.code-body .formula {
+  color: #2C2A28;
+}
+
+/* 操作符 */
+.code-body .operator {
+  color: #0550ae;
+}
+
+/* ===== 夜间模式 ===== */
+
+html.dark .code-block {
+  background: #1E1E1E;
+  border-color: #2D2D2D;
+}
+
+html.dark .code-header {
+  background: #2A2A2A;
+  border-bottom-color: #3D3D3D;
+}
+
+html.dark .code-filename {
+  color: #E8E8E8;
+}
+
+html.dark .code-lang-badge {
+  color: #888888;
+  background: #3D3D3D;
+}
+
+html.dark .code-copy-btn {
+  color: #888888;
+}
+html.dark .code-copy-btn:hover {
+  color: #C0C0C0;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: #555;
+}
+html.dark .code-copy-btn.copied {
+  color: #4ADE80;
+}
+
+html.dark .code-body pre {
+  color: #D4D4D4;
+}
+
+/* 夜间模式滚动条 */
+html.dark .code-body::-webkit-scrollbar-track {
+  background: #1E1E1E;
+}
+html.dark .code-body::-webkit-scrollbar-thumb {
+  background: #3D3D3D;
+}
+html.dark .code-body::-webkit-scrollbar-thumb:hover {
+  background: #5A5A5A;
+}
+
+/* ===== 语法高亮 — 夜间（One Dark） ===== */
+
+html.dark .code-body .comment,
+html.dark .code-body .meta,
+html.dark .code-body .quote {
+  color: #546E7A;
+  font-style: italic;
+}
+
+html.dark .code-body .keyword,
+html.dark .code-body .selector-tag,
+html.dark .code-body .meta-keyword,
+html.dark .code-body .doctag,
+html.dark .code-body .strong {
+  color: #C792EA;
+}
+
+html.dark .code-body .string,
+html.dark .code-body .meta-string,
+html.dark .code-body .subst,
+html.dark .code-body .addition,
+html.dark .code-body .attr,
+html.dark .code-body .attribute {
+  color: #C3E88D;
+}
+
+html.dark .code-body .number,
+html.dark .code-body .literal,
+html.dark .code-body .variable,
+html.dark .code-body .constant,
+html.dark .code-body .deletion,
+html.dark .code-body .bullet {
+  color: #F78C6C;
+}
+
+html.dark .code-body .title,
+html.dark .code-body .name,
+html.dark .code-body .function,
+html.dark .code-body .section {
+  color: #82AAFF;
+}
+
+html.dark .code-body .built_in,
+html.dark .code-body .type,
+html.dark .code-body .class,
+html.dark .code-body .title.class_ {
+  color: #FFCB6B;
+}
+
+html.dark .code-body .tag,
+html.dark .code-body .selector-class,
+html.dark .code-body .selector-id,
+html.dark .code-body .template-tag {
+  color: #F07178;
+}
+
+html.dark .code-body .regexp,
+html.dark .code-body .symbol,
+html.dark .code-body .link {
+  color: #89DDFF;
+}
+
+html.dark .code-body .params,
+html.dark .code-body .formula {
+  color: #EEEEEE;
+}
+
+html.dark .code-body .operator {
+  color: #89DDFF;
+}
+
+/* ========================================
+   回退样式 — 裸 &lt;pre&gt; 代码块（无 highlight 类）
+   ======================================== */
+.post-body pre:not(.highlight):not(.code-block pre) {
+  background: #F0EFEB;
+  color: #2C2A28;
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 14px;
+  line-height: 1.7;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  border: 1px solid #D4CEC6;
+}
+html.dark .post-body pre:not(.highlight):not(.code-block pre) {
+  background: #1E1E1E;
+  color: #D4D4D4;
+  border-color: #2D2D2D;
+}
+
+/* ========================================
+   响应式 — 代码块
+   ======================================== */
+@media (max-width: 768px) {
+  .code-block {
+    border-radius: 6px;
+  }
+  .code-body pre {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  .code-header {
+    padding: 6px 12px;
+    min-height: 36px;
+  }
+  .code-filename {
+    font-size: 12px;
+  }
+  .code-lang-badge {
+    font-size: 10px;
+    padding: 1px 8px;
+  }
+  .code-copy-btn {
+    padding: 6px 8px;
+    min-height: 36px;
+  }
+}
 
 /* ===== Tables ===== */
 .post-body table{width:100%;border-collapse:collapse;margin:1.5em 0;font-size:.9em}

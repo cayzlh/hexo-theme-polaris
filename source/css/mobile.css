@@ -292,14 +292,13 @@
    2.6 代码块
    ============================================ */
 @media (max-width: 768px) {
-  .code-block-wrap pre,
-  .code-block-wrap .highlight {
+  .code-body pre {
     font-size: 12px;
     padding: 10px 14px;
     -webkit-overflow-scrolling: touch;
   }
 
-  .post-body pre:not(.highlight):not(.code-block-wrap pre) {
+  .post-body pre:not(.highlight):not(.code-block pre) {
     font-size: 12px;
     padding: 10px 14px;
     -webkit-overflow-scrolling: touch;
@@ -318,11 +317,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .code-block-wrap pre,
-  .code-block-wrap .highlight {
-    padding: 10px 14px;
   }
 
   .post-body code {
@@ -808,8 +802,7 @@
     font-size: 1.1rem;
   }
 
-  .code-block-wrap pre,
-  .code-block-wrap .highlight {
+  .code-body pre {
     font-size: 13px;
   }
 

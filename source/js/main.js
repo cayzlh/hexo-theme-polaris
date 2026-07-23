@@ -1,5 +1,5 @@
 /**
- * Polaris — Clone detection + Code block copy
+ * Polaris — Clone detection + Code block copy (DeepSeek style)
  */
 (function() {
   // === Clone detection ===
@@ -20,60 +20,39 @@
     }
   }
 
-  // === Code block copy ===
-  document.querySelectorAll('.post-body figure.highlight, .post-body pre:not(figure pre)').forEach(function(block) {
-    if (block.closest('.code-block-wrap')) return;
+  // === Code block copy (DeepSeek 风格 — 服务端已生成结构，仅绑事件) ===
+  document.querySelectorAll('.code-block .code-copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var block = btn.closest('.code-block');
+      var codeBody = block.querySelector('.code-body code, .code-body pre');
+      var text = codeBody ? codeBody.textContent || '' : '';
 
-    // Detect language from class
-    var lang = 'text';
-    if (block.tagName === 'FIGURE') {
-      var cls = block.className.replace('highlight', '').trim();
-      if (cls) lang = cls.split(' ')[0];
-    }
-    // Also check code tag
-    var codeEl = block.querySelector('code[class*="language-"]');
-    if (codeEl) {
-      var m = codeEl.className.match(/language-(\w+)/);
-      if (m) lang = m[1];
-    }
-
-    // Wrap everything in a container
-    var wrap = document.createElement('div');
-    wrap.className = 'code-block-wrap';
-    block.parentNode.insertBefore(wrap, block);
-    wrap.appendChild(block);
-
-    // Add header
-    var header = document.createElement('div');
-    header.className = 'code-header';
-    var langSpan = document.createElement('span');
-    langSpan.className = 'code-lang';
-    langSpan.textContent = lang;
-    var copyBtn = document.createElement('button');
-    copyBtn.className = 'code-copy-btn';
-    copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">📋</span> Copy';
-    copyBtn.addEventListener('click', function() {
-      var text = (block.querySelector('code') || block).textContent || '';
       var doCopy = function(t) {
         navigator.clipboard.writeText(t).then(function() {
-          copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">✓</span> Copied!';
-          copyBtn.classList.add('copied');
-          setTimeout(function() { copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">📋</span> Copy'; copyBtn.classList.remove('copied'); }, 2000);
+          btn.querySelector('.copy-text').textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(function() {
+            btn.querySelector('.copy-text').textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
         }).catch(function() {
           var ta = document.createElement('textarea');
           ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
           document.body.appendChild(ta); ta.select();
-          try { document.execCommand('copy'); copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">✓</span> Copied!'; }
-          catch(e) { copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">✗</span> Failed'; }
-          setTimeout(function() { copyBtn.innerHTML = '<span style="font-size:13px;line-height:1">📋</span> Copy'; }, 2000);
+          try {
+            document.execCommand('copy');
+            btn.querySelector('.copy-text').textContent = 'Copied!';
+          } catch(e) {
+            btn.querySelector('.copy-text').textContent = 'Failed';
+          }
+          setTimeout(function() {
+            btn.querySelector('.copy-text').textContent = 'Copy';
+          }, 2000);
           document.body.removeChild(ta);
         });
       };
       doCopy(text);
     });
-    header.appendChild(langSpan);
-    header.appendChild(copyBtn);
-    wrap.insertBefore(header, block);
   });
 
   // === Dropdown Menu ===
