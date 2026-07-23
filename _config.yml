@@ -310,3 +310,30 @@ archive:
   highlight_match: true
   # 是否显示搜索匹配数量
   show_match_count: true
+
+# =============================================
+# Alapi (每日资讯数据源)
+# =============================================
+# API 数据源配置，驱动 /news/ 页面的三个 Tab：
+#   每日早报 / 知乎日报 / 微博热搜
+#
+# Token 获取：https://alapi.cn
+#
+# 缓存机制：首次构建后写入 .daily_cache.json，同一天内重复构建不再请求 API，
+#           避免本地开发（hexo server）频繁消耗免费额度。
+#
+# Token 直接填写在上方 alapi.token 中
+alapi:
+  # 总开关（false 时所有资讯显示空状态，可用于本地开发）
+  enable: true
+  # API Token（建议通过环境变量或站点 _config.yml 设置，此处留空）
+  token: 'gfweyja2xjcn9afftymjwwmarjykvz'
+  # 每日早报
+  zaobao:
+    enable: true
+  # 知乎日报
+  zhihu:
+    enable: true
+  # 微博热搜
+  weibo:
+    enable: true

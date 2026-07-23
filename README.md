@@ -80,6 +80,37 @@ Key configuration is in `themes/polaris/_config.yml`. Below are the main section
 | `custom_pages` | Extra pages from `custom/` directory |
 | `footer` | Footer text & copyright |
 | `hr` | Horizontal rule styles (gradient / short / dotted / double / ornament) |
+| `alapi` | Daily news API settings (token, switches, cache) |
+
+### Daily News
+
+Polaris ships with a `/news/` page that aggregates three data sources from [alapi.cn](https://alapi.cn): 每日早报, 知乎日报, 微博热搜.
+
+**Theme scripts:**
+- `scripts/zaobao.js` — Fetches all three APIs on `hexo generate`, generates `/news/index.html`
+
+**Theme config (`themes/polaris/_config.yml`):**
+
+```yaml
+alapi:
+  enable: true               # 总开关
+  token: ''                  # API Token（建议通过环境变量或站点配置传入）
+  zaobao:
+    enable: true             # 每日早报
+  zhihu:
+    enable: true             # 知乎日报
+  weibo:
+    enable: true             # 微博热搜
+```
+
+**Token (themes/polaris/_config.yml):**
+
+```yaml
+alapi:
+  token: 'your_token_here'
+```
+
+> **Cache**: Data is cached in `.daily_cache.json` (gitignored). Repeated builds on the same day skip API requests, preventing free tier overuse during local development.
 
 See the [full `_config.yml`](_config.yml) for all options and defaults.
 
