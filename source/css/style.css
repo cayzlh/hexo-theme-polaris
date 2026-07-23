@@ -23,7 +23,7 @@
   --c-border:#E5E2DC;--c-code-bg:#EDECE8;--c-hover-bg:#EDECE8;
   --c-sel:#E5E2DC;
   --c-hr:rgba(44,42,40,0.15);--c-hr-strong:rgba(44,42,40,0.25);--c-hr-weak:rgba(44,42,40,0.08);
-  --fs:18px;--lh:1.75;--mw:680px;
+  --fs:20px;--lh:1.75;--mw:680px;
 }
 
 /* ===== Variables (Dark) ===== */
@@ -154,10 +154,10 @@ hr.dash-dot::before,hr.style-dash-dot::before{
 /* ===== Post List ===== */
 .post-list{list-style:none;padding:0;margin:0 0 2em}
 .post-list li{margin-bottom:.6em}
-.post-list a{display:inline;color:var(--c-text);font-size:1.1rem}
+.post-list a{display:inline;color:var(--c-text);font-size:var(--fs)}
 .post-list a:hover{color:var(--c-link-hover)}
 .post-list-date{font-size:.9rem;color:var(--c-text-light);font-variant-numeric:tabular-nums}
-.post-list-title{font-size:1.1rem}
+.post-list-title{font-size:var(--fs)}
 
 /* ===== Archive / Category / Tag ===== */
 .page-heading{font-size:1.5rem;font-weight:400;margin-bottom:1.5em;color:var(--c-text)}
@@ -166,7 +166,7 @@ hr.dash-dot::before,hr.style-dash-dot::before{
 .archive-list a{color:var(--c-text)}
 .archive-list a:hover{color:var(--c-link-hover)}
 .archive-date{font-size:.95rem;color:var(--c-text-light);font-variant-numeric:tabular-nums}
-.archive-title{font-size:1.1rem}
+.archive-title{font-size:var(--fs)}
 
 /* ===== Paginator ===== */
 .paginator{margin:2em 0;font-size:.9rem;color:var(--c-text-light)}
@@ -967,7 +967,7 @@ html.dark .project-card-start--outline:hover{
   .header{padding-top:2rem}
   .header-top{gap:8px}
   .post-title{font-size:1.6rem}
-  .section-title{font-size:1.15rem}
+  .section-title{font-size:var(--fs)}
   .intro p{margin-bottom:.8em}
 }
 
@@ -1195,8 +1195,8 @@ html.dark .search-highlight {
 .daily-item {
   counter-increment: news-counter;
   padding: 6px 0;
-  font-size: 1rem;
-  line-height: 1.8;
+  font-size: var(--fs);
+  line-height: var(--lh);
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -1282,7 +1282,7 @@ html.dark .search-highlight {
     padding: 14px 16px;
   }
   .zhihu-card-title {
-    font-size: 0.9rem;
+    font-size: var(--fs);
   }
 }
 
@@ -1394,9 +1394,9 @@ html.dark .search-highlight {
 }
 
 .zhihu-card-title {
-  font-size: 0.95rem;
+  font-size: var(--fs);
   color: var(--c-text);
-  line-height: 1.6;
+  line-height: var(--lh);
   transition: color 0.2s;
 }
 

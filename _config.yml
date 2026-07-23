@@ -152,7 +152,7 @@ link:
   underline_opacity: 0.25
 
 # Typography
-font_size: 17px
+font_size: 20px
 line_height: 1.75
 max_width: 680px
 
