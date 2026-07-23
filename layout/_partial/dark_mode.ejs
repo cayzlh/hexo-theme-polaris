@@ -34,21 +34,17 @@
       });
     }
   } else if (dm.mode === 'system') {
-    // System + toggle override
+    // System preference only — no localStorage, no toggle override
+    localStorage.removeItem('polaris-theme');
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
-    var override = localStorage.getItem('polaris-theme');
-    var isDark = override ? override === 'dark' : mq.matches;
-    setDark(isDark);
+    setDark(mq.matches);
     mq.addEventListener('change', function(e) {
-      if (!localStorage.getItem('polaris-theme')) setDark(e.matches);
+      setDark(e.matches);
     });
-    if (toggle) {
-      toggle.addEventListener('click', function() {
-        root.classList.toggle('dark');
-        var now = root.classList.contains('dark') ? 'dark' : 'light';
-        localStorage.setItem('polaris-theme', now);
-      });
-    }
+    // Handle bfcache restore — re-check system preference
+    window.addEventListener('pageshow', function() {
+      setDark(mq.matches);
+    });
   }
 })();
 </script>
