@@ -28,6 +28,8 @@ menu:
     url: /dossier/
   - name: About
     url: /about/
+  - name: News
+    url: /news/
   - name: Tools
     children:
       - name: 标签

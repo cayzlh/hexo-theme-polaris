@@ -1,0 +1,63 @@
+<!-- Daily News Page — Polaris theme -->
+<!-- Data sourced from alapi.cn zaobao API during hexo generate -->
+
+<%# Format date into Chinese style, extract time from updateTime %>
+<%
+var displayDate = '';
+var displayTime = '';
+if (page.newsDate) {
+  var s = String(page.newsDate);
+  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    displayDate = m[1] + '年' + parseInt(m[2], 10) + '月' + parseInt(m[3], 10) + '日';
+  } else {
+    displayDate = s;
+  }
+}
+if (page.updateTime) {
+  var t = String(page.updateTime).match(/(\d{2}):(\d{2})$/);
+  if (t) {
+    displayTime = '更新于 ' + t[1] + ':' + t[2];
+  }
+}
+%>
+
+<div class="daily-page">
+  <h1 class="daily-title">
+    <span class="daily-date"><%= displayDate || '—' %></span>
+    <% if (displayTime) { %>
+      <span class="daily-updatetime"><%= displayTime %></span>
+    <% } %>
+  </h1>
+
+  <hr class="daily-divider">
+
+  <% if (page.news && page.news.length > 0) { %>
+    <ol class="daily-list">
+      <% for (var i = 0; i < page.news.length; i++) {
+        var item = page.news[i];
+        var hasUrl = item.url && item.url.length > 0;
+      %>
+        <li class="daily-item">
+          <% if (hasUrl) { %>
+            <a href="<%= item.url %>" target="_blank" rel="noopener noreferrer"><%= item.title %></a>
+          <% } else { %>
+            <span class="daily-item-text"><%= item.title %></span>
+          <% } %>
+        </li>
+      <% } %>
+    </ol>
+
+    <% if (page.motto) { %>
+      <hr class="daily-divider">
+      <blockquote class="daily-motto">&ldquo;<%= page.motto %>&rdquo;</blockquote>
+    <% } %>
+
+  <% } else { %>
+    <div class="daily-empty">
+      <div class="daily-empty-icon">&#128235;</div>
+      <p class="daily-empty-text">今日资讯加载中…</p>
+      <p class="daily-empty-hint">请稍后再来</p>
+    </div>
+  <% } %>
+</div>

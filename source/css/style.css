@@ -1150,3 +1150,132 @@ html.dark .search-highlight {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Daily News Page ===== */
+.daily-page {
+  max-width: var(--mw, 680px);
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+}
+
+.daily-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--c-text);
+  text-align: center;
+  margin: 0 0 4px 0;
+}
+
+.daily-date {
+  font-weight: 400;
+  color: var(--c-text-light);
+}
+
+.daily-updatetime {
+  font-size: 0.75rem;
+  color: var(--c-text-light);
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.daily-divider {
+  border: none;
+  border-top: 1.5px solid var(--c-border);
+  width: 64px;
+  margin: 1.2em auto;
+}
+
+.daily-list {
+  padding-left: 0;
+  margin: 1em 0;
+  list-style: none;
+  counter-reset: news-counter;
+}
+
+.daily-item {
+  counter-increment: news-counter;
+  padding: 6px 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.daily-item::before {
+  content: counter(news-counter) ".";
+  color: var(--c-text-light);
+  font-size: 0.9rem;
+  min-width: 24px;
+  flex-shrink: 0;
+}
+
+.daily-item a,
+.daily-item-text {
+  color: var(--c-text);
+  text-decoration: none;
+  transition: color 0.2s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.daily-item a:hover {
+  color: var(--c-link);
+}
+
+.daily-motto {
+  margin: 1.2em 0;
+  padding: 0.6em 1.2em;
+  font-size: 0.95rem;
+  color: var(--c-text-muted);
+  font-style: italic;
+  border-left: 3px solid var(--c-border);
+  background: transparent;
+}
+
+.daily-footer {
+  margin-top: 2em;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--c-text-light);
+}
+
+.daily-footer span {
+  margin: 0 4px;
+}
+
+.daily-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.daily-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.daily-empty-text {
+  font-size: 1rem;
+  color: var(--c-text-muted);
+  margin: 0 0 4px 0;
+}
+
+.daily-empty-hint {
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .daily-page {
+    padding: 12px 16px 40px;
+  }
+  .daily-title {
+    font-size: 1.2rem;
+  }
+  .daily-item {
+    font-size: 0.95rem;
+    padding: 4px 0;
+  }
+}
