@@ -30,6 +30,8 @@ menu:
     url: /about/
   - name: News
     url: /news/
+  - name: Rss
+    url: /subscriptions/
   - name: Tools
     children:
       - name: 标签
@@ -279,6 +281,27 @@ mobile:
   transition_enabled: false
   # 触控目标最小尺寸（px）
   touch_target_size: 44
+
+# =============================================
+# 订阅页面配置
+# =============================================
+# 在 hexo generate 时抓取 RSS/Atom 订阅源，生成 /subscriptions/ 页面
+#
+# 数据来源：source/_data/subscriptions.yml
+#
+subscriptions:
+  # 每个源默认抓取条数
+  default_limit: 3
+  # 是否显示订阅源描述
+  show_description: true
+  # 是否显示更新条数
+  show_count: true
+  # 页面标题
+  page_title: 订阅
+  # 页面描述模板（%d 会被替换为成功抓取的订阅源数量）
+  page_subtitle: '正在关注 %d 个博客'
+  # 请求超时（毫秒）
+  timeout: 10000
 
 # =============================================
 # Runtime (实时运行时间)

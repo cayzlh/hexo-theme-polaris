@@ -27,6 +27,7 @@ Polaris is a personal blog theme for [Hexo](https://hexo.io/), designed with a f
 - **Responsive** — Mobile-first design, adapts from phone to desktop
 - **Custom Pages** — Drop plain Markdown/HTML into a `custom/` directory
 - **Typography-first** — Carefully tuned font size, line height, and max-width for comfortable reading
+- **RSS Subscriptions** — Built-in `/subscriptions/` page that fetches and displays latest articles from RSS/Atom feeds
 - **Minimal & Clean** — No unnecessary dependencies, pure CSS + vanilla JS
 
 ---
@@ -115,6 +116,60 @@ alapi:
 See the [full `_config.yml`](_config.yml) for all options and defaults.
 
 ---
+
+### Subscriptions
+
+Polaris ships with a `/subscriptions/` page that displays the latest articles from RSS/Atom feeds you follow, fetched during `hexo generate`.
+
+**Dependencies:**
+
+Install `rss-parser` in your Hexo site root:
+
+```bash
+npm install rss-parser --save
+```
+
+**Data source:** `source/_data/subscriptions.yml`
+
+```yaml
+subscriptions:
+  - name: 阮一峰的网络日志
+    url: http://www.ruanyifeng.com/blog/atom.xml
+    homepage: https://www.ruanyifeng.com/blog/
+    limit: 3
+    icon: 📡
+    description: 科技、互联网、生活随笔
+
+  - name: 酷壳 - CoolShell
+    url: https://coolshell.cn/feed
+    homepage: https://coolshell.cn
+    limit: 3
+    icon: ⚙️
+    description: 技术、架构、思考
+```
+
+**Theme scripts:**
+- `scripts/subscriptions.js` — Generator that fetches all feeds concurrently and generates `/subscriptions/index.html`
+- `scripts/helpers.js` — Template helper `formatDate` for formatting feed item dates
+
+**Theme config (`themes/polaris/_config.yml`):**
+
+```yaml
+subscriptions:
+  default_limit: 3           # 每个源默认抓取条数
+  show_description: true     # 是否显示订阅源描述
+  show_count: true           # 是否显示更新条数
+  page_title: 订阅            # 页面标题
+  page_subtitle: '正在关注 %d 个博客'  # 页面副标题（%d 为成功源数）
+  timeout: 10000             # 请求超时（毫秒）
+```
+
+**Behavior:**
+- Feeds are fetched concurrently using `Promise.all` for minimal build time
+- Single feed failure is isolated — other feeds still render
+- Request timeout control prevents a single slow feed from blocking the build
+- Empty feeds and fetch errors show graceful fallback messages
+- All feeds open in new tabs with `rel="noopener"`
 
 ## Horizontal Rules (分割线体系)
 

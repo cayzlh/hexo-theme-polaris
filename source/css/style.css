@@ -1943,3 +1943,240 @@ html.dark .search-highlight {
   color: var(--c-text-light);
   white-space: nowrap;
 }
+
+/* ==========================================
+   Subscriptions Page
+   ========================================== */
+.subscriptions-page {
+  padding: 20px 0 60px;
+}
+
+.subscriptions-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--c-text);
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.subscriptions-subtitle {
+  font-size: 0.85rem;
+  color: var(--c-text-muted);
+  margin: 0 0 8px;
+}
+
+.subscriptions-subtitle .count {
+  font-weight: 600;
+  color: var(--c-accent);
+}
+
+.subscriptions-divider {
+  margin: 1.2em 0 0;
+}
+
+/* ===== 订阅源列表 ===== */
+.subscriptions-list {
+  margin-top: 0;
+}
+
+/* ===== 单个订阅源区块 ===== */
+.subscription-item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.subscription-item:first-child {
+  padding-top: 20px;
+}
+
+.subscription-item:last-child {
+  border-bottom: none;
+}
+
+.subscription-item.subscription-error {
+  opacity: 0.7;
+}
+
+/* ===== 订阅源头部 ===== */
+.subscription-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.subscription-icon {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.subscription-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.subscription-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--c-text);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.subscription-name a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.subscription-name a:hover {
+  color: var(--c-accent);
+}
+
+.subscription-desc {
+  font-size: 0.85rem;
+  color: var(--c-text-muted);
+  margin: 2px 0 0;
+  line-height: 1.5;
+}
+
+.subscription-count {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  color: var(--c-text-light);
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+/* ===== 文章列表 ===== */
+.subscription-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.subscription-items li {
+  padding: 3px 0;
+}
+
+.item-link {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--c-text);
+  transition: color 0.2s;
+  line-height: 1.6;
+}
+
+.item-link:hover {
+  color: var(--c-accent);
+}
+
+.item-date {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+}
+
+.item-title {
+  font-size: 0.92rem;
+  transition: color 0.2s;
+}
+
+/* ===== 错误 & 空状态 ===== */
+.subscription-error-msg {
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  padding: 8px 0 0;
+  margin: 0;
+}
+
+.subscription-empty-msg {
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  padding: 8px 0 0;
+  margin: 0;
+  font-style: italic;
+}
+
+.subscriptions-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.subscriptions-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.subscriptions-empty-text {
+  font-size: 1rem;
+  color: var(--c-text-muted);
+  margin: 0 0 4px;
+}
+
+.subscriptions-empty-hint {
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  margin: 0;
+}
+
+.subscriptions-empty-hint code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  padding: 1px 6px;
+  background: var(--c-code-bg);
+  border-radius: 3px;
+}
+
+/* ===== 页脚 ===== */
+.subscriptions-footer {
+  margin-top: 2em;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--c-text-light);
+}
+
+@media (max-width: 768px) {
+  .subscriptions-page {
+    padding: 12px 0 40px;
+  }
+
+  .subscriptions-title {
+    font-size: 1.3rem;
+  }
+
+  .subscription-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .subscription-name {
+    font-size: 1rem;
+  }
+
+  .item-link {
+    font-size: 0.88rem;
+    gap: 8px;
+  }
+
+  .item-date {
+    font-size: 0.72rem;
+    min-width: 40px;
+  }
+
+  .item-title {
+    font-size: 0.88rem;
+  }
+
+  .subscription-item {
+    padding: 16px 0;
+  }
+}
