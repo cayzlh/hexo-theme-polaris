@@ -1,30 +1,8 @@
 <!-- Daily News Page — Polaris theme -->
-<!-- Three tabs: zaobao / zhihu / weibo -->
-<!-- Left sidebar navigation + Right content area layout -->
+<!-- Vertical layout: 微语 → 每日早报 → 知乎日报 → 微博热点 -->
 
-<%# Format date & time for sidebar bottom %>
+<%# Format time for footer %>
 <%
-var displayDate = '';
-var displayTime = '';
-if (page.newsDate) {
-  var s = String(page.newsDate);
-  var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (m) {
-    displayDate = m[1] + '年' + parseInt(m[2], 10) + '月' + parseInt(m[3], 10) + '日';
-  } else {
-    displayDate = s;
-  }
-}
-if (page.updateTime) {
-  var t = String(page.updateTime);
-  var tm = t.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})/);
-  if (tm) {
-    displayTime = tm[1] + '年' + parseInt(tm[2], 10) + '月' + parseInt(tm[3], 10) + '日 ' + tm[4] + ':' + tm[5];
-  } else {
-    displayTime = t;
-  }
-}
-// 短格式用于侧边栏：MM-DD HH:mm
 var displayTimeShort = '';
 if (page.updateTime) {
   var ts = String(page.updateTime);
@@ -46,115 +24,96 @@ function fmtHot(n) {
 var hasZaobao = page.zaobao && page.zaobao.news && page.zaobao.news.length > 0;
 var hasZhihu  = page.zhihu  && page.zhihu.news  && page.zhihu.news.length > 0;
 var hasWeibo  = page.weibo  && page.weibo.news  && page.weibo.news.length > 0;
-var anyData = hasZaobao || hasZhihu || hasWeibo;
+var hasWeiyu  = page.zaobao && page.zaobao.motto && page.zaobao.motto.trim() !== '';
+var anyData = hasZaobao || hasZhihu || hasWeibo || hasWeiyu;
+var hasContent = hasZaobao || hasZhihu || hasWeibo;
 %>
 
 <div class="daily-page">
   <% if (anyData) { %>
 
-    <!-- ====== 左侧边栏 ====== -->
-    <aside class="daily-sidebar">
-      <nav class="daily-tabs" role="tablist">
-        <button class="daily-tab active" data-tab="zaobao" onclick="switchTab('zaobao')" role="tab" aria-selected="true">
-          <span class="tab-icon">📰</span> 每日早报
-        </button>
-        <button class="daily-tab" data-tab="zhihu" onclick="switchTab('zhihu')" role="tab" aria-selected="false">
-          <span class="tab-icon">💡</span> 知乎日报
-        </button>
-        <button class="daily-tab" data-tab="weibo" onclick="switchTab('weibo')" role="tab" aria-selected="false">
-          <span class="tab-icon">🔥</span> 微博热搜
-        </button>
-      </nav>
+    <!-- ====== 微语 ====== -->
+    <% if (hasWeiyu) { %>
+    <blockquote class="daily-weiyu">&ldquo;<%= page.zaobao.motto %>&rdquo;</blockquote>
+    <% if (hasContent) { %><hr class="short"><% } %>
+    <% } %>
 
-      <hr class="daily-sidebar-divider">
-
-      <!-- 更新时间固定在侧边栏底部 -->
-      <div class="daily-update">
-        <time class="daily-update-time">更新于 <%= displayTimeShort || '—' %></time>
-      </div>
-    </aside>
-
-    <!-- ====== 右侧内容区 ====== -->
-    <main class="daily-content">
-
-      <!-- ====== 每日早报 ====== -->
-      <div class="daily-tab-content active" id="tab-zaobao" role="tabpanel">
-        <% if (hasZaobao) { %>
-          <ol class="daily-list">
-            <% for (var i = 0; i < page.zaobao.news.length; i++) {
-              var item = page.zaobao.news[i];
-            %>
-              <li class="daily-item">
-                <% if (item.url) { %>
-                  <a href="<%= item.url %>" target="_blank" rel="noopener"><%= item.title %></a>
-                <% } else { %>
-                  <span class="daily-item-text"><%= item.title %></span>
-                <% } %>
-              </li>
+    <!-- ====== 每日早报 ====== -->
+    <% if (hasZaobao) { %>
+    <section>
+      <h2 class="section-title">📰 每日早报</h2>
+      <ol class="daily-list">
+        <% for (var i = 0; i < page.zaobao.news.length; i++) {
+          var item = page.zaobao.news[i];
+        %>
+          <li class="daily-item">
+            <% if (item.url) { %>
+              <a href="<%= item.url %>" target="_blank" rel="noopener"><%= item.title %></a>
+            <% } else { %>
+              <span class="daily-item-text"><%= item.title %></span>
             <% } %>
-          </ol>
-          <% if (page.zaobao.motto) { %>
-            <hr class="daily-divider">
-            <blockquote class="daily-motto">&ldquo;<%= page.zaobao.motto %>&rdquo;</blockquote>
-          <% } %>
-        <% } else { %>
-          <div class="daily-tab-empty">早报暂无数据</div>
+          </li>
         <% } %>
-      </div>
+      </ol>
+    </section>
+    <% } %>
+    <% if (hasZaobao && (hasZhihu || hasWeibo)) { %><hr class="short"><% } %>
 
-      <!-- ====== 知乎日报 ====== -->
-      <div class="daily-tab-content" id="tab-zhihu" role="tabpanel">
-        <% if (hasZhihu) { %>
-          <div class="zhihu-cards">
-            <% for (var i = 0; i < page.zhihu.news.length; i++) {
-              var item = page.zhihu.news[i];
-            %>
-              <a class="zhihu-card" href="<%= item.url %>" target="_blank" rel="noopener">
-                <div class="zhihu-card-body">
-                  <% if (item.image) { %>
-                    <div class="zhihu-card-img-wrap">
-                      <img class="zhihu-card-img" src="<%= item.image %>" alt="" loading="lazy">
-                    </div>
-                  <% } else { %>
-                    <span class="zhihu-card-num"><%= i + 1 %></span>
-                  <% } %>
-                  <div class="zhihu-card-text">
-                    <span class="zhihu-card-title"><%= item.title %></span>
-                    <span class="zhihu-card-hint"><%= item.hint %></span>
-                  </div>
+    <!-- ====== 知乎日报 ====== -->
+    <% if (hasZhihu) { %>
+    <section>
+      <h2 class="section-title">💡 知乎日报</h2>
+      <div class="zhihu-cards">
+        <% for (var i = 0; i < page.zhihu.news.length; i++) {
+          var item = page.zhihu.news[i];
+        %>
+          <a class="zhihu-card" href="<%= item.url %>" target="_blank" rel="noopener">
+            <div class="zhihu-card-body">
+              <% if (item.image) { %>
+                <div class="zhihu-card-img-wrap">
+                  <img class="zhihu-card-img" src="<%= item.image %>" alt="" loading="lazy">
                 </div>
-              </a>
-            <% } %>
-          </div>
-        <% } else { %>
-          <div class="daily-tab-empty">知乎暂无数据</div>
+              <% } else { %>
+                <span class="zhihu-card-num"><%= i + 1 %></span>
+              <% } %>
+              <div class="zhihu-card-text">
+                <span class="zhihu-card-title"><%= item.title %></span>
+                <span class="zhihu-card-hint"><%= item.hint %></span>
+              </div>
+            </div>
+          </a>
         <% } %>
       </div>
+    </section>
+    <% } %>
+    <% if (hasZhihu && hasWeibo) { %><hr class="short"><% } %>
 
-      <!-- ====== 微博热搜 ====== -->
-      <div class="daily-tab-content" id="tab-weibo" role="tabpanel">
-        <% if (hasWeibo) { %>
-          <ol class="daily-list weibo-list">
-            <% for (var i = 0; i < page.weibo.news.length; i++) {
-              var item = page.weibo.news[i];
-              var hot = fmtHot(item.hot);
-            %>
-              <li class="daily-item weibo-item">
-                <a href="<%= item.url %>" target="_blank" rel="noopener" class="weibo-link">
-                  <span class="weibo-title"><%= item.title %></span>
-                  <% if (hot) { %>
-                    <span class="weibo-hot"><%= hot %></span>
-                  <% } %>
-                </a>
-              </li>
-            <% } %>
-          </ol>
-        <% } else { %>
-          <div class="daily-tab-empty">热搜暂无数据</div>
+    <!-- ====== 微博热点 ====== -->
+    <% if (hasWeibo) { %>
+    <section>
+      <h2 class="section-title">🔥 微博热点</h2>
+      <ol class="daily-list weibo-list">
+        <% for (var i = 0; i < page.weibo.news.length; i++) {
+          var item = page.weibo.news[i];
+          var hot = fmtHot(item.hot);
+        %>
+          <li class="daily-item weibo-item">
+            <a href="<%= item.url %>" target="_blank" rel="noopener" class="weibo-link">
+              <span class="weibo-title"><%= item.title %></span>
+              <% if (hot) { %>
+                <span class="weibo-hot"><%= hot %></span>
+              <% } %>
+            </a>
+          </li>
         <% } %>
-      </div>
+      </ol>
+    </section>
+    <% } %>
 
-    </main>
+    <!-- Footer with update time -->
+    <footer class="daily-footer">
+      <span>更新于 <time><%= displayTimeShort || '—' %></time></span>
+    </footer>
 
   <% } else { %>
     <!-- Empty State -->
@@ -165,22 +124,3 @@ var anyData = hasZaobao || hasZhihu || hasWeibo;
     </div>
   <% } %>
 </div>
-
-<script>
-function switchTab(name) {
-  var tabs = document.querySelectorAll('.daily-tab');
-  var contents = document.querySelectorAll('.daily-tab-content');
-  tabs.forEach(function(t) {
-    t.classList.remove('active');
-    t.setAttribute('aria-selected', 'false');
-  });
-  contents.forEach(function(c) { c.classList.remove('active'); });
-  var tab = document.querySelector('.daily-tab[data-tab="' + name + '"]');
-  var content = document.getElementById('tab-' + name);
-  if (tab) {
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-  }
-  if (content) content.classList.add('active');
-}
-</script>
