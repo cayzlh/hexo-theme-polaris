@@ -1,9 +1,10 @@
 <!-- Daily News Page — Polaris theme -->
 <!-- Three tabs: zaobao / zhihu / weibo -->
 
-<%# Format date %>
+<%# Format date & time for footer %>
 <%
 var displayDate = '';
+var displayTime = '';
 if (page.newsDate) {
   var s = String(page.newsDate);
   var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -11,6 +12,15 @@ if (page.newsDate) {
     displayDate = m[1] + '年' + parseInt(m[2], 10) + '月' + parseInt(m[3], 10) + '日';
   } else {
     displayDate = s;
+  }
+}
+if (page.updateTime) {
+  var t = String(page.updateTime);
+  var tm = t.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})/);
+  if (tm) {
+    displayTime = tm[1] + '年' + parseInt(tm[2], 10) + '月' + parseInt(tm[3], 10) + '日 ' + tm[4] + ':' + tm[5];
+  } else {
+    displayTime = t;
   }
 }
 
@@ -28,17 +38,13 @@ var anyData = hasZaobao || hasZhihu || hasWeibo;
 %>
 
 <div class="daily-page">
-  <h1 class="daily-title">
-    <span class="daily-date"><%= displayDate || '—' %></span>
-  </h1>
-
   <% if (anyData) { %>
 
     <!-- Tab Navigation -->
     <div class="daily-tabs" id="dailyTabs">
-      <button class="daily-tab active" data-tab="zaobao" onclick="switchTab('zaobao')">每日早报</button>
-      <button class="daily-tab" data-tab="zhihu" onclick="switchTab('zhihu')">知乎日报</button>
-      <button class="daily-tab" data-tab="weibo" onclick="switchTab('weibo')">微博热搜</button>
+      <button class="daily-tab active" data-tab="zaobao" onclick="switchTab('zaobao')">📰 每日早报</button>
+      <button class="daily-tab" data-tab="zhihu" onclick="switchTab('zhihu')">💡 知乎日报</button>
+      <button class="daily-tab" data-tab="weibo" onclick="switchTab('weibo')">🔥 微博热搜</button>
     </div>
 
     <!-- ====== 每日早报 ====== -->
@@ -117,6 +123,12 @@ var anyData = hasZaobao || hasZhihu || hasWeibo;
         <div class="daily-tab-empty">热搜暂无数据</div>
       <% } %>
     </div>
+
+    <!-- Footer with update time -->
+    <footer class="daily-footer-bar">
+      <span class="daily-footer-icon">🔄</span>
+      <span class="daily-footer-text">数据更新于 <time class="daily-footer-time"><%= displayTime || '—' %></time></span>
+    </footer>
 
   <% } else { %>
     <!-- Empty State -->
