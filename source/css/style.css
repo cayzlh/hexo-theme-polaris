@@ -2018,7 +2018,7 @@ html.dark .search-highlight {
 }
 
 .subscription-name {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--c-text);
   margin: 0;
@@ -2085,7 +2085,7 @@ html.dark .search-highlight {
 }
 
 .item-title {
-  font-size: 0.92rem;
+  font-size: var(--fs);
   transition: color 0.2s;
 }
 
@@ -2173,7 +2173,7 @@ html.dark .search-highlight {
   }
 
   .item-title {
-    font-size: 0.88rem;
+    font-size: 1rem;
   }
 
   .subscription-item {
