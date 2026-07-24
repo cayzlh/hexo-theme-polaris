@@ -1505,30 +1505,22 @@ html.dark .search-highlight {
 }
 
 /* ===== Daily News Page ===== */
+/* ===== Daily News Page — Left Sidebar + Right Content ===== */
+/* 左侧突破 .content 的 680px 限制，右侧对齐父容器 */
 .daily-page {
-  max-width: var(--mw, 680px);
-  margin: 0 auto;
+  display: flex;
+  gap: 48px;
   padding: 20px 20px 60px;
+  align-items: flex-start;
 }
 
-.daily-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--c-text);
-  text-align: center;
-  margin: 0 0 4px 0;
-}
-
-.daily-date {
-  font-weight: 400;
-  color: var(--c-text-light);
-}
-
-.daily-updatetime {
-  font-size: 0.75rem;
-  color: var(--c-text-light);
-  margin-left: 8px;
-  font-weight: 400;
+/* 宽屏下左侧扩展 140px，使侧边栏更靠左 */
+@media (min-width: 960px) {
+  .daily-page {
+    margin-left: -140px;
+    margin-right: auto;
+    max-width: calc(100% + 140px);
+  }
 }
 
 .daily-divider {
@@ -1568,9 +1560,6 @@ html.dark .search-highlight {
   color: var(--c-text);
   text-decoration: none;
   transition: color 0.2s;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .daily-item a:hover {
@@ -1587,16 +1576,7 @@ html.dark .search-highlight {
   background: transparent;
 }
 
-.daily-footer {
-  margin-top: 2em;
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--c-text-light);
-}
 
-.daily-footer span {
-  margin: 0 4px;
-}
 
 .daily-empty {
   text-align: center;
@@ -1622,10 +1602,12 @@ html.dark .search-highlight {
 
 @media (max-width: 768px) {
   .daily-page {
-    padding: 12px 16px 40px;
-  }
-  .daily-title {
-    font-size: 1.2rem;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 12px 0 40px;
   }
   .daily-item {
     font-size: 0.95rem;
@@ -1639,24 +1621,43 @@ html.dark .search-highlight {
   }
 }
 
-/* ===== Daily News — Tab Navigation ===== */
+/* ===== Daily News — Sidebar ===== */
+.daily-sidebar {
+  flex: 0 0 160px;
+  width: 160px;
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+  padding-right: 20px;
+  border-right: 1px solid var(--c-border);
+}
+
+/* Tab 列表 */
 .daily-tabs {
   display: flex;
-  justify-content: center;
-  gap: 0;
-  margin: 0 0 0 0;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .daily-tab {
-  background: none;
-  border: none;
-  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
   font-size: 0.95rem;
-  color: var(--c-text-light);
+  font-family: inherit;
+  color: var(--c-text-muted);
+  background: transparent;
+  border: none;
+  border-right: 2px solid transparent;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
-  border-bottom: 2px solid transparent;
-  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  border-radius: 0;
 }
 
 .daily-tab:hover {
@@ -1664,9 +1665,42 @@ html.dark .search-highlight {
 }
 
 .daily-tab.active {
-  color: var(--c-text);
-  border-bottom-color: var(--c-link);
+  color: var(--c-accent);
+  border-right-color: var(--c-accent);
   font-weight: 500;
+}
+
+/* Tab 图标 */
+.tab-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* 侧边栏分割线 */
+.daily-sidebar-divider {
+  border: none;
+  border-top: 1px solid var(--c-border);
+  margin: 16px 0 12px 0;
+}
+
+/* 更新时间（固定在侧边栏底部） */
+.daily-update {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: var(--c-text-light);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.daily-update-time {
+  font-style: normal;
+}
+
+/* ===== Content Area ===== */
+.daily-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 680px;
 }
 
 .daily-tab-content {
@@ -1675,6 +1709,7 @@ html.dark .search-highlight {
 
 .daily-tab-content.active {
   display: block;
+  animation: dailyFadeIn 0.25s ease;
 }
 
 .daily-tab-empty {
@@ -1682,6 +1717,64 @@ html.dark .search-highlight {
   padding: 40px 20px;
   color: var(--c-text-light);
   font-size: 0.9rem;
+}
+
+@keyframes dailyFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Responsive: Mobile ===== */
+@media (max-width: 768px) {
+  .daily-sidebar {
+    flex: none;
+    width: 100%;
+    position: relative;
+    top: 0;
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-right: none;
+    border-bottom: 1px solid var(--c-border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+  }
+
+  .daily-tabs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .daily-tab {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-right: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  .daily-tab.active {
+    border-right-color: transparent;
+    border-bottom-color: var(--c-accent);
+  }
+
+  .daily-sidebar-divider {
+    display: none;
+  }
+
+  .daily-update {
+    margin-left: auto;
+    font-size: 0.65rem;
+    white-space: nowrap;
+  }
+
+  .daily-content {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* ===== Daily News — Zhihu Cards ===== */
