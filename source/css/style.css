@@ -169,6 +169,208 @@ hr.dash-dot::before,hr.style-dash-dot::before{
 .archive-date{font-size:.95rem;color:var(--c-text-light);font-variant-numeric:tabular-nums}
 .archive-title{font-size:var(--fs)}
 
+/* 在 PC 端隐藏移动端 FAB 元素（mobile.css 在媒体查询中显示） */
+.fab-group,
+.fab-overlay {
+  display: none;
+}
+
+/* ==========================================
+   归档页面 — 时间线样式（Timeline）
+/* ==========================================
+   归档页面 — 连续时间线 + 刻度标记
+   ========================================== */
+.archive-timeline {
+  max-width: var(--mw);
+  margin: 0 auto;
+  padding: 0 0 40px;
+}
+
+/* ===== 时间线容器 ===== */
+.archive-items {
+  position: relative;
+}
+
+/* ===== 时间线条目 ===== */
+.archive-item {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 5px 0;
+}
+
+/* 日期（YYYY-MM-DD 等宽） */
+.archive-date {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  color: #6B6864;
+  width: 88px;
+  text-align: right;
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+}
+
+html.dark .archive-date {
+  color: #888888;
+}
+
+/* 文章标题 */
+.archive-item .archive-title {
+  font-size: var(--fs);
+  color: #2C2A28;
+  text-decoration: none;
+  transition: color 0.2s;
+  border-bottom: none;
+  line-height: 1.6;
+}
+
+.archive-item .archive-title:hover {
+  color: #8B6B4D;
+}
+
+html.dark .archive-item .archive-title {
+  color: #E8E8E8;
+}
+
+html.dark .archive-item .archive-title:hover {
+  color: #60A5FA;
+}
+
+/* ===== 时间线主体（flex 布局，为右侧刻度尺留位） ===== */
+.archive-timeline-body {
+  display: flex;
+  gap: 0;
+  position: relative;
+}
+
+.archive-items {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== 右侧刻度尺 ===== */
+.timeline-ruler {
+  position: sticky;
+  top: 80px;
+  width: 64px;
+  flex-shrink: 0;
+  margin-left: 4px;
+  align-self: flex-start;
+  display: block;
+}
+
+/* 刻度尺的竖线 */
+.timeline-ruler::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #E5E2DC;
+}
+
+html.dark .timeline-ruler::before {
+  background: #3D3D3D;
+}
+
+/* 每个刻度——短线 + 文字标签（若隐若现） */
+.ruler-tick {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  pointer-events: auto;
+  cursor: default;
+}
+
+/* 刻度短线 */
+.ruler-tick::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6px;
+  height: 1px;
+  background: #C8C2BA;
+  transform: translateY(-50%);
+  transition: background 0.3s;
+}
+
+html.dark .ruler-tick::before {
+  background: #555555;
+}
+
+/* 刻度文字标签——默认若隐若现 */
+.ruler-tick::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.6rem;
+  color: #A09C96;
+  font-weight: 400;
+  white-space: nowrap;
+  opacity: 0.25;
+  transition: opacity 0.3s;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+html.dark .ruler-tick::after {
+  color: #999999;
+}
+
+/* active：滚动到该区域时文字清晰 */
+.ruler-tick.active::after {
+  opacity: 1;
+  color: #1A1816;
+  font-weight: 500;
+}
+
+html.dark .ruler-tick.active::after {
+  color: #F0EDE8;
+}
+
+/* hover：悬停时文字清晰 */
+.ruler-tick:hover::after {
+  opacity: 1;
+}
+
+/* active 时刻度短线加深 */
+.ruler-tick.active::before {
+  background: #8B6B4D;
+}
+
+html.dark .ruler-tick.active::before {
+  background: #60A5FA;
+}
+
+@media (max-width: 1023px) {
+  .timeline-ruler {
+    display: none;
+  }
+}
+
+/* ===== 移动端适配 ===== */
+  .archive-timeline {
+    padding: 0 0 32px;
+  }
+
+  .archive-item {
+    padding: 4px 0;
+    gap: 10px;
+  }
+
+  .archive-date {
+    font-size: 0.8rem;
+    width: 78px;
+  }
+}
+
 /* ===== Paginator ===== */
 .paginator{margin:2em 0;font-size:.9rem;color:var(--c-text-light)}
 .paginator a{color:var(--c-link);margin-right:1em}

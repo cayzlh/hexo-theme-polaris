@@ -242,6 +242,90 @@
   }
 
   // =============================================
+  // 2.16 组合悬浮球（TOC + MENU 融合）
+  // =============================================
+  function initFabGroup() {
+    if (!isMobileView()) return;
+
+    var fabMain = document.getElementById('fabMain');
+    var fabOverlay = document.getElementById('fabOverlay');
+    var fabChildren = document.querySelectorAll('.fab-child');
+    var fabToc = document.getElementById('fabToc');
+    var fabMenu = document.getElementById('fabMenu');
+    var fabDark = document.getElementById('fabDark');
+
+    if (!fabMain || !fabOverlay) return;
+
+    var isOpen = false;
+
+    function toggleFab() {
+      isOpen = !isOpen;
+      fabMain.classList.toggle('open', isOpen);
+      fabChildren.forEach(function (el) { el.classList.toggle('show', isOpen); });
+      fabOverlay.classList.toggle('active', isOpen);
+    }
+
+    function closeFab() {
+      if (isOpen) toggleFab();
+    }
+
+    fabMain.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleFab();
+    });
+
+    fabOverlay.addEventListener('click', closeFab);
+
+    // TOC 子球：复用现有 TOC 面板
+    if (fabToc) {
+      fabToc.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeFab();
+        var panel = document.querySelector('.toc-panel');
+        var panelOverlay = document.querySelector('.toc-panel-overlay');
+        if (panel) {
+          panel.classList.add('open');
+          if (panelOverlay) panelOverlay.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    }
+
+    // MENU 子球：展开导航抽屉
+    if (fabMenu) {
+      fabMenu.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeFab();
+        var drawer = document.querySelector('.nav-drawer');
+        var navOverlay = document.querySelector('.nav-overlay');
+        var toggle = document.querySelector('.nav-toggle');
+        if (drawer) {
+          drawer.classList.add('open');
+          if (navOverlay) navOverlay.classList.add('active');
+          if (toggle) toggle.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    }
+
+    // 暗色模式子球：切换日间/夜间模式
+    if (fabDark) {
+      fabDark.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeFab();
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('polaris-theme',
+          document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      });
+    }
+
+    // ESC 关闭
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) closeFab();
+    });
+  }
+
+  // =============================================
   // 初始化
   // =============================================
   function init() {
@@ -249,6 +333,7 @@
     initMobileToc();
     initDossierSidebar();
     initDossierMobileNav();
+    initFabGroup();
 
     // 监听视口变化：当从移动端切换到 PC 端时，
     // 清理可能残留的移动端状态
@@ -270,6 +355,14 @@
         if (toggle) toggle.classList.remove('open');
         if (panel) panel.classList.remove('open');
         if (panelOverlay) panelOverlay.classList.remove('active');
+
+        // 关闭组合悬浮球
+        var fabMain = document.getElementById('fabMain');
+        var fabOverlay = document.getElementById('fabOverlay');
+        var fabChildren = document.querySelectorAll('.fab-child');
+        if (fabMain) fabMain.classList.remove('open');
+        if (fabOverlay) fabOverlay.classList.remove('active');
+        fabChildren.forEach(function (el) { el.classList.remove('show'); });
       }
     });
   }

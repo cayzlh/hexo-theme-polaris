@@ -210,6 +210,7 @@
 @media (max-width: 768px) {
   .post-list li {
     margin-bottom: 0.5em;
+    padding: 10px 0;
   }
 
   .post-list a {
@@ -218,11 +219,12 @@
   }
 
   .post-list-date {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   .post-list-title {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
   .archive-list li {
@@ -256,26 +258,62 @@
     line-height: 1.35;
   }
 
+  /* 标题左侧竖线装饰 */
   .post-body h1 {
-    font-size: 1.6rem;
-    margin: 1.8em 0 0.6em;
+    font-size: 1.5rem;
+    margin-top: 1.6em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+    padding-left: 6px;
+    border-left: 4px solid var(--c-accent, #8B6B4D);
+  }
+
+  html.dark .post-body h1 {
+    border-left-color: #60A5FA;
   }
 
   .post-body h2 {
-    font-size: 1.3rem;
-    margin: 1.6em 0 0.5em;
-    padding-left: 12px;
+    font-size: 1.25rem;
+    margin-top: 1.6em;
+    margin-bottom: 0.4em;
+    line-height: 1.4;
+    padding-left: 5px;
+    border-left: 3px solid var(--c-accent, #8B6B4D);
+  }
+
+  html.dark .post-body h2 {
+    border-left-color: #60A5FA;
   }
 
   .post-body h3 {
     font-size: 1.05rem;
-    margin: 1.3em 0 0.35em;
-    padding-left: 10px;
+    margin-top: 1.3em;
+    margin-bottom: 0.3em;
+    line-height: 1.5;
+    padding-left: 4px;
+    border-left: 2px solid var(--c-border);
   }
 
   .post-body h4 {
     font-size: 0.95rem;
-    margin: 1em 0 0.3em;
+    margin-top: 1.0em;
+    margin-bottom: 0.2em;
+    line-height: 1.6;
+    padding-left: 4px;
+    border-left: 2px solid var(--c-border-weak);
+  }
+
+  /* 标题后紧跟正文的间距微调 */
+  .post-body h1 + p,
+  .post-body h2 + p,
+  .post-body h3 + p,
+  .post-body h4 + p {
+    margin-top: 0.2em;
+  }
+
+  /* 移动端隐藏 headerlink 锚点图标，避免占用标题左侧空间 */
+  .post-body a.headerlink {
+    display: none !important;
   }
 
   .post-body h5 {
@@ -1023,5 +1061,180 @@
   /* 隐藏 PC 端侧边栏折叠中的已有导航项（如果有冲突） */
   .dossier-mobile-nav-section {
     display: none;
+  }
+}
+
+/* ============================================
+   2.16 组合悬浮球（TOC + MENU 融合）
+   ============================================ */
+@media (max-width: 768px) {
+  /* 隐藏旧的独立 TOC FAB，由组合悬浮球替代 */
+  .toc-fab {
+    display: none !important;
+  }
+
+  /* 顶部汉堡菜单按钮已由悬浮球 MENU 功能替代 */
+  .nav-toggle {
+    display: none !important;
+  }
+
+  /* 顶部导航栏暗色模式开关已由悬浮球暗色子球替代 */
+  .header .nav > .dark-toggle {
+    display: none !important;
+  }
+
+  /* ===== 组合悬浮球容器 ===== */
+  .fab-group {
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    right: 20px;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ===== 子功能球 ===== */
+  .fab-child {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #FAFAF7;
+    border: 1px solid #E5E2DC;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.25s ease;
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    font-size: 18px;
+    color: #2C2A28;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .fab-child.show {
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .fab-child:active {
+    transform: scale(0.88);
+  }
+
+  .fab-child .fab-label {
+    font-size: 8px;
+    font-weight: 500;
+    color: #6B6864;
+    margin-top: 1px;
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+
+  [data-theme="dark"] .fab-child {
+    background: #2A2A2A;
+    border-color: #3D3D3D;
+    color: #E8E8E8;
+  }
+
+  [data-theme="dark"] .fab-child .fab-label {
+    color: #888888;
+  }
+
+  /* 暗色模式子球图标切换 */
+  #fabDark .icon-dark { display: none; }
+  [data-theme="dark"] #fabDark .icon-light { display: none; }
+  [data-theme="dark"] #fabDark .icon-dark { display: inline; }
+  #fabDark .fab-label { margin-top: 0; }
+
+  /* ===== 主悬浮球 ===== */
+  .fab-main {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #8B6B4D;
+    border: none;
+    box-shadow: 0 4px 16px rgba(139, 107, 77, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+                background 0.2s;
+    font-size: 22px;
+    color: #fff;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .fab-main:active {
+    transform: scale(0.92);
+  }
+
+  .fab-main.open {
+    transform: rotate(45deg);
+  }
+
+  [data-theme="dark"] .fab-main {
+    background: #60A5FA;
+    box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3);
+  }
+
+  /* ===== 遮罩 ===== */
+  .fab-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.15);
+    z-index: 140;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+
+  .fab-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* 深色模式遮罩 */
+  [data-theme="dark"] .fab-overlay {
+    background: rgba(0,0,0,0.35);
+  }
+
+  /* 在移动端默认显示（media query 已隔离 PC 端） */
+  .fab-group,
+  .fab-overlay {
+    display: flex;
+  }
+}
+
+/* ============================================
+   2.17 归档时间线 — 移动端覆盖
+   ============================================
+   覆盖 mobile.css 中通用规则
+   ============================================ */
+@media (max-width: 768px) {
+  .archive-item .archive-date {
+    font-size: 0.8rem;
+    width: 78px;
+  }
+
+  .archive-item .archive-title {
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .archive-item {
+    padding: 4px 0;
+    gap: 10px;
   }
 }

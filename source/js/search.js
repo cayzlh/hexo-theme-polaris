@@ -1,20 +1,29 @@
 /**
  * Polaris — Archive search
- * Real-time filtering of archive articles by title / tags / categories / content.
+ * Real-time filtering of archive articles.
+ * Supports continuous timeline (.archive-item) and list (.archive-list li) modes.
  */
 (function() {
   'use strict';
 
   // === DOM refs ===
   var input = document.querySelector('.archive-search-input');
+  var timeline = document.querySelector('.archive-timeline');
   var list = document.querySelector('.archive-list');
-  var items = list ? list.querySelectorAll('li') : [];
   var countEl = document.querySelector('.archive-search-count');
   var emptyEl = document.querySelector('.archive-empty');
 
-  if (!input || !items.length) return;
+  if (!input) return;
 
-  // === Config (from theme, with defaults) ===
+  // === Detect mode ===
+  var isTimeline = !!timeline;
+  var items = isTimeline
+    ? timeline.querySelectorAll('.archive-item')
+    : (list ? list.querySelectorAll('li') : []);
+
+  if (!items.length) return;
+
+  // === Config ===
   var debounceDelay = parseInt(input.getAttribute('data-debounce'), 10) || 200;
   var highlightEnabled = input.getAttribute('data-highlight') !== 'false';
 
@@ -23,35 +32,27 @@
 
   // === Utilities ===
 
-  // Escape special regex characters
   function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
-  // Highlight matching text in an element
   function highlightText(el, query) {
     if (!el) return;
-
-    // Cache original text on first call
     if (!el.hasAttribute('data-original')) {
       el.setAttribute('data-original', el.textContent);
     }
-
     var original = el.getAttribute('data-original');
-
     if (!query) {
-      el.textContent = original;  // restore plain text (removes previous highlights)
+      el.textContent = original;
       return;
     }
-
-    // Case-insensitive regex
     var regex = new RegExp('(' + escapeRegExp(query) + ')', 'gi');
     el.innerHTML = original.replace(regex, '<span class="search-highlight">$1</span>');
   }
 
-  // Remove highlights from all title elements
   function clearHighlights() {
-    var titles = list.querySelectorAll('.archive-title');
+    var container = isTimeline ? timeline : list;
+    var titles = container.querySelectorAll('.archive-title');
     for (var i = 0; i < titles.length; i++) {
       var t = titles[i];
       if (t.hasAttribute('data-original')) {
@@ -60,12 +61,31 @@
     }
   }
 
+  // Toggle marker visibility based on visible items after it
+  function updateMarkers() {
+    if (!isTimeline) return;
+    var markers = timeline.querySelectorAll('.archive-marker');
+    for (var m = 0; m < markers.length; m++) {
+      var marker = markers[m];
+      var item = marker.nextElementSibling;
+      var hasVisible = false;
+      // Scan forward until next marker or end
+      while (item && !item.classList.contains('archive-marker')) {
+        if (item.classList.contains('archive-item') && item.style.display !== 'none') {
+          hasVisible = true;
+          break;
+        }
+        item = item.nextElementSibling;
+      }
+      marker.style.display = hasVisible ? '' : 'none';
+    }
+  }
+
   // === Main search ===
   function performSearch(query) {
     var trimmed = query.trim().toLowerCase();
     var matchCount = 0;
 
-    // Clear old highlights first
     clearHighlights();
 
     for (var i = 0; i < items.length; i++) {
@@ -81,10 +101,8 @@
         item.style.display = '';
         matchCount++;
 
-        // Highlight matched text in title
         if (highlightEnabled && trimmed !== '') {
           var titleEl = item.querySelector('.archive-title');
-          // Only highlight when title actually matches
           if (title.indexOf(trimmed) !== -1) {
             highlightText(titleEl, trimmed);
           }
@@ -93,6 +111,9 @@
         item.style.display = 'none';
       }
     }
+
+    // Sync marker visibility with filtered items
+    updateMarkers();
 
     // Update count
     if (countEl) {
@@ -113,12 +134,10 @@
   function debounce(fn, delay) {
     var timer = null;
     return function() {
-      var context = this;
+      var ctx = this;
       var args = arguments;
       clearTimeout(timer);
-      timer = setTimeout(function() {
-        fn.apply(context, args);
-      }, delay);
+      timer = setTimeout(function() { fn.apply(ctx, args); }, delay);
     };
   }
 
@@ -129,6 +148,5 @@
 
   input.addEventListener('input', debouncedSearch);
 
-  // Initial render: show all
   performSearch('');
 })();

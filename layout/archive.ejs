@@ -1,66 +1,83 @@
-<%# 归档页面 - 文章列表 + 搜索功能 %>
+<%# 归档页面 - 连续时间线 + 右侧刻度尺 %>
 
-<%# 搜索框 %>
-<% if (theme.archive && theme.archive.search_enable !== false) { %>
-  <div class="archive-search">
-    <span class="archive-search-icon">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="m21 21-4.35-4.35"/>
-      </svg>
-    </span>
-    <input
-      type="text"
-      class="archive-search-input"
-      placeholder="<%= theme.archive.search_placeholder || '搜索文章标题...' %>"
-      aria-label="搜索文章"
-      autocomplete="off"
-      data-debounce="<%= theme.archive.search_debounce || 200 %>"
-      data-highlight="<%= theme.archive.highlight_match !== false ? 'true' : 'false' %>"
-    >
-  </div>
-  <% if (theme.archive.show_match_count !== false) { %>
-    <div class="archive-search-count">共 <%= page.posts.length %> 篇文章</div>
-  <% } %>
-<% } %>
+<%
+// ============================================
+// 数据整理：构建连续时间线
+// 所有文章按时间倒序排列
+// ============================================
+var sorted = [];
+page.posts.each(function(post) {
+  sorted.push(post);
+});
+%>
 
-<%# 文章列表 %>
-<ul class="archive-list">
-  <% page.posts.each(function(post) { %>
-    <li
-      data-title="<%= post.title %>"
-      data-tags="<%= post.tags ? post.tags.map(function(t) { return t.name; }).join(',') : '' %>"
-      data-categories="<%= post.categories ? post.categories.map(function(c) { return c.name; }).join(',') : '' %>"
-      data-content="<%= (post.excerpt || post.content.replace(/<[^>]*>/g, '')).substring(0, 200).replace(/"/g, '&quot;') %>"
-    >
-      <a href="<%= url_for(post.path) %>">
-        <time class="archive-date" datetime="<%= date_xml(post.date) %>">
-          <%= date(post.date, 'YYYY-MM-DD') %>
-        </time>
-        &nbsp;<span class="archive-title"><%= post.title %></span>
-      </a>
-    </li>
-  <% }); %>
-</ul>
-
-<%# 空状态 %>
-<% if (theme.archive && theme.archive.search_enable !== false) { %>
-  <div class="archive-empty" style="display: none;">
-    <div class="archive-empty-icon">
-      <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="m21 21-4.35-4.35"/>
-        <line x1="8" y1="11" x2="14" y2="11"/>
-      </svg>
+<div class="archive-timeline">
+  <%# 搜索框 %>
+  <% if (theme.archive && theme.archive.search_enable !== false) { %>
+    <div class="archive-search">
+      <span class="archive-search-icon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </span>
+      <input
+        type="text"
+        class="archive-search-input"
+        placeholder="<%= theme.archive.search_placeholder || '搜索文章标题...' %>"
+        aria-label="搜索文章"
+        autocomplete="off"
+        data-debounce="<%= theme.archive.search_debounce || 200 %>"
+        data-highlight="<%= theme.archive.highlight_match !== false ? 'true' : 'false' %>"
+      >
     </div>
-    <p class="archive-empty-text">没有找到匹配的文章</p>
-    <p class="archive-empty-hint">试试其他关键词吧</p>
+    <% if (theme.archive.show_match_count !== false) { %>
+      <div class="archive-search-count">共 <%= page.posts.length %> 篇文章</div>
+    <% } %>
+  <% } %>
+
+  <%# 时间线主体 %>
+  <div class="archive-timeline-body">
+    <div class="archive-items">
+      <% for (var i = 0; i < sorted.length; i++) { %>
+        <% var post = sorted[i]; %>
+        <div class="archive-item"
+          data-date="<%= post.date.format('YYYY-MM') %>"
+          data-title="<%= post.title %>"
+          data-tags="<%= post.tags ? post.tags.map(function(t) { return t.name; }).join(',') : '' %>"
+          data-categories="<%= post.categories ? post.categories.map(function(c) { return c.name; }).join(',') : '' %>"
+          data-content="<%= (post.excerpt || post.content.replace(/<[^>]*>/g, '')).substring(0, 200).replace(/"/g, '&quot;') %>"
+        >
+          <span class="archive-date"><%= post.date.format('YYYY-MM-DD') %></span>
+          <a href="<%= url_for(post.path) %>" class="archive-title"><%= post.title %></a>
+        </div>
+      <% } %>
+    </div>
+
+    <%# 右侧刻度尺容器（由 JS 动态构建） %>
+    <div class="timeline-ruler" aria-hidden="true"></div>
   </div>
-<% } %>
 
-<%- partial('_partial/paginator') %>
+  <%# 空状态 %>
+  <% if (theme.archive && theme.archive.search_enable !== false) { %>
+    <div class="archive-empty" style="display: none;">
+      <div class="archive-empty-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </div>
+      <p class="archive-empty-text">没有找到匹配的文章</p>
+      <p class="archive-empty-hint">试试其他关键词吧</p>
+    </div>
+  <% } %>
 
-<%# 搜索 JS（仅在启用搜索时加载） %>
+  <%- partial('_partial/paginator') %>
+</div>
+
+<%# 搜索 JS + 刻度尺 JS %>
 <% if (theme.archive && theme.archive.search_enable !== false) { %>
   <script src="<%= url_for('/js/search.js') %>" defer></script>
 <% } %>
+<script src="<%= url_for('/js/archive-ruler.js') %>" defer></script>
