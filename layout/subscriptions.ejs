@@ -1,56 +1,49 @@
 <!-- Subscriptions Page — Polaris theme -->
 <div class="subscriptions-page">
-  <!-- ====== 订阅源列表 ====== -->
   <div class="subscriptions-list">
-    <% if (page.isEmpty || !page.feeds || page.feeds.length === 0) { %>
+    <% if (page.isEmpty || !page.items || page.items.length === 0) { %>
       <div class="subscriptions-empty">
         <div class="subscriptions-empty-icon">📡</div>
         <p class="subscriptions-empty-text">暂无订阅内容</p>
         <p class="subscriptions-empty-hint">请在 <code>source/_data/subscriptions.yml</code> 中配置订阅源</p>
       </div>
     <% } else { %>
-      <% for (var i = 0; i < page.feeds.length; i++) {
-        var feed = page.feeds[i];
-        if (!feed) continue;
+      <% for (var i = 0; i < page.items.length; i++) {
+        var item = page.items[i];
+        if (!item) continue;
       %>
-        <div class="subscription-item<%= feed.error ? ' subscription-error' : '' %>">
-          <div class="subscription-header">
-            <span class="subscription-icon"><%= feed.icon || '📡' %></span>
-            <div class="subscription-meta">
-              <h2 class="subscription-name">
-                <a href="<%= feed.homepage || feed.url || '#' %>" target="_blank" rel="noopener"><%= feed.name || '未知来源' %></a>
-              </h2>
-              <% if (page.showDescription && feed.description) { %>
-                <p class="subscription-desc"><%= feed.description %></p>
-              <% } %>
-            </div>
-            <% if (page.showCount && !feed.error && feed.items) { %>
-              <span class="subscription-count"><%= feed.items.length %> 条更新</span>
-            <% } %>
+        <div class="sub-item">
+          <div class="sub-item-header">
+            <a class="sub-item-source" href="<%= item.sourceHomepage || '#' %>" target="_blank" rel="noopener">
+              <span class="sub-source-icon"><%= item.sourceIcon || '📡' %></span>
+              <span class="sub-source-name"><%= item.sourceName %></span>
+            </a>
+            <span class="sub-item-date"><%= formatDate(item.pubDate) %></span>
           </div>
-
-          <% if (feed.error) { %>
-            <p class="subscription-error-msg">⚠️ 获取失败，请检查订阅源</p>
-          <% } else if (!feed.items || feed.items.length === 0) { %>
-            <p class="subscription-empty-msg">暂无更新</p>
-          <% } else { %>
-            <ul class="subscription-items">
-              <% for (var j = 0; j < feed.items.length; j++) {
-                var item = feed.items[j];
-                if (!item) continue;
-              %>
-                <li>
-                  <a href="<%= item.link || '#' %>" target="_blank" rel="noopener" class="item-link">
-                    <span class="item-date"><%= formatDate(item.pubDate) %></span>
-                    <span class="item-title"><%= item.title || '无标题' %></span>
-                  </a>
-                </li>
-              <% } %>
-            </ul>
-          <% } %>
+          <a class="sub-item-link" href="<%= item.link || '#' %>" target="_blank" rel="noopener">
+            <%= item.title || '无标题' %>
+          </a>
         </div>
       <% } %>
     <% } %>
   </div>
 
+  <!-- ====== 分页 ====== -->
+  <% if (!page.isEmpty && page.total > 1) { %>
+  <div class="sub-paginator">
+    <% if (page.prev) { %>
+      <a class="sub-paginator-btn prev" href="<%= url_for(page.prev_link) %>" aria-label="上一页">‹</a>
+    <% } else { %>
+      <span class="sub-paginator-btn disabled">‹</span>
+    <% } %>
+
+    <span class="sub-paginator-info"><%= page.current %> / <%= page.total %></span>
+
+    <% if (page.next) { %>
+      <a class="sub-paginator-btn next" href="<%= url_for(page.next_link) %>" aria-label="下一页">›</a>
+    <% } else { %>
+      <span class="sub-paginator-btn disabled">›</span>
+    <% } %>
+  </div>
+  <% } %>
 </div>
