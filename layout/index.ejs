@@ -30,7 +30,7 @@ var randomPosts = pool.slice(0, randomCount);
 <!-- Intro -->
 <div class="intro">
   <% introLines.forEach(function(line) { %>
-    <p><%= line %></p>
+    <%- markdown(line) %>
   <% }); %>
 </div>
 
