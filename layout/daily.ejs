@@ -1,121 +1,307 @@
-<!-- Daily News Page — Polaris theme -->
-<!-- Vertical layout: 微语 → 每日早报 → 知乎日报 → 微博热点 -->
+<!-- Daily News — Polaris v2 | 60s-API driven -->
+<!-- Build-time static + frontend incremental refresh -->
 
-<%# Format time for footer %>
 <%
+// ===== Data helpers =====
 var displayTimeShort = '';
 if (page.updateTime) {
   var ts = String(page.updateTime);
   var tms = ts.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})/);
-  if (tms) {
-    displayTimeShort = tms[2] + '-' + tms[3] + ' ' + tms[4] + ':' + tms[5];
-  } else {
-    displayTimeShort = ts;
-  }
+  if (tms) displayTimeShort = tms[2] + '-' + tms[3] + ' ' + tms[4] + ':' + tms[5];
+  else displayTimeShort = ts;
 }
 
+function trunc(s, n) { return s && s.length > n ? s.slice(0, n) + '…' : s || ''; }
+
 function fmtHot(n) {
-  if (n === null || n === undefined || n === '') return '';
+  if (n == null || n === '') return '';
   n = Number(n);
-  if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '\u4E07';
+  if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '万';
   return String(n);
 }
 
-var hasZaobao = page.zaobao && page.zaobao.news && page.zaobao.news.length > 0;
-var hasZhihu  = page.zhihu  && page.zhihu.news  && page.zhihu.news.length > 0;
-var hasWeibo  = page.weibo  && page.weibo.news  && page.weibo.news.length > 0;
-var hasWeiyu  = page.zaobao && page.zaobao.motto && page.zaobao.motto.trim() !== '';
-var anyData = hasZaobao || hasZhihu || hasWeibo || hasWeiyu;
-var hasContent = hasZaobao || hasZhihu || hasWeibo;
+// ===== Extract data =====
+var daily  = page.daily  || {};
+var zaobao = page.zaobao || { news: [] };
+var history = (page.todayInHistory && page.todayInHistory.items) || [];
+var zhihu  = page.zhihu  || { news: [] };
+var weibo  = page.weibo  || { news: [] };
+var aiNews = page.aiNews || { news: [] };
+
+var hasZaobao = zaobao.news.length > 0;
+var hasHistory = history.length > 0;
+var hasZhihu  = zhihu.news.length  > 0;
+var hasWeibo  = weibo.news.length  > 0;
+var hasAi     = aiNews.news.length > 0;
+var hasAny    = hasZaobao || hasHistory || hasZhihu || hasWeibo || hasAi;
+
+var API_BASE = 'https://glance.cayzlh.com';
 %>
 
-<div class="daily-page">
-  <% if (anyData) { %>
+<div class="daily-page" id="daily-app">
+  <% if (hasAny) { %>
 
-    <!-- ====== 微语 ====== -->
-    <% if (hasWeiyu) { %>
-    <blockquote class="daily-weiyu">&ldquo;<%= page.zaobao.motto %>&rdquo;</blockquote>
-    <% if (hasContent) { %><hr class="short"><% } %>
-    <% } %>
-
-    <!-- ====== 每日早报 ====== -->
-    <% if (hasZaobao) { %>
-    <section>
-      <h2 class="section-title">📰 每日早报</h2>
-      <ol class="daily-list">
-        <% for (var i = 0; i < page.zaobao.news.length; i++) {
-          var item = page.zaobao.news[i];
-        %>
-          <li class="daily-item">
-            <% if (item.url) { %>
-              <a href="<%= item.url %>" target="_blank" rel="noopener"><%= item.title %></a>
-            <% } else { %>
-              <span class="daily-item-text"><%= item.title %></span>
-            <% } %>
-          </li>
+  <!-- ==============================
+       日签区
+       ============================== -->
+  <div class="dm-head">
+    <div class="dm-head-row">
+      <div class="dm-date">
+        <span class="dm-date-main"><%= daily.dateDisplay || daily.date %></span>
+        <span class="dm-date-sub">
+          <%= daily.dayOfWeek || '' %>
+          <% if (daily.lunarDate) { %>· <%= daily.lunarDate %><% } %>
+        </span>
+      </div>
+      <div class="dm-badges" id="dm-badges">
+        <% if (daily.nextWeekend != null) { %>
+        <span class="dm-badge" id="b-weekend">周末还有 <%= daily.nextWeekend %> 天</span>
         <% } %>
-      </ol>
-    </section>
-    <% } %>
-    <% if (hasZaobao && (hasZhihu || hasWeibo)) { %><hr class="short"><% } %>
-
-    <!-- ====== 知乎日报 ====== -->
-    <% if (hasZhihu) { %>
-    <section>
-      <h2 class="section-title">💡 知乎日报</h2>
-      <div class="zhihu-cards">
-        <% for (var i = 0; i < page.zhihu.news.length; i++) {
-          var item = page.zhihu.news[i];
-        %>
-          <a class="zhihu-card" href="<%= item.url %>" target="_blank" rel="noopener">
-            <div class="zhihu-card-body">
-              <% if (item.image) { %>
-                <div class="zhihu-card-img-wrap">
-                  <img class="zhihu-card-img" src="<%= item.image %>" alt="" loading="lazy">
-                </div>
-              <% } else { %>
-                <span class="zhihu-card-num"><%= i + 1 %></span>
-              <% } %>
-              <div class="zhihu-card-text">
-                <span class="zhihu-card-title"><%= item.title %></span>
-                <span class="zhihu-card-hint"><%= item.hint %></span>
-              </div>
-            </div>
-          </a>
+        <% if (daily.luckRank != null) { %>
+        <span class="dm-badge" id="b-luck">🍀 运势 <%= daily.luckRank %></span>
         <% } %>
       </div>
-    </section>
+    </div>
+    <% if (daily.tip) { %>
+    <blockquote class="dm-tip" id="dm-tip">“<%= daily.tip %>”</blockquote>
     <% } %>
-    <% if (hasZhihu && hasWeibo) { %><hr class="short"><% } %>
+  </div>
 
-    <!-- ====== 微博热点 ====== -->
-    <% if (hasWeibo) { %>
-    <section>
-      <h2 class="section-title">🔥 微博热点</h2>
-      <ol class="daily-list weibo-list">
-        <% for (var i = 0; i < page.weibo.news.length; i++) {
-          var item = page.weibo.news[i];
-          var hot = fmtHot(item.hot);
-        %>
-          <li class="daily-item weibo-item">
-            <a href="<%= item.url %>" target="_blank" rel="noopener" class="weibo-link">
-              <span class="weibo-title"><%= item.title %></span>
-              <% if (hot) { %>
-                <span class="weibo-hot"><%= hot %></span>
-              <% } %>
+  <!-- ==============================
+       每日早报
+       ============================== -->
+  <% if (hasZaobao) { %>
+  <section class="ds">
+    <h2 class="ds-title">
+        📰 每日早报
+        <button class="ds-copy" id="copy-zaobao" title="复制全部"></button>
+      </h2>
+    <ol class="dz-list" id="z-list">
+      <% for (var i = 0; i < zaobao.news.length; i++) { %>
+      <li class="dz-item"<%= i >= 5 ? ' aria-hidden="true"' : '' %>><%= zaobao.news[i].title %></li>
+      <% } %>
+    </ol>
+    <% if (zaobao.news.length > 5) { %>
+    <button class="dm-toggle" id="z-toggle">展开全部 <%= zaobao.news.length %> 条 ▾</button>
+    <% } %>
+  </section>
+  <% } %>
+
+  <!-- ==============================
+       AI 资讯
+       ============================== -->
+  <% if (hasAi) { %>
+  <section class="ds">
+    <h2 class="ds-title">🤖 AI 资讯</h2>
+    <div class="dai" id="ai-list">
+      <% for (var i = 0; i < Math.min(aiNews.news.length, 4); i++) {
+        var item = aiNews.news[i];
+      %>
+      <div class="dai-item">
+        <a href="<%= item.link %>" target="_blank" rel="noopener" class="dai-title"><%= item.title %></a>
+        <span class="dai-detail"><%= trunc(item.detail, 100) %></span>
+        <span class="dai-source"><%= item.source %></span>
+      </div>
+      <% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- ==============================
+       历史上的今天
+       ============================== -->
+  <% if (hasHistory) { %>
+  <section class="ds">
+    <h2 class="ds-title">📅 历史上的今天</h2>
+    <div class="dtl" id="dtl-list">
+      <% for (var i = 0; i < Math.min(history.length, 5); i++) {
+        var ev = history[i];
+        var tag = '';
+        if (ev.event_type === 'birth') tag = '诞辰';
+        else if (ev.event_type === 'death') tag = '逝世';
+      %>
+      <div class="dtl-item">
+        <time class="dtl-year"><%= ev.year %></time>
+        <div class="dtl-body">
+          <a href="<%= ev.link || '#' %>" target="_blank" rel="noopener" class="dtl-title"><%= ev.title %></a>
+          <% if (tag) { %><span class="dtl-tag"><%= tag %></span><% } %>
+          <span class="dtl-desc"><%= trunc(ev.description, 80) %></span>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- ==============================
+       热搜双栏
+       ============================== -->
+  <% if (hasZhihu || hasWeibo) { %>
+  <section class="ds">
+    <h2 class="ds-title">🔥 热搜榜</h2>
+    <div class="dgrid" id="dgrid">
+      <% if (hasZhihu) { %>
+      <div class="dgrid-col" id="zhihu-col">
+        <h3 class="dgrid-ct">💡 知乎热榜</h3>
+        <ol class="dgrid-list">
+          <% for (var i = 0; i < Math.min(zhihu.news.length, 8); i++) {
+            var item = zhihu.news[i];
+          %>
+          <li>
+            <a href="<%= item.url %>" target="_blank" rel="noopener">
+              <span class="dgrid-t"><%= item.title %></span>
+              <span class="dgrid-m"><%= item.hint %></span>
             </a>
           </li>
-        <% } %>
-      </ol>
-    </section>
-    <% } %>
+          <% } %>
+        </ol>
+      </div>
+      <% } %>
+      <% if (hasWeibo) { %>
+      <div class="dgrid-col" id="weibo-col">
+        <h3 class="dgrid-ct">🔥 微博热搜</h3>
+        <ol class="dgrid-list">
+          <% for (var i = 0; i < Math.min(weibo.news.length, 10); i++) {
+            var item = weibo.news[i];
+            var h = fmtHot(item.hot);
+          %>
+          <li>
+            <a href="<%= item.url %>" target="_blank" rel="noopener">
+              <span class="dgrid-t"><%= item.title %></span>
+              <% if (h) { %><span class="dgrid-hot"><%= h %></span><% } %>
+            </a>
+          </li>
+          <% } %>
+        </ol>
+      </div>
+      <% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- ==============================
+       Hacker News
+       ============================== -->
+  <% if (page.hackerNews && page.hackerNews.news && page.hackerNews.news.length > 0) { %>
+  <section class="ds">
+    <h2 class="ds-title">🌐 Hacker News</h2>
+    <div class="dhn" id="hn-list">
+      <% for (var i = 0; i < Math.min(page.hackerNews.news.length, 8); i++) {
+        var hn = page.hackerNews.news[i];
+      %>
+      <div class="dhn-item">
+        <a href="<%= hn.link %>" target="_blank" rel="noopener" class="dhn-title"><%= hn.title %></a>
+        <span class="dhn-meta"><%= hn.score %> 分 · by <%= hn.author %></span>
+      </div>
+      <% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- ==============================
+       Footer
+       ============================== -->
+  <div class="daily-footer">
+    <span>更新于 <time id="update-time"><%= displayTimeShort %></time></span>
+  </div>
 
   <% } else { %>
-    <!-- Empty State -->
-    <div class="daily-empty">
-      <div class="daily-empty-icon">&#128235;</div>
-      <p class="daily-empty-text">今日资讯加载中…</p>
-      <p class="daily-empty-hint">请稍后再来</p>
-    </div>
+  <!-- Empty -->
+  <div class="daily-empty">
+    <div class="daily-empty-icon">&#128235;</div>
+    <p class="daily-empty-text">今日资讯加载中…</p>
+    <p class="daily-empty-hint">请稍后再来</p>
+  </div>
   <% } %>
 </div>
+
+<!-- ==============================
+     前端增量更新
+     ============================== -->
+<script>
+(function(doc) {
+  'use strict';
+
+  /* ---- copy zaobao ---- */
+  var copyBtn = doc.getElementById('copy-zaobao');
+  var zList2  = doc.getElementById('z-list');
+  if (copyBtn && zList2) {
+    copyBtn.addEventListener('click', function() {
+      var items = zList2.querySelectorAll('.dz-item');
+      var text = '';
+      for (var i = 0; i < items.length; i++) {
+        text += (i + 1) + '. ' + items[i].textContent.trim() + '\n';
+      }
+      navigator.clipboard.writeText(text.trim()).then(function() {
+        copyBtn.classList.add('done');
+        setTimeout(function() { copyBtn.classList.remove('done'); }, 2000);
+      }).catch(function() {});
+    });
+  }
+
+  /* ---- toggle zaobao ---- */
+  var toggle = doc.getElementById('z-toggle');
+  var zList  = doc.getElementById('z-list');
+  if (toggle && zList) {
+    zList.classList.add('collapsed');
+    toggle.addEventListener('click', function() {
+      var isOpen = !zList.classList.contains('collapsed');
+      zList.classList.toggle('collapsed');
+      this.textContent = isOpen ? ('展开全部 ' + zList.children.length + ' 条 ▾') : '收起 ▴';
+    });
+  }
+
+  /* ---- incremental refresh ---- */
+  var today = '<%= daily.date || "" %>';
+  if (!today) return;
+
+  var cacheKey = 'daily_v2_' + today;
+
+  fetch('<%= API_BASE %>/v2/60s')
+    .then(function(r) { return r.json(); })
+    .then(function(res) {
+      if (!res || res.code !== 200) return;
+      var d = res.data;
+      if (!d || d.date !== today) return;
+
+      /* update tip */
+      var tipEl = doc.getElementById('dm-tip');
+      if (tipEl && d.tip) tipEl.innerHTML = '&ldquo;' + d.tip + '&rdquo;';
+
+      /* update time */
+      var timeEl = doc.getElementById('update-time');
+      if (timeEl && d.api_updated) {
+        var t = d.api_updated;
+        var m = t.match(/\d{2}:\d{2}/);
+        if (m) timeEl.textContent = m[0];
+      }
+
+      /* fetch luck & weekend in parallel */
+      return Promise.all([
+        fetch('<%= API_BASE %>/v2/moyu').then(function(r) { return r.json(); }),
+        fetch('<%= API_BASE %>/v2/luck').then(function(r) { return r.json(); })
+      ]);
+    })
+    .then(function(results) {
+      if (!results) return;
+      var moyu = results[0], luck = results[1];
+
+      /* update weekend badge */
+      var wb = doc.getElementById('b-weekend');
+      if (wb && moyu && moyu.code === 200 && moyu.data) {
+        var nw = moyu.data.nextWeekend;
+        if (nw && nw.daysUntil != null) {
+          wb.textContent = '周末还有 ' + nw.daysUntil + ' 天';
+        }
+      }
+
+      /* update luck badge */
+      var lb = doc.getElementById('b-luck');
+      if (lb && luck && luck.code === 200 && luck.data) {
+        lb.textContent = '🍀 运势 ' + luck.data.luck_rank;
+      }
+    })
+    .catch(function() { /* silent */ });
+
+})(document);
+</script>

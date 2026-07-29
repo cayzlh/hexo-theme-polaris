@@ -26,8 +26,8 @@ menu:
     url: /archives/
   - name: Dossier
     url: /dossier/
-  - name: About
-    url: /about/
+  - name: 拾遗
+    url: /curio/
   - name: News
     url: /news/
   - name: Rss
@@ -337,26 +337,23 @@ archive:
 # =============================================
 # Alapi (每日资讯数据源)
 # =============================================
-# API 数据源配置，驱动 /news/ 页面的三个 Tab：
+# 60s-API 数据源配置，驱动 /news/ 页面的三个栏目：
 #   每日早报 / 知乎日报 / 微博热搜
 #
-# Token 获取：https://alapi.cn
-#
-# 缓存机制：首次构建后写入 .daily_cache.json，同一天内重复构建不再请求 API，
-#           避免本地开发（hexo server）频繁消耗免费额度。
-#
-# Token 直接填写在上方 alapi.token 中
-alapi:
+# 数据来源：自部署的 60s-API（Cloudflare Workers）
+# 缓存机制：首次构建后写入 .daily_cache.json，同一天内重复构建不再请求 API
+#           避免本地开发（hexo server）频繁请求
+daily:
   # 总开关（false 时所有资讯显示空状态，可用于本地开发）
   enable: true
-  # API Token（建议通过环境变量或站点 _config.yml 设置，此处留空）
-  token: 'gfweyja2xjcn9afftymjwwmarjykvz'
-  # 每日早报
+  # 60s-API 地址
+  api_base: 'https://glance.cayzlh.com'
+  # 每日早报（来自 /v2/60s）
   zaobao:
     enable: true
-  # 知乎日报
+  # 知乎日报（来自 /v2/zhihu）
   zhihu:
     enable: true
-  # 微博热搜
+  # 微博热搜（来自 /v2/weibo）
   weibo:
     enable: true

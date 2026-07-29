@@ -1516,6 +1516,8 @@ html.dark .project-card-start--outline:hover{
   opacity: 0.85;
 }
 
+html.dark .footer a:hover{color:#6BB5FF}
+
 /* ===== Responsive ===== */
 @media(max-width:600px){
   :root{--fs:17px}
@@ -1707,15 +1709,368 @@ html.dark .search-highlight {
 }
 
 /* ===== Daily News Page ===== */
-/* ===== Daily News Page — Vertical Layout ===== */
+/* ===== Daily News v2 — Polaris ===== */
+
 .daily-page {
   padding: 20px 0 60px;
 }
 
-.daily-page .section-title {
-  margin-top: 0;
+/* ---- 日签 ---- */
+.dm-head {
+  margin-bottom: 2.5em;
+  padding-bottom: 1.5em;
+  border-bottom: 1px solid var(--c-border);
 }
 
+.dm-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.dm-date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dm-date-main {
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--c-text);
+}
+
+.dm-date-sub {
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+}
+
+.dm-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dm-badge {
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  color: var(--c-text-light);
+  white-space: nowrap;
+}
+
+.dm-tip {
+  margin: 1em 0 0;
+  padding: 0;
+  font-size: 1rem;
+  color: var(--c-text-muted);
+  font-style: italic;
+  line-height: 1.7;
+  border: none;
+  background: transparent;
+}
+
+/* ---- section ---- */
+.ds {
+  margin-bottom: 2.2em;
+}
+
+.ds-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.8em;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-copy {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.ds-copy::before {
+  content: '📋';
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.ds-copy:hover {
+  border-color: var(--c-text-light);
+  background: var(--c-bg-tertiary);
+}
+
+.ds-copy.done {
+  border-color: var(--c-text-light);
+  pointer-events: none;
+}
+
+.ds-copy.done::before {
+  content: '✓';
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+/* ---- 早报 ---- */
+.dz-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: zc;
+}
+
+.dz-list.collapsed .dz-item:nth-child(n+6) {
+  display: none;
+}
+
+.dz-item {
+  counter-increment: zc;
+  padding: 5px 0 5px 2em;
+  font-size: var(--fs);
+  line-height: var(--lh);
+  position: relative;
+}
+
+.dz-item::before {
+  content: counter(zc) ".";
+  position: absolute;
+  left: 0;
+  color: var(--c-text-light);
+  font-size: 0.9rem;
+  min-width: 2em;
+}
+
+.dm-toggle {
+  display: block;
+  margin: 10px auto 0;
+  padding: 6px 20px;
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  background: none;
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.dm-toggle:hover {
+  color: var(--c-text);
+  border-color: var(--c-text-light);
+}
+
+/* ---- 历史上的今天 ---- */
+.dtl {
+  display: flex;
+  flex-direction: column;
+}
+
+.dtl-item {
+  display: flex;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.dtl-item:last-child {
+  border-bottom: none;
+}
+
+.dtl-year {
+  flex-shrink: 0;
+  width: 4em;
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  font-weight: 500;
+  padding-top: 1px;
+  text-align: right;
+}
+
+.dtl-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.dtl-title {
+  color: var(--c-text);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: var(--fs);
+  line-height: var(--lh);
+}
+
+.dtl-title:hover {
+  color: var(--c-link);
+}
+
+.dtl-tag {
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  color: var(--c-text-light);
+  white-space: nowrap;
+}
+
+.dtl-desc {
+  width: 100%;
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  line-height: 1.5;
+}
+
+/* ---- 热搜双栏 ---- */
+.dgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  min-width: 0;
+}
+
+.dgrid-col {
+  min-width: 0;
+}
+
+.dgrid-ct {
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin: 0 0 0.6em;
+}
+
+.dgrid-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: dg;
+}
+
+.dgrid-list li {
+  counter-increment: dg;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--c-border);
+  display: flex;
+  align-items: baseline;
+}
+
+.dgrid-list li:last-child {
+  border-bottom: none;
+}
+
+.dgrid-list li::before {
+  content: counter(dg);
+  flex-shrink: 0;
+  width: 20px;
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+  font-weight: 500;
+  text-align: right;
+  margin-right: 10px;
+}
+
+.dgrid-list li:nth-child(1)::before,
+.dgrid-list li:nth-child(2)::before,
+.dgrid-list li:nth-child(3)::before {
+  color: var(--c-accent, #e03);
+  font-weight: 600;
+}
+
+.dgrid-list a {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: var(--c-text);
+}
+
+.dgrid-list a:hover .dgrid-t {
+  color: var(--c-link);
+}
+
+.dgrid-t {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs);
+  line-height: var(--lh);
+}
+
+.dgrid-m,
+.dgrid-hot {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+  white-space: nowrap;
+}
+
+/* ---- AI 资讯 ---- */
+.dai {
+  display: flex;
+  flex-direction: column;
+}
+
+.dai-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.dai-item:last-child {
+  border-bottom: none;
+}
+
+.dai-title {
+  display: block;
+  font-size: var(--fs);
+  font-weight: 500;
+  color: var(--c-text);
+  text-decoration: none;
+  line-height: var(--lh);
+  margin-bottom: 2px;
+}
+
+.dai-title:hover {
+  color: var(--c-link);
+}
+
+.dai-detail {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  line-height: 1.5;
+  margin-bottom: 2px;
+}
+
+.dai-source {
+  font-size: 0.75rem;
+  color: var(--c-text-light);
+}
+
+/* ---- footer ---- */
 .daily-footer {
   margin-top: 2.5em;
   text-align: center;
@@ -1723,225 +2078,23 @@ html.dark .search-highlight {
   color: var(--c-text-light);
 }
 
-.daily-weiyu {
-  margin: 0.5em 0 0;
-  padding: 0.8em 1.5em;
-  font-size: 1rem;
-  color: var(--c-text-muted);
-  font-style: italic;
-  text-align: center;
-  border: none;
-  background: transparent;
-  line-height: 1.7;
-}
-
-.daily-divider {
-  border: none;
-  border-top: 1.5px solid var(--c-border);
-  width: 64px;
-  margin: 1.2em auto;
-}
-
-.daily-list {
-  padding-left: 0;
-  margin: 1em 0;
-  list-style: none;
-  counter-reset: news-counter;
-}
-
-.daily-item {
-  counter-increment: news-counter;
-  padding: 6px 0;
-  font-size: var(--fs);
-  line-height: var(--lh);
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.daily-item::before {
-  content: counter(news-counter) ".";
-  color: var(--c-text-light);
-  font-size: 0.9rem;
-  min-width: 24px;
-  flex-shrink: 0;
-}
-
-.daily-item a,
-.daily-item-text {
-  color: var(--c-text);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.daily-item a:hover {
-  color: var(--c-link);
-}
-
-.daily-motto {
-  margin: 1.2em 0;
-  padding: 0.6em 1.2em;
-  font-size: 0.95rem;
-  color: var(--c-text-muted);
-  font-style: italic;
-  border-left: 3px solid var(--c-border);
-  background: transparent;
-}
-
-
-
+/* ---- empty ---- */
 .daily-empty {
   text-align: center;
   padding: 60px 20px;
 }
 
-.daily-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
+.daily-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.daily-empty-text { font-size: 1rem; color: var(--c-text-muted); margin: 0 0 4px; }
+.daily-empty-hint { font-size: 0.85rem; color: var(--c-text-light); margin: 0; }
 
-.daily-empty-text {
-  font-size: 1rem;
-  color: var(--c-text-muted);
-  margin: 0 0 4px 0;
-}
-
-.daily-empty-hint {
-  font-size: 0.85rem;
-  color: var(--c-text-light);
-  margin: 0;
-}
-
+/* ---- mobile ---- */
 @media (max-width: 768px) {
-  .daily-page {
-    padding: 12px 0 40px;
-  }
-  .daily-item {
-    font-size: 0.95rem;
-    padding: 4px 0;
-  }
-  .zhihu-card {
-    padding: 14px 16px;
-  }
-  .zhihu-card-title {
-    font-size: var(--fs);
-  }
-}
-
-/* ===== Daily News — Zhihu Cards ===== */
-.zhihu-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.zhihu-card {
-  display: block;
-  text-decoration: none;
-  border-bottom: 1px solid var(--c-border);
-  padding: 16px 0;
-  transition: opacity 0.2s;
-}
-
-.zhihu-card:last-child {
-  border-bottom: none;
-}
-
-.zhihu-card:hover {
-  opacity: 0.75;
-}
-
-.zhihu-card-body {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.zhihu-card-img-wrap {
-  flex-shrink: 0;
-  width: 80px;
-  height: 60px;
-  border-radius: 4px;
-  overflow: hidden;
-  background: var(--c-bg-tertiary);
-}
-
-.zhihu-card-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.zhihu-card-num {
-  flex-shrink: 0;
-  width: 24px;
-  font-size: 0.85rem;
-  color: var(--c-link);
-  font-weight: 500;
-  line-height: 1.6;
-  text-align: right;
-}
-
-.zhihu-card-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: 4px;
-}
-
-.zhihu-card-title {
-  font-size: var(--fs);
-  color: var(--c-text);
-  line-height: var(--lh);
-  transition: color 0.2s;
-}
-
-.zhihu-card:hover .zhihu-card-title {
-  color: var(--c-link);
-}
-
-.zhihu-card-hint {
-  font-size: 0.78rem;
-  color: var(--c-text-light);
-  line-height: 1.4;
-}
-
-/* ===== Daily News — Weibo Hot Search ===== */
-.weibo-item::before {
-  min-width: 28px;
-  font-weight: 500;
-}
-
-/* Highlight top 3 */
-.weibo-item:nth-child(1)::before,
-.weibo-item:nth-child(2)::before,
-.weibo-item:nth-child(3)::before {
-  color: var(--c-accent);
-  font-weight: 600;
-}
-
-.weibo-link {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px;
-}
-
-.weibo-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  min-width: 0;
-}
-
-.weibo-hot {
-  flex-shrink: 0;
-  font-size: 0.78rem;
-  color: var(--c-text-light);
-  white-space: nowrap;
+  .daily-page { padding: 12px 0 40px; }
+  .dm-date-main { font-size: 1.1rem; }
+  .dgrid { grid-template-columns: 1fr; gap: 20px; }
+  .dz-item { font-size: 0.95rem; padding: 4px 0 4px 2em; }
+  .dtl-year { width: 3.4em; font-size: 0.8rem; }
 }
 
 /* ==========================================
@@ -2129,3 +2282,177 @@ html.dark .search-highlight {
     font-size: 1rem;
   }
 }
+
+/* ===== About — Bing wallpaper ===== */
+.ab-hero {
+  margin: 0 0 2em;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  background: var(--c-bg-secondary);
+}
+
+.ab-hero-img-wrap {
+  width: 100%;
+  max-height: 320px;
+  overflow: hidden;
+  background: var(--c-bg-tertiary);
+}
+
+.ab-hero-img-wrap img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+.ab-hero-body {
+  padding: 16px 20px;
+}
+
+.ab-hero-body h2 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ab-hero-body p {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--c-text-light);
+  line-height: 1.5;
+}
+
+.ab-hero-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ab-btn {
+  font-size: 0.78rem;
+  padding: 4px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--c-text-light);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.ab-btn:hover {
+  border-color: var(--c-text-light);
+  color: var(--c-text);
+}
+
+/* ===== About — Epic free games ===== */
+.ab-epic {
+  margin-top: 2em;
+}
+
+.ab-epic-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.8em;
+  letter-spacing: 0.02em;
+}
+
+.ab-epic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ab-epic-card {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--c-border);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ab-epic-card:last-child {
+  border-bottom: none;
+}
+
+.ab-epic-card:hover {
+  opacity: 0.8;
+}
+
+.ab-epic-img-wrap {
+  flex-shrink: 0;
+  width: 100px;
+  height: 56px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--c-bg-tertiary);
+}
+
+.ab-epic-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ab-epic-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ab-epic-name {
+  font-size: var(--fs);
+  font-weight: 500;
+  color: var(--c-text);
+  line-height: var(--lh);
+}
+
+.ab-epic-price {
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+}
+
+.ab-epic-date {
+  font-size: 0.75rem;
+  color: var(--c-text-light);
+}
+
+
+
+/* ===== Daily — Hacker News ===== */
+.dhn {
+  display: flex;
+  flex-direction: column;
+}
+
+.dhn-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.dhn-item:last-child {
+  border-bottom: none;
+}
+
+.dhn-title {
+  display: block;
+  font-size: var(--fs);
+  font-weight: 500;
+  color: var(--c-text);
+  text-decoration: none;
+  line-height: var(--lh);
+  margin-bottom: 2px;
+}
+
+.dhn-title:hover {
+  color: var(--c-link);
+}
+
+.dhn-meta {
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+}
+
