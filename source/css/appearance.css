@@ -1,0 +1,717 @@
+/* ==========================================================================
+   Polaris — OnePage 外观层
+   --------------------------------------------------------------------------
+   Loaded after tokens.css and style.css (see layout/_partial/head.ejs).
+   Two jobs:
+
+   1. Type system. One Maple Mono family for the whole site, with the code /
+      prose split expressed in features, not in font-family:
+        · prose  — ligatures OFF, so `->` `!=` `=>` stay as typed
+        · code   — ligatures ON, so `->` renders as →, `!=` as ≠, as a
+                    programming font intends
+   2. Reading surface. Warm paper (light) / warm brown (dark), quieter
+      chrome, ruled code blocks, OnePage 彩色排版 for headings / strong / em.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Font features — the code / prose split
+   ========================================================================== */
+
+/* Site-wide: no ligatures. Maple Mono's operator ligatures live in `calt`,
+   which browsers apply by default to every text run — so it has to be turned
+   off explicitly, not just left alone. `common-ligatures` stays off too so no
+   `liga`/`clig` substitution can sneak back in. */
+html,
+body {
+  -webkit-font-feature-settings: 'calt' 0, 'liga' 0, 'clig' 0, 'dlig' 0;
+  font-feature-settings: 'calt' 0, 'liga' 0, 'clig' 0, 'dlig' 0;
+  font-variant-ligatures: none;
+}
+
+/* Code: ligatures on. `calt` is what produces -> => != == <= >= |>
+   <| :: ?? ... in Maple Mono; `zero` keeps 0 slashed; `tnum` keeps columns
+   aligned. This is the whole point of using a programming font here. */
+.code-block,
+.code-block pre,
+.code-block code,
+.code-body,
+.code-body pre,
+.code-body code,
+.post-body pre,
+.post-body pre code,
+.post-body .highlight,
+.post-body .highlight code,
+.highlight pre,
+.highlight code,
+pre,
+code,
+.hljs,
+[class*='language-'],
+kbd,
+samp {
+  -webkit-font-feature-settings: 'calt' 1, 'liga' 1, 'clig' 1, 'zero' 1, 'tnum' 1;
+  font-feature-settings: 'calt' 1, 'liga' 1, 'clig' 1, 'zero' 1, 'tnum' 1;
+  font-variant-ligatures: contextual common-ligatures;
+}
+
+/* Prose elements inside a post must never ligate, even though they may sit
+   inside a wrapper that turned ligatures on. `code` is excluded on purpose. */
+.post-body h1, .post-body h2, .post-body h3, .post-body h4,
+.post-body h5, .post-body h6, .post-body p, .post-body li,
+.post-body blockquote, .post-body td, .post-body th,
+.intro, .post-list, .archive-item, .post-title,
+.footer, .post-meta, .nav-link {
+  font-variant-ligatures: none;
+  -webkit-font-feature-settings: 'calt' 0, 'liga' 0;
+  font-feature-settings: 'calt' 0, 'liga' 0;
+}
+
+/* ==========================================================================
+   2. Type scale — tabular mono needs slightly different proportions than a
+   sans: a touch more size, a touch less line-height, and real letter-spacing
+   joins the mono grid instead of fighting it.
+   ========================================================================== */
+body {
+  font-family: var(--font-prose);
+  font-size: var(--fs);
+  line-height: var(--lh);
+  letter-spacing: 0.002em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-kerning: normal;
+}
+
+/* Line length follows characters, not pixels: at 0.55em average advance a
+   680px measure is ~82 cols, which is right for technical prose. */
+
+/* Body copy */
+.post-body { font-size: var(--fs); line-height: 1.78; }
+.post-body p { margin-bottom: 1.15em; }
+.post-body li { margin-bottom: 0.28em; }
+
+/* ==========================================================================
+   3. Headings — OnePage 彩色排版
+   H1 靛蓝 / H2 紫 / H3 青 / H4 陶红 / H5 赭黄, weights 650-580 with negative
+   tracking. Themed by token so dark mode gets a lifted variant.
+   ========================================================================== */
+.post-title {
+  font-size: 1.95rem;
+  font-weight: 650;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
+  color: var(--c-text);
+  margin-bottom: 0.7em;
+}
+
+.post-body h1,
+.post-body h2,
+.post-body h3,
+.post-body h4 {
+  letter-spacing: -0.012em;
+  color: var(--c-text);
+}
+
+.post-body h1 {
+  font-size: 1.78rem;
+  font-weight: 650;
+  color: var(--typo-h1);
+  margin: 2.1em 0 0.7em;
+  line-height: 1.32;
+}
+
+/* H2 got the heaviest ornament before (4px accent bar). OnePage's signature is
+   colour, not chrome — the bar is gone, the colour carries the rank. */
+.post-body h2 {
+  font-size: 1.38rem;
+  font-weight: 620;
+  color: var(--typo-h2);
+  margin: 1.95em 0 0.62em;
+  padding-left: 0;
+  border-left: none;
+  line-height: 1.42;
+}
+
+.post-body h3 {
+  font-size: 1.14rem;
+  font-weight: 580;
+  color: var(--typo-h3);
+  margin: 1.55em 0 0.45em;
+  padding-left: 0;
+  border-left: none;
+  line-height: 1.5;
+}
+
+.post-body h4 {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--typo-h4);
+  margin: 1.25em 0 0.35em;
+  line-height: 1.55;
+}
+
+.post-body h5 {
+  font-size: 0.95rem;
+  font-weight: 550;
+  color: var(--typo-h5);
+  margin: 1.05em 0 0.25em;
+  line-height: 1.6;
+}
+
+.post-body h6 {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--typo-h6);
+  margin: 0.9em 0 0.2em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Section headings on non-post pages (home list, archive, dossier) */
+.section-title,
+.page-heading {
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--c-text);
+  margin-bottom: 0.9em;
+}
+
+/* ==========================================================================
+   4. Inline semantics
+   ========================================================================== */
+.post-body strong {
+  color: var(--typo-bold);
+  font-weight: 700;
+}
+
+.post-body em {
+  color: var(--typo-italic);
+  font-style: italic;
+}
+
+.post-body strong em,
+.post-body em strong {
+  color: var(--typo-bold);
+}
+
+/* Links: thin accent underline with a generous offset, per OnePage. */
+.post-body a {
+  color: var(--c-link);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-accent-line);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
+}
+
+.post-body a:hover {
+  color: var(--c-link-hover);
+  border-bottom-color: var(--c-link-hover);
+  background: var(--c-accent-soft);
+}
+
+/* Visited state is not OnePage-like and confuses long-form reading; drop it
+   rather than tint it purple. */
+.post-body a:visited {
+  color: var(--c-link);
+  border-bottom-color: var(--c-accent-line);
+}
+
+/* Bare URLs and anchors inside headings */
+.post-body h1 a, .post-body h2 a, .post-body h3 a,
+.post-body h4 a, .post-body h5 a, .post-body h6 a {
+  color: inherit;
+  border-bottom: none;
+}
+
+/* ==========================================================================
+   5. Quote / rule / list
+   ========================================================================== */
+.post-body blockquote {
+  margin: 1.4em 0;
+  padding: 0.9em 1.15em;
+  background: var(--c-bg-secondary);
+  border-left: 2px solid var(--c-accent-line);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--c-text-muted);
+  font-style: normal;
+}
+
+.post-body blockquote p { margin-bottom: 0.6em; }
+.post-body blockquote p:last-child { margin-bottom: 0; }
+
+.post-body blockquote cite {
+  display: block;
+  margin-top: 0.5em;
+  font-size: 0.82rem;
+  color: var(--c-text-light);
+  font-style: normal;
+}
+
+html.dark .post-body blockquote {
+  background: var(--c-bg-secondary);
+  border-left-color: var(--c-accent-line);
+  color: var(--c-text-muted);
+}
+
+/* Lists: keep the marker column tight so mono bullets don't push text off
+   the measure. */
+.post-body ul,
+.post-body ol {
+  margin: 0.7em 0 1.1em;
+  padding-left: 1.35em;
+}
+
+.post-body ul { list-style: disc; }
+.post-body ul ul { list-style: circle; margin: 0.25em 0 0.25em; }
+.post-body ol { list-style: decimal; }
+.post-body li::marker { color: var(--c-text-faint); }
+.post-body ol > li::marker { color: var(--c-accent); }
+
+.post-body hr {
+  border: none;
+  border-top: 1px solid var(--c-hr);
+  width: 100%;
+  margin: 2.4em auto;
+}
+
+/* ==========================================================================
+   6. Code
+   ========================================================================== */
+/* Inline code: OnePage's pill — soft tint of the accent, no hard border. */
+.post-body code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--c-code-inline-bg);
+  color: var(--c-code-inline);
+  padding: 0.12em 0.42em;
+  border-radius: 5px;
+  word-break: break-word;
+}
+
+html.dark .post-body code {
+  background: var(--c-code-inline-bg);
+  color: var(--c-code-inline);
+}
+
+/* Code block chrome: one hairline border, no drop shadow, header sits flush. */
+.code-block {
+  margin: 1.6em 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-code-border);
+}
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 14px;
+  background: var(--c-code-head);
+  border-bottom: 1px solid var(--c-code-border);
+  font-size: 12.5px;
+  min-height: 36px;
+}
+
+.code-filename {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--c-text-muted);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.code-lang-badge {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--c-text-muted);
+  background: transparent;
+  border: 1px solid var(--c-code-border);
+  padding: 1px 8px;
+  border-radius: 999px;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+.code-copy-btn {
+  border-radius: 999px;
+}
+
+.code-body pre {
+  padding: 16px 18px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--c-text);
+}
+
+html.dark .code-body pre { color: var(--c-text); }
+
+.code-body pre,
+.code-body code {
+  /* mono blocks read better with a hair of extra tracking disabled — the
+     em box already carries the rhythm */
+  letter-spacing: 0;
+  tab-size: 4;
+}
+
+.post-body pre:not(.highlight):not(.code-block pre) {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--c-code-border);
+  background: var(--c-code-bg);
+  font-size: 13.5px;
+  line-height: 1.62;
+}
+
+/* ==========================================================================
+   7. Chrome — header, nav, footer, toggles
+   Header keeps the two-line structure (title/subtitle, then nav) but loses the
+   underline-on-active in favour of a quiet pill, closer to OnePage's tabs. */
+.header {
+  padding: 3.2rem 1rem 0;
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--c-text);
+}
+
+.site-title:hover { color: var(--c-link); }
+
+.site-subtitle {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--c-text-light);
+  letter-spacing: 0.02em;
+}
+
+.header-bottom { margin-top: 14px; }
+
+.nav {
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  color: var(--c-text-muted);
+  padding: 4px 9px;
+  border-radius: 6px;
+  transition: color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
+}
+
+.nav-link:hover {
+  color: var(--c-text);
+  background: var(--c-hover-bg);
+}
+
+.nav-link.active {
+  color: var(--c-accent);
+  background: var(--c-accent-soft);
+  font-weight: 500;
+}
+
+/* old underline indicator is replaced by the pill above */
+.nav-link.active::after { content: none; }
+
+.dropdown-menu {
+  background: var(--c-card-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(30, 24, 18, 0.09);
+  padding: 5px;
+}
+
+html.dark .dropdown-menu {
+  background: var(--c-bg-secondary);
+  border-color: var(--c-border);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+}
+
+.dropdown-item {
+  border-radius: 5px;
+  padding: 7px 12px;
+  font-size: 0.88rem;
+}
+
+.dropdown-item:hover {
+  background: var(--c-hover-bg);
+  color: var(--c-text);
+}
+
+.dropdown-divider {
+  background: var(--c-border);
+  margin: 5px 8px;
+}
+
+.dark-toggle {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: 7px;
+  color: var(--c-text-light);
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+
+.dark-toggle:hover {
+  background: var(--c-hover-bg);
+  border-color: var(--c-border-strong);
+  color: var(--c-text);
+}
+
+.footer {
+  padding: 2.4rem 1rem 3.4rem;
+}
+
+.footer-inner {
+  font-size: 0.78rem;
+  color: var(--c-text-light);
+}
+
+.footer a {
+  color: var(--c-text-light);
+  border-bottom: 1px solid transparent;
+}
+
+.footer a:hover {
+  color: var(--c-accent);
+  border-bottom-color: var(--c-accent-line);
+}
+
+/* ==========================================================================
+   8. Lists on index / archive — the date gutter becomes a mono column, the
+   title is the only thing that gains colour on hover.
+   ========================================================================== */
+.post-list li {
+  margin-bottom: 0.5em;
+  line-height: 1.62;
+}
+
+.post-list a {
+  color: var(--c-text);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.post-list a:hover { color: var(--c-link); }
+.post-list a:hover .post-list-title { text-decoration: underline; text-decoration-color: var(--c-accent-line); text-underline-offset: 3px; }
+
+.post-list-date {
+  font-size: 0.84rem;
+  color: var(--c-text-light);
+  letter-spacing: 0;
+}
+
+.archive-item { padding: 4px 0; }
+
+.archive-date {
+  font-size: 0.82rem;
+  color: var(--c-text-light);
+  width: 92px;
+}
+
+.archive-item .archive-title { color: var(--c-text); }
+.archive-item .archive-title:hover { color: var(--c-link); }
+
+/* ==========================================================================
+   9. TOC — quieter, accent rail instead of a 3px block
+   ========================================================================== */
+.toc-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--c-text-light);
+  border-bottom-color: var(--c-border);
+}
+
+.toc-link {
+  color: var(--c-text-muted);
+  font-size: 0.8rem;
+}
+
+.toc-level-2 .toc-link { font-weight: 500; }
+
+.toc-link:hover { color: var(--c-text); }
+
+.toc-link.active {
+  color: var(--c-accent);
+  font-weight: 600;
+}
+
+.toc-link.active::before {
+  width: 2px;
+  background: var(--c-accent);
+}
+
+.toc-item .toc-list { border-left-color: var(--c-border); }
+
+.toc-footer { border-top-color: var(--c-border); }
+.toc-back-top { color: var(--c-text-light); }
+.toc-back-top:hover { color: var(--c-accent); }
+
+/* ==========================================================================
+   10. Post meta, paginator, tag chips
+   ========================================================================== */
+.post-meta {
+  margin-top: 2.6em;
+  padding-top: 1em;
+  border-top: 1px solid var(--c-border);
+  font-size: 0.82rem;
+  color: var(--c-text-light);
+}
+
+.post-meta a { color: var(--c-text-light); }
+.post-meta a:hover { color: var(--c-accent); }
+
+.post-tags a {
+  display: inline-block;
+  padding: 1px 8px;
+  margin-right: 4px;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  color: var(--c-text-light);
+  transition: border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+
+.post-tags a:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent-line);
+}
+
+.post-nav {
+  margin: 2.2em 0;
+  font-size: 0.88rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+
+/* ==========================================================================
+   11. Tables
+   ========================================================================== */
+.post-body table {
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.88em;
+  font-variant-ligatures: none;
+}
+
+.post-body th {
+  font-weight: 600;
+  background: var(--c-bg-secondary);
+  color: var(--c-text);
+}
+
+.post-body th,
+.post-body td {
+  border: 1px solid var(--c-border);
+  padding: 0.5em 0.75em;
+}
+
+.post-body tbody tr:nth-child(2n) { background: color-mix(in srgb, var(--c-bg-secondary) 55%, transparent); }
+
+/* ==========================================================================
+   12. Selection / focus / scrollbar
+   ========================================================================== */
+::selection {
+  background: var(--c-sel);
+  color: var(--c-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border-strong) transparent;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--c-border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--c-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--c-text-faint); }
+
+/* Mobile drawer: flat rows, accent text for the current page — the pill used
+   in the desktop nav would fight the full-width row rhythm. */
+.nav-drawer .nav-link {
+  border-radius: 0;
+  padding: 13px 0;
+  color: var(--c-text);
+  background: none;
+  font-size: 1rem;
+}
+
+.nav-drawer .nav-link:hover { background: none; color: var(--c-accent); }
+
+.nav-drawer .nav-link.active {
+  color: var(--c-accent);
+  background: none;
+  font-weight: 600;
+}
+
+.nav-drawer .nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--c-accent);
+}
+
+.nav-drawer .nav-link { position: relative; }
+
+.nav-overlay { background: rgba(30, 24, 18, 0.35); }
+html.dark .nav-overlay { background: rgba(0, 0, 0, 0.55); }
+
+/* ==========================================================================
+   13. Responsive
+   ========================================================================== */
+@media (max-width: 600px) {
+  body { font-size: 15.5px; }
+  .header { padding-top: 2.2rem; }
+  .site-title { font-size: 1.32rem; }
+  .post-title { font-size: 1.5rem; }
+  .post-body h1 { font-size: 1.42rem; }
+  .post-body h2 { font-size: 1.2rem; }
+  .post-body h3 { font-size: 1.06rem; }
+  .post-body { line-height: 1.72; }
+  .archive-date { width: 82px; font-size: 0.78rem; }
+
+  /* The home list stacks date above title on narrow screens (mobile.css); the
+     whitespace between them would otherwise render as an empty text line. */
+  .post-list a { font-size: 0; }
+  .post-list-date { display: block; margin-bottom: 3px; font-size: 0.75rem; white-space: nowrap; }
+  .post-list-title { display: block; font-size: var(--fs); }
+}
+
+/* Respect a reader who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

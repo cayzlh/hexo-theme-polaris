@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Polaris — design tokens
+   --------------------------------------------------------------------------
+   The palette/motion language follows OnePage (macOS paper × geek editor):
+   light = warm white paper + deep-teal accent, dark = warm brown + cool
+   teal anchor. Nothing here is a raw colour in a component file — every
+   component reads a token, so the two modes stay in lockstep.
+
+   Loaded before style.css / mobile.css by layout/_partial/head.ejs.
+   ========================================================================== */
+
+:root {
+  /* ---- surfaces: warm white paper ---- */
+  --c-bg: #faf7f1;
+  --c-bg-secondary: #f3efe7;
+  --c-bg-tertiary: #ede8de;
+  --c-hover-bg: #f0ebe2;
+  --c-card-bg: #fdfbf7;
+
+  /* ---- ink ---- */
+  --c-text: #3d3730;
+  --c-text-light: #79705f;   /* 4.0:1 on paper — metadata that still reads */
+  --c-text-muted: #6b6255;
+  --c-text-faint: #857b6b;   /* 3.9:1 — small labels only, never body copy */
+
+  /* ---- accent: deep teal ---- */
+  --c-link: #0e6e63;
+  --c-link-hover: #0a544b;
+  --c-accent: #0e6e63;
+  --c-accent-soft: rgba(14, 110, 99, 0.1);
+  --c-accent-line: rgba(14, 110, 99, 0.28);
+
+  /* ---- lines ---- */
+  --c-border: #e6e0d4;
+  --c-border-strong: #d5ccbb;
+  --c-hr: rgba(61, 55, 48, 0.16);
+  --c-hr-strong: rgba(61, 55, 48, 0.26);
+  --c-hr-weak: rgba(61, 55, 48, 0.08);
+  --c-sel: #e5dbca;
+
+  /* ---- typographic colour roles (OnePage 彩色排版) ---- */
+  --typo-h1: #1d345c;
+  --typo-h2: #52377a;
+  --typo-h3: #0e6e63;
+  --typo-h4: #b8475a;
+  --typo-h5: #8c5d17;
+  --typo-h6: #857c6e;
+  --typo-bold: #c2410c;
+  --typo-italic: #4a704f;
+
+  /* ---- code ---- */
+  --c-code-bg: #f3efe7;
+  --c-code-border: #e2dbcd;
+  --c-code-head: #ece6da;
+  --c-code-inline: #b8475a;
+  --c-code-inline-bg: rgba(184, 71, 90, 0.07);
+
+  /* ---- type ---- */
+  --font-mono: 'Maple Mono NF CN', 'JetBrains Mono', 'SF Mono', Menlo, Consolas,
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', monospace;
+  --font-prose: var(--font-mono);
+  /* Reading size is tuned for a monospaced face: 18px of mono occupies
+     noticeably more width than 18px of sans, so the measure is kept at 680px
+     with a 16.5px body size (~76 columns). */
+  --fs: 16.5px;
+  --lh: 1.72;
+  --mw: 680px;
+
+  /* ---- geometry ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  /* ---- motion ---- */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 0.14s;
+  --dur-base: 0.22s;
+
+  color-scheme: light;
+}
+
+html.dark {
+  /* ---- surfaces: warm brown, cool anchor ---- */
+  --c-bg: #262322;
+  --c-bg-secondary: #2d2927;
+  --c-bg-tertiary: #1f1c1b;
+  --c-hover-bg: #332e2c;
+  --c-card-bg: #2b2725;
+
+  /* ---- ink ---- */
+  --c-text: #cfc7bd;
+  --c-text-light: #a49c90;
+  --c-text-muted: #948d83;
+  --c-text-faint: #8a837a;   /* 4.2:1 on the warm brown ground */
+
+  /* ---- accent: light teal ---- */
+  --c-link: #6db3a3;
+  --c-link-hover: #8cc9ba;
+  --c-accent: #6db3a3;
+  --c-accent-soft: rgba(109, 179, 163, 0.14);
+  --c-accent-line: rgba(109, 179, 163, 0.32);
+
+  /* ---- lines ---- */
+  --c-border: #3a3532;
+  --c-border-strong: #4a443f;
+  --c-hr: rgba(207, 199, 189, 0.14);
+  --c-hr-strong: rgba(207, 199, 189, 0.22);
+  --c-hr-weak: rgba(207, 199, 189, 0.07);
+  --c-sel: #43392f;
+
+  /* ---- typographic colour roles, lifted one stop for the dark ground ---- */
+  --typo-h1: #7fa3de;
+  --typo-h2: #b596e6;
+  --typo-h3: #6db3a3;
+  --typo-h4: #e08d9c;
+  --typo-h5: #d8b476;
+  --typo-h6: #948d83;
+  --typo-bold: #e89a60;
+  --typo-italic: #a6ba9d;
+
+  /* ---- code ---- */
+  --c-code-bg: #201d1c;
+  --c-code-border: #352f2c;
+  --c-code-head: #2a2624;
+  --c-code-inline: #e8927c;
+  --c-code-inline-bg: rgba(232, 146, 124, 0.1);
+
+  color-scheme: dark;
+}

@@ -26,7 +26,8 @@ Polaris is a personal blog theme for [Hexo](https://hexo.io/), designed with a f
 - **Page Transitions** — View Transitions API with JS fade fallback
 - **Responsive** — Mobile-first design, adapts from phone to desktop
 - **Custom Pages** — Drop plain Markdown/HTML into a `custom/` directory
-- **Typography-first** — Carefully tuned font size, line height, and max-width for comfortable reading
+- **Typography-first** — Self-hosted **Maple Mono NF CN** across the whole site. Operator ligatures (`->` `!=` `=>` …) fire in code only; running prose always renders the literal characters
+- **OnePage visual language** — Warm-paper light mode + warm-brown dark mode, teal accent, colour-coded heading ranks (indigo → violet → teal → terracotta)
 - **RSS Subscriptions** — Built-in `/subscriptions/` page that fetches and displays latest articles from RSS/Atom feeds
 - **Minimal & Clean** — No unnecessary dependencies, pure CSS + vanilla JS
 
@@ -239,32 +240,111 @@ See [Dossier documentation](https://www.cayzlh.com/dossier/) for details.
 Override any color variable in `_config.yml`:
 
 ```yaml
-color:
-  text: '#2C2A28'
-  text-light: '#A09C96'
-  text-muted: '#6B6864'
-  background: '#F4F3EF'
-  background-secondary: '#FAFAF7'
-  background-tertiary: '#F0EFEB'
-  link: '#8B6B4D'
-  link-hover: '#6D4F3A'
-  accent: '#8B6B4D'
-  border: '#E5E2DC'
-  border-dark: '#D4CEC6'
-  code-bg: '#EDECE8'
-  code-border: '#E0DED9'
-  selection: '#E5E2DC'
+color:                # light — "warm white paper"
+  text: '#3D3730'
+  text-light: '#79705F'
+  text-muted: '#6B6255'
+  background: '#FAF7F1'
+  background-secondary: '#F3EFE7'
+  background-tertiary: '#EDE8DE'
+  link: '#0E6E63'
+  link-hover: '#0A544B'
+  accent: '#0E6E63'
+  border: '#E6E0D4'
+  border-dark: '#D5CCBB'
+  code-bg: '#F3EFE7'
+  code-border: '#E2DBCD'
+  selection: '#E5DBCA'
+
+dark:                 # dark — "warm brown, cool anchor"
+  text: '#CFC7BD'
+  text-light: '#A49C90'
+  text-muted: '#948D83'
+  background: '#262322'
+  background-secondary: '#2D2927'
+  background-tertiary: '#1F1C1B'
+  link: '#6DB3A3'
+  link-hover: '#8CC9BA'
+  accent: '#6DB3A3'
+  border: '#3A3532'
+  code-bg: '#201D1C'
+  hover-bg: '#332E2C'
+  selection: '#43392F'
 ```
 
-> The default light mode uses a warm off-white background (`#F4F3EF`) with an earthy brown accent palette (`#8B6B4D`) for a comfortable reading experience. Dark mode is unaffected.
+> The palette above is the OnePage language: warm white paper with a deep-teal
+> accent in light mode, warm brown with a cool teal anchor in dark mode.
+> **Keep this file in sync with `source/css/tokens.css`** — the CSS is what
+> actually renders; the YAML is the documented, overridable copy.
+
+### Heading colours (彩色排版)
+
+`source/css/tokens.css` carries eight typographic roles that give the heading
+ranks their colour:
+
+| Token | Light | Dark | Used by |
+| --- | --- | --- | --- |
+| `--typo-h1` | `#1D345C` | `#7FA3DE` | `.post-body h1` |
+| `--typo-h2` | `#52377A` | `#B596E6` | `.post-body h2` |
+| `--typo-h3` | `#0E6E63` | `#6DB3A3` | `.post-body h3` |
+| `--typo-h4` | `#B8475A` | `#E08D9C` | `.post-body h4` |
+| `--typo-h5` | `#8C5D17` | `#D8B476` | `.post-body h5` |
+| `--typo-h6` | `#857C6E` | `#948D83` | `.post-body h6` |
+| `--typo-bold` | `#C2410C` | `#E89A60` | `strong` |
+| `--typo-italic` | `#4A704F` | `#A6BA9D` | `em` |
+
+Set them all to `currentColor` to fall back to plain body-coloured headings.
 
 ### Typography
 
 ```yaml
-font_size: 17px
-line_height: 1.75
+font_size: 16.5px     # documented default; the live values are --fs / --lh / --mw in tokens.css
+line_height: 1.72
 max_width: 680px
 ```
+
+### Fonts — Maple Mono NF CN
+
+The theme ships its own web font: **Maple Mono NF CN v7.9** (SIL OFL 1.1, see
+[LICENSE-MapleMono.txt](LICENSE-MapleMono.txt)). The upstream TTFs are ~20 MB
+each, so `tools/build-fonts.py` slices them into chunked WOFF2 files under
+`source/fonts/`. Each chunk carries its own `unicode-range`, so the browser only
+downloads what the page actually contains.
+
+| Chunk | Covers | Regular | Bold |
+| --- | --- | --- | --- |
+| `maple-latin-*` | Latin, punctuation, arrows, math, box drawing | ~39 KB | ~41 KB |
+| `maple-sym-*` | CJK punctuation, fullwidth forms, symbols | ~8 KB | ~8 KB |
+| `maple-cjk-*` | Ideographs used by this blog (+ safety margin) | ~399 KB | ~409 KB |
+
+Total ≈ 1.0 MB for the whole family; a typical page pulls the Latin + symbol
+chunks and (if it has Chinese) the ideograph chunk in the matching weights.
+
+**Rebuild after adding content** so new ideographs get embedded:
+
+```bash
+pip install fonttools brotli
+python3 tools/build-fonts.py --src /path/to/MapleMono-NF-CN-unhinted
+```
+
+Any ideograph that is *not* in the subset falls back to the system CJK font via
+`font-display: swap` — no tofu, no blocked render.
+
+#### The code / prose split
+
+Maple Mono's operator ligatures live in the `calt` (contextual alternates)
+feature, which browsers apply to every text run by default. Polaris turns it off
+site-wide and back on for code:
+
+```css
+html, body { font-variant-ligatures: none; font-feature-settings: 'calt' 0, 'liga' 0; }
+.code-block pre, .post-body code, pre, code, kbd, samp { /* … */ font-feature-settings: 'calt' 1, 'liga' 1; }
+```
+
+So `->` inside a fenced block renders as `→`, `!=` as `≠`, `=>` as `⇒` — while
+the very same characters in running prose stay literal. That is the division of
+labour a programming font is designed for: the glyph substitution helps you scan
+code, and it never silently rewrites your sentence.
 
 ### Add custom CSS/JS
 
@@ -282,7 +362,8 @@ Place files in `source/css/` or `source/js/` — they are loaded automatically.
 
 ## License
 
-[MIT](LICENSE)
+Theme code: [MIT](LICENSE)
+Bundled font: [SIL OFL 1.1](LICENSE-MapleMono.txt) — Maple Mono NF CN, © 2022 The Maple Mono Project Authors
 
 Copyright © 2018–2026 [Ant丶](https://cayzlh.com)
 

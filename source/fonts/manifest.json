@@ -1,0 +1,96 @@
+{
+  "family": "Maple Mono NF CN",
+  "version": "7.9",
+  "chunks": {
+    "latin": {
+      "regular": {
+        "file": "maple-latin-regular.woff2",
+        "size": 39924,
+        "unicodeRange": "U+0000-00FF, U+0100-017F, U+0180-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF, U+2460-24FF, U+2500-257F, U+2580-259F, U+25A0-25FF, U+2600-26FF, U+2700-27BF, U+2B00-2BFF",
+        "weight": 400,
+        "style": "normal"
+      },
+      "italic": {
+        "file": "maple-latin-italic.woff2",
+        "size": 45012,
+        "unicodeRange": "U+0000-00FF, U+0100-017F, U+0180-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF, U+2460-24FF, U+2500-257F, U+2580-259F, U+25A0-25FF, U+2600-26FF, U+2700-27BF, U+2B00-2BFF",
+        "weight": 400,
+        "style": "italic"
+      },
+      "medium": {
+        "file": "maple-latin-medium.woff2",
+        "size": 41384,
+        "unicodeRange": "U+0000-00FF, U+0100-017F, U+0180-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF, U+2460-24FF, U+2500-257F, U+2580-259F, U+25A0-25FF, U+2600-26FF, U+2700-27BF, U+2B00-2BFF",
+        "weight": 500,
+        "style": "normal"
+      },
+      "bold": {
+        "file": "maple-latin-bold.woff2",
+        "size": 41696,
+        "unicodeRange": "U+0000-00FF, U+0100-017F, U+0180-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF, U+2460-24FF, U+2500-257F, U+2580-259F, U+25A0-25FF, U+2600-26FF, U+2700-27BF, U+2B00-2BFF",
+        "weight": 700,
+        "style": "normal"
+      },
+      "bolditalic": {
+        "file": "maple-latin-bolditalic.woff2",
+        "size": 46520,
+        "unicodeRange": "U+0000-00FF, U+0100-017F, U+0180-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF, U+2100-214F, U+2190-21FF, U+2200-22FF, U+2460-24FF, U+2500-257F, U+2580-259F, U+25A0-25FF, U+2600-26FF, U+2700-27BF, U+2B00-2BFF",
+        "weight": 700,
+        "style": "italic"
+      }
+    },
+    "sym": {
+      "regular": {
+        "file": "maple-sym-regular.woff2",
+        "size": 8256,
+        "unicodeRange": "U+2300-23FF, U+2800-28FF, U+2900-297F, U+2A00-2AFF, U+2E00-2E7F, U+3000-303F, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF",
+        "weight": 400,
+        "style": "normal"
+      },
+      "italic": {
+        "file": "maple-sym-italic.woff2",
+        "size": 8892,
+        "unicodeRange": "U+2300-23FF, U+2800-28FF, U+2900-297F, U+2A00-2AFF, U+2E00-2E7F, U+3000-303F, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF",
+        "weight": 400,
+        "style": "italic"
+      },
+      "medium": {
+        "file": "maple-sym-medium.woff2",
+        "size": 8456,
+        "unicodeRange": "U+2300-23FF, U+2800-28FF, U+2900-297F, U+2A00-2AFF, U+2E00-2E7F, U+3000-303F, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF",
+        "weight": 500,
+        "style": "normal"
+      },
+      "bold": {
+        "file": "maple-sym-bold.woff2",
+        "size": 8496,
+        "unicodeRange": "U+2300-23FF, U+2800-28FF, U+2900-297F, U+2A00-2AFF, U+2E00-2E7F, U+3000-303F, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF",
+        "weight": 700,
+        "style": "normal"
+      },
+      "bolditalic": {
+        "file": "maple-sym-bolditalic.woff2",
+        "size": 9072,
+        "unicodeRange": "U+2300-23FF, U+2800-28FF, U+2900-297F, U+2A00-2AFF, U+2E00-2E7F, U+3000-303F, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF",
+        "weight": 700,
+        "style": "italic"
+      }
+    },
+    "cjk": {
+      "regular": {
+        "file": "maple-cjk-regular.woff2",
+        "size": 408416,
+        "unicodeRange": "U+4E00-9F99",
+        "weight": 400,
+        "style": "normal"
+      },
+      "bold": {
+        "file": "maple-cjk-bold.woff2",
+        "size": 418440,
+        "unicodeRange": "U+4E00-9F99",
+        "weight": 700,
+        "style": "normal"
+      }
+    }
+  }
+}
