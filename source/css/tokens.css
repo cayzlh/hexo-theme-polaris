@@ -1,8 +1,8 @@
 /* ==========================================================================
    Polaris — design tokens
    --------------------------------------------------------------------------
-   The palette/motion language follows OnePage (macOS paper × geek editor):
-   light = warm white paper + deep-teal accent, dark = warm brown + cool
+   The palette/motion language follows OnePage (minimal editor):
+   light = plain white + deep-teal accent, dark = warm brown + cool
    teal anchor. Nothing here is a raw colour in a component file — every
    component reads a token, so the two modes stay in lockstep.
 
@@ -10,16 +10,26 @@
    ========================================================================== */
 
 :root {
-  /* ---- surfaces: warm white paper ---- */
-  --c-bg: #faf7f1;
-  --c-bg-secondary: #f3efe7;
-  --c-bg-tertiary: #ede8de;
-  --c-hover-bg: #f0ebe2;
-  --c-card-bg: #fdfbf7;
+  /* ---- surfaces: neutral white, four-step elevation ladder ----
+     Every channel is equal (R=G=B), so nothing reads warm or cool. The steps
+     are 4-6% apart in luminance — far enough that a panel is legible against
+     the page, close enough that the page still reads as white, not grey.
+       bg         #ffffff  page canvas
+       hover      #f1f1f1  transient feedback (nav, rows, buttons)
+       secondary  #f5f5f5  panels: quotes, table headers, chips, pager
+       tertiary   #ededed  deepest inset: zebra ground, inner wells
+     card stays pure white on purpose: it is both the dropdown surface (which
+     floats on a shadow, not a tint) and the ink colour on accent-filled
+     buttons, so it must not carry a tint. */
+  --c-bg: #ffffff;
+  --c-bg-secondary: #f5f5f5;
+  --c-bg-tertiary: #ededed;
+  --c-hover-bg: #f1f1f1;
+  --c-card-bg: #ffffff;
 
   /* ---- ink ---- */
   --c-text: #3d3730;
-  --c-text-light: #79705f;   /* 4.0:1 on paper — metadata that still reads */
+  --c-text-light: #79705f;   /* 4.6:1 on white — metadata that still reads */
   --c-text-muted: #6b6255;
   --c-text-faint: #857b6b;   /* 3.9:1 — small labels only, never body copy */
 
@@ -31,12 +41,12 @@
   --c-accent-line: rgba(14, 110, 99, 0.28);
 
   /* ---- lines ---- */
-  --c-border: #e6e0d4;
-  --c-border-strong: #d5ccbb;
-  --c-hr: rgba(61, 55, 48, 0.16);
-  --c-hr-strong: rgba(61, 55, 48, 0.26);
-  --c-hr-weak: rgba(61, 55, 48, 0.08);
-  --c-sel: #e5dbca;
+  --c-border: #e8e8e8;
+  --c-border-strong: #d4d4d4;
+  --c-hr: rgba(0, 0, 0, 0.14);
+  --c-hr-strong: rgba(0, 0, 0, 0.22);
+  --c-hr-weak: rgba(0, 0, 0, 0.07);
+  --c-sel: #e6e6e6;
 
   /* ---- typographic colour roles (OnePage 彩色排版) ---- */
   --typo-h1: #1d345c;
@@ -49,9 +59,12 @@
   --typo-italic: #4a704f;
 
   /* ---- code ---- */
-  --c-code-bg: #f3efe7;
-  --c-code-border: #e2dbcd;
-  --c-code-head: #ece6da;
+  /* The block is an inset well on the white canvas: body sits at the panel
+     step, the filename header one step deeper, so the two are separable
+     without a heavy border. */
+  --c-code-bg: #f5f5f5;
+  --c-code-border: #e3e3e3;
+  --c-code-head: #ededed;
   --c-code-inline: #b8475a;
   --c-code-inline-bg: rgba(184, 71, 90, 0.07);
 
