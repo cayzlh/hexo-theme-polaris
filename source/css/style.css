@@ -1458,6 +1458,30 @@ html.dark .project-card-start--outline:hover{
 .footer-inner{max-width:var(--mw);margin:0 auto;text-align:center;font-size:0.8rem;color:var(--c-text-muted)}
 .footer-info{display:flex;justify-content:center;gap:0.6em;flex-wrap:wrap;line-height:1.8}
 .footer-text,.footer-copy{display:inline}
+
+/* Footer navigation — a quiet row of links above the contact line. Separators are
+   drawn with a border so the anchors stay clean and wrap predictably. */
+.footer-nav{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0;
+  margin:0 auto 0.85em;
+  font-size:0.8rem;
+}
+.footer-nav a{
+  color:var(--c-text-light);
+  text-decoration:none;
+  border-bottom:none;
+  padding:0 0.75em;
+  transition:color 0.2s;
+}
+.footer-nav a+a{border-left:1px solid var(--c-border-strong)}
+.footer-nav a:hover{color:var(--c-accent)}
+html.dark .footer-nav a{color:var(--c-text-muted)}
+html.dark .footer-nav a+a{border-left-color:var(--c-border)}
+html.dark .footer-nav a:hover{color:var(--c-link)}
 .footer-text a,.footer-copy a{color:var(--c-text-muted)}
 .footer-text a:hover,.footer-copy a:hover{color:var(--c-link-hover)}
 

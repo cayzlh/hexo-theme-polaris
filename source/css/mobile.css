@@ -932,13 +932,53 @@
     text-decoration-color: var(--c-accent-line);
   }
 
-  /* Footer 链接 */
+  /* Footer 导航：手机上加高点击区，字号不小于 0.82rem */
+  .footer-nav {
+    margin-bottom: 0.9em;
+    font-size: 0.82rem;
+    align-items: center;
+  }
+
+  /* Increase the tap target without stretching the divider: pad vertically on
+     the anchor and let the border follow the content box instead of the line box. */
+  .footer-nav a {
+    position: relative;
+    padding: 0.5em 0.6em;
+    line-height: 1.4;
+    align-self: center;
+  }
+
+  .footer-nav a + a {
+    border-left: none;
+  }
+
+  .footer-nav a + a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1em;
+    border-left: 1px solid var(--c-border-strong);
+  }
+
+  html.dark .footer-nav a + a::before {
+    border-left-color: var(--c-border);
+  }
+
+  /* Footer 链接（导航行除外：那里靠分隔竖线区分，避免每条都带下划线） */
   .footer a {
     text-decoration: underline !important;
     text-underline-offset: 0.15em;
     text-decoration-thickness: 1px;
     text-decoration-skip-ink: auto;
     border-bottom: none;
+  }
+
+  .footer-nav a,
+  .footer-nav a:hover {
+    text-decoration: none !important;
+    border-bottom: none !important;
   }
 
   /* Dossier 面包屑链接 */

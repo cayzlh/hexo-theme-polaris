@@ -1,6 +1,13 @@
 <footer class="footer">
   <div class="footer-inner">
     <%- partial('_partial/runtime') %>
+    <% if (theme.footer && theme.footer.links && theme.footer.links.length) { %>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <% theme.footer.links.forEach(function(link) { %>
+          <a href="<%= link.url %>"<% if (link.external) { %> target="_blank" rel="noopener"<% } %>><%= link.name %></a>
+        <% }); %>
+      </nav>
+    <% } %>
     <div class="footer-info">
       <% if (theme.footer && theme.footer.text) { %>
         <span class="footer-text">
