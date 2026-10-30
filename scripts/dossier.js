@@ -422,7 +422,7 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
     layout: ['index_dossier'],
     data: {
       layout: 'index_dossier',
-      title: 'Dossier',
+      title: '档案',
       projects: projects,
       allTags: allTags,
       filter: false
