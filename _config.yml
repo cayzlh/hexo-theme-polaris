@@ -322,7 +322,10 @@ footer:
   text: |
     Stay in touch — subscribe via <a href="/atom.xml">RSS</a>, or send comments by email to <a href="mailto:hello@example.com">hello@example.com</a>
   # copyright: '© 2020–2026 Your Name'   # Uncomment to override the auto-generated © {year} {author}
-  # 页脚导航链接。显式写出 url 与 external，模板不做任何域名假设。
+  # 页脚导航链接。配置后页脚变为左右两栏：
+  #   左：计时 + 联系方式 + 版权        右：竖排导航
+  # 未配置时保持原来的居中单列布局。
+  # 显式写出 url 与 external，模板不做任何域名假设。
   # links:
   #   - name: 访问统计
   #     url: https://stats.example.com

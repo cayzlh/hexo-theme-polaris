@@ -1,26 +1,29 @@
 <footer class="footer">
-  <div class="footer-inner">
-    <%- partial('_partial/runtime') %>
-    <% if (theme.footer && theme.footer.links && theme.footer.links.length) { %>
+  <% var footerLinks = (theme.footer && theme.footer.links) || [] %>
+  <div class="footer-inner<%= footerLinks.length ? ' footer-inner--split' : '' %>">
+    <div class="footer-main">
+      <%- partial('_partial/runtime') %>
+      <div class="footer-info">
+        <% if (theme.footer && theme.footer.text) { %>
+          <span class="footer-text">
+            <%- theme.footer.text %>
+          </span>
+        <% } %>
+        <span class="footer-copy">
+          <% if (theme.footer && theme.footer.copyright) { %>
+            <%- theme.footer.copyright %>
+          <% } else { %>
+            © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
+          <% } %>
+        </span>
+      </div>
+    </div>
+    <% if (footerLinks.length) { %>
       <nav class="footer-nav" aria-label="页脚导航">
-        <% theme.footer.links.forEach(function(link) { %>
+        <% footerLinks.forEach(function(link) { %>
           <a href="<%= link.url %>"<% if (link.external) { %> target="_blank" rel="noopener"<% } %>><%= link.name %></a>
         <% }); %>
       </nav>
     <% } %>
-    <div class="footer-info">
-      <% if (theme.footer && theme.footer.text) { %>
-        <span class="footer-text">
-          <%- theme.footer.text %>
-        </span>
-      <% } %>
-      <span class="footer-copy">
-        <% if (theme.footer && theme.footer.copyright) { %>
-          <%- theme.footer.copyright %>
-        <% } else { %>
-          © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
-        <% } %>
-      </span>
-    </div>
   </div>
 </footer>

@@ -932,38 +932,34 @@
     text-decoration-color: var(--c-accent-line);
   }
 
-  /* Footer 导航：手机上加高点击区，字号不小于 0.82rem */
+  /* Footer：窄屏仍然保持左右两栏，但把导航收窄，避免挤掉左侧的计时信息。
+     左侧是流式内容，右侧按内容宽度收缩。 */
+  .footer-inner--split {
+    gap: 0.85rem;
+    font-size: 0.74rem;
+    align-items: flex-start;
+  }
+
+  .footer-inner--split .footer-main {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   .footer-nav {
-    margin-bottom: 0.9em;
-    font-size: 0.82rem;
-    align-items: center;
+    flex: 0 1 auto;
+    font-size: 0.75rem;
+    padding-left: 0.7rem;
+    line-height: 2.2;
   }
 
-  /* Increase the tap target without stretching the divider: pad vertically on
-     the anchor and let the border follow the content box instead of the line box. */
+  /* 窄屏下计时行允许换行，不再被导航挤成一词一行。 */
+  .footer-inner--split .site-runtime {
+    line-height: 1.6;
+  }
+
+  /* 竖排导航：行高已提供点击区，不再额外加内边距，避免条目间距过大。 */
   .footer-nav a {
-    position: relative;
-    padding: 0.5em 0.6em;
-    line-height: 1.4;
-    align-self: center;
-  }
-
-  .footer-nav a + a {
-    border-left: none;
-  }
-
-  .footer-nav a + a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 1em;
-    border-left: 1px solid var(--c-border-strong);
-  }
-
-  html.dark .footer-nav a + a::before {
-    border-left-color: var(--c-border);
+    padding: 0;
   }
 
   /* Footer 链接（导航行除外：那里靠分隔竖线区分，避免每条都带下划线） */
@@ -975,8 +971,8 @@
     border-bottom: none;
   }
 
-  .footer-nav a,
-  .footer-nav a:hover {
+  .footer .footer-nav a,
+  .footer .footer-nav a:hover {
     text-decoration: none !important;
     border-bottom: none !important;
   }

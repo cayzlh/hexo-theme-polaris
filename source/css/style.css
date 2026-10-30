@@ -1453,37 +1453,72 @@ html.dark .project-card-start--outline:hover{
   background:var(--c-bg-secondary);
 }
 
-/* ===== Footer ===== */
+/* ===== Footer =====
+   Two layouts share one markup:
+     - no footer links: centred single column (the original look)
+     - with links:      left column holds runtime + copyright, right column is a
+                        vertical link list, separated by a hairline rule
+   `.footer-inner--split` is only emitted when links are configured. */
 .footer{padding:2rem 1rem 4rem}
 .footer-inner{max-width:var(--mw);margin:0 auto;text-align:center;font-size:0.8rem;color:var(--c-text-muted)}
 .footer-info{display:flex;justify-content:center;gap:0.6em;flex-wrap:wrap;line-height:1.8}
 .footer-text,.footer-copy{display:inline}
 
-/* Footer navigation — a quiet row of links above the contact line. Separators are
-   drawn with a border so the anchors stay clean and wrap predictably. */
-.footer-nav{
+.footer-inner--split{
   display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:2rem;
+  text-align:left;
+}
+.footer-inner--split .footer-main{flex:1 1 auto;min-width:0}
+.footer-inner--split .footer-info{justify-content:flex-start;display:block}
+/* Each metadata line sits on its own row in split mode. */
+.footer-inner--split .footer-text,
+.footer-inner--split .footer-copy{display:block}
+.footer-inner--split .site-runtime{margin-top:0;margin-bottom:0.5em}
+.footer-inner--split .footer-text{margin-bottom:0.35em}
+
+/* Vertical link rail. A left border on the list reads as a margin rule rather
+   than per-item separators, which stays legible when the list grows. */
+.footer-nav{
+  flex:0 0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
   gap:0;
-  margin:0 auto 0.85em;
+  margin:0;
+  padding:0 0 0 1.25rem;
+  border-left:1px solid var(--c-border);
   font-size:0.8rem;
+  line-height:1.9;
 }
 .footer-nav a{
   color:var(--c-text-light);
   text-decoration:none;
   border-bottom:none;
-  padding:0 0.75em;
+  white-space:nowrap;
+  line-height:inherit;
   transition:color 0.2s;
 }
-.footer-nav a+a{border-left:1px solid var(--c-border-strong)}
 .footer-nav a:hover{color:var(--c-accent)}
+html.dark .footer-nav{border-left-color:var(--c-border)}
 html.dark .footer-nav a{color:var(--c-text-muted)}
-html.dark .footer-nav a+a{border-left-color:var(--c-border)}
 html.dark .footer-nav a:hover{color:var(--c-link)}
 .footer-text a,.footer-copy a{color:var(--c-text-muted)}
 .footer-text a:hover,.footer-copy a:hover{color:var(--c-link-hover)}
+
+/* Fallback for sites that keep the old centred layout without links. */
+.footer-inner:not(.footer-inner--split) .footer-nav{
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 0.85em;
+  padding-left:0;
+  border-left:none;
+}
+.footer-inner:not(.footer-inner--split) .footer-nav a{padding:0 0.75em}
+.footer-inner:not(.footer-inner--split) .footer-nav a+a{border-left:1px solid var(--c-border-strong)}
 
 .site-runtime {
   margin-top: 10px;
