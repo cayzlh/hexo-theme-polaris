@@ -50,6 +50,18 @@ html.dark .dark-toggle .icon-dark{display:inline}
 .intro p{margin-bottom:1em}
 .intro a{color:var(--c-link)}
 .intro a:hover{color:var(--c-link-hover)}
+/* 简介下方的一行元信息：写作时长 + 当前时刻。
+   原来这条在页脚逐秒闪，现在收进简介里，语气放轻、只做一句脚注。 */
+.intro-meta{
+  margin-top:0.9em;
+  font-size:0.76rem;
+  line-height:1.7;
+  color:var(--c-text-faint);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0.01em;
+}
+.intro-meta b{font-weight:400;color:var(--c-text-light)}
+.intro-meta__sep{margin:0 0.55em;color:var(--c-border-strong)}
 .home-hr{border:none;height:1px;background:linear-gradient(to right,transparent,var(--c-hr),transparent);width:70%;margin:2.5em auto}
 
 /* ========================================
@@ -1530,6 +1542,126 @@ html.dark .footer-nav a:hover{color:var(--c-link)}
 
 html.dark .footer a:hover{color:var(--c-link)}
 
+/* ===== 十年之约 · 虫洞印章 =====
+   页脚的「头」：一条 hairline 顶开，左=可点的虫洞入口，右=官方成员标识。
+   标识只在这条里出现橙色，是整页唯一的彩色落点——橙色来自官方素材，
+   不参与主题调色板，所以这里一个色值都不新增，全部读 token。
+
+   两个必须显式处理的继承陷阱：
+   1. `.footer a` 给所有页脚链接留了 1px 透明下边框做 hover 动画的占位；
+      印章里的链接要自己收掉，否则基线会整体下沉 1px。
+   2. mobile.css 会给 `.footer a` 加 `text-decoration:underline !important`，
+      只对 `.footer-nav` 网开一面。印章不在 nav 里，必须自己豁免（见 mobile.css）。 */
+.wh-seal{
+  max-width:var(--mw);
+  margin:0 auto 1.75em;
+  padding:1.15em 0 0;
+  border-top:1px solid var(--c-hr-weak);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1.5em;
+  font-size:0.78rem;
+  line-height:1.9;
+  color:var(--c-text-light);
+}
+.wh-seal__links{
+  display:flex;
+  align-items:center;
+  gap:0.55em;
+  flex-wrap:wrap;
+  min-width:0;
+}
+.wh-seal a{
+  border-bottom:none;
+  text-decoration:none;
+}
+.wh-link{
+  display:inline-flex;
+  align-items:center;
+  gap:0.4em;
+  color:inherit;
+  border-bottom:1px solid transparent;
+  transition:color var(--dur-fast) var(--ease-out),
+             border-bottom-color var(--dur-fast) var(--ease-out);
+}
+.wh-link:hover{
+  color:var(--c-accent);
+  border-bottom-color:var(--c-accent-line);
+}
+/* 细线螺旋：笔画粗细对齐 Maple Mono，色取强调色，是主题里自己的图标语言。 */
+.wh-glyph{
+  width:1.1em;
+  height:1.1em;
+  flex:none;
+  color:var(--c-accent);
+  overflow:visible;
+  transition:transform var(--dur-base) var(--ease-out);
+}
+.wh-link:hover .wh-glyph{transform:rotate(-45deg) scale(1.06)}
+.wh-sep{
+  color:var(--c-border-strong);
+  user-select:none;
+}
+
+/* 标识：两枚图按主题切换。选择器必须写 `.wh-mark img.xxx` ——
+   `.wh-mark img` 的优先级高于单独的 `.wh-mark__on-light`，否则两枚会同时显示。 */
+.wh-mark{
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:center;
+  gap:1em;
+  opacity:0.9;
+  transition:opacity var(--dur-fast) var(--ease-out);
+}
+.wh-mark:hover{opacity:1}
+.wh-mark__art{display:inline-flex;flex:none}
+.wh-mark img{
+  height:26px;
+  width:auto;
+  display:block;
+}
+.wh-mark img.wh-mark__on-dark{display:none}
+html.dark .wh-mark img.wh-mark__on-light{display:none}
+html.dark .wh-mark img.wh-mark__on-dark{display:block}
+
+/* 键盘可达：印章是页脚里唯一的跨站出口，焦点必须看得见。 */
+.wh-seal a:focus-visible{
+  outline:2px solid var(--c-accent);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+/* ===== 十年之约 · 「今天读什么」挂件 =====
+   官方 iframe，独立成块、默认关。外面只加一层标题和间距，
+   内部样式由官方控制（跨域，改不了也不该改）。 */
+.wh-widget{
+  max-width:var(--mw);
+  margin:2.2em auto 0;
+  padding-top:1.4em;
+  border-top:1px solid var(--c-hr-weak);
+}
+.wh-widget__title{
+  font-size:0.78rem;
+  font-weight:400;
+  letter-spacing:0.04em;
+  color:var(--c-text-faint);
+  margin:0 0 0.9em;
+}
+.wh-widget__frame{
+  display:block;
+  width:100%;
+  max-width:360px;
+  height:260px;
+  border:0;
+  /* 挂件底色只有纯白/纯黑两档，和暖白纸面有细微色差；
+     用圆角把边界收成一块「嵌入的卡片」，比裸贴更像设计过。 */
+  border-radius:var(--radius-md);
+  overflow:hidden;
+  background:var(--c-bg-secondary);
+  color-scheme:light dark;
+}
+
 /* ===== Responsive ===== */
 @media(max-width:600px){
   :root{--fs:15.5px}
@@ -2112,186 +2244,308 @@ html.dark .search-highlight {
 /* ==========================================
    Subscriptions Page
    ========================================== */
-.subscriptions-page {
-  padding: 20px 0 60px;
+/* ======================================================================
+   Subscriptions Page
+   ----------------------------------------------------------------------
+   无大标题（导航已标明位置），一句说明开场，主体是按日分组的时间流，
+   底部才是「正在关注」的源清单。全部读 token，没有新增色值。
+   ====================================================================== */
+.subs {
+  padding: 4px 0 60px;
 }
 
-/* ===== 文章列表 ===== */
-.subscriptions-list {
-  margin-top: 0;
-}
-
-/* ===== 单条文章 ===== */
-.sub-item {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--c-border);
-}
-
-.sub-item:last-child {
-  border-bottom: none;
-}
-
-/* 头部：博主 + 日期 */
-.sub-item-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
-}
-
-/* 日期 */
-.sub-item-date {
-  margin-left: auto;
-  flex-shrink: 0;
-  font-size: 0.75rem;
+/* ---- 开场的一句说明 ---- */
+.subs-note {
+  margin: 0 0 2.4em;
+  font-size: 0.88rem;
   color: var(--c-text-light);
+  line-height: 1.75;
+}
+
+/* ---- 按日分组 ---- */
+.subs-day {
+  margin-bottom: 2em;
+}
+
+.subs-day:last-child {
+  margin-bottom: 0;
+}
+
+/* 日期是结构，不是注释：mono + 字距 + 一条极淡的下划线，和归档页同源。 */
+.subs-day__date {
   font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--c-text-faint);
   font-variant-numeric: tabular-nums;
+  margin: 0 0 0.75em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--c-hr-weak);
 }
 
-/* 博主标记 */
-.sub-item-source {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  text-decoration: none;
-  color: var(--c-text-muted);
-  font-size: 0.78rem;
-  transition: color 0.2s;
-  min-width: 0;
+.subs-day__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.sub-item-source:hover {
-  color: var(--c-accent);
+.subs-entry {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.2em;
+  padding: 0.5em 0;
 }
 
-.sub-source-icon {
-  font-size: 0.82rem;
-  line-height: 1;
-}
-
-.sub-source-name {
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* 文章标题 */
-.sub-item-link {
-  display: block;
+.subs-entry__title {
   color: var(--c-text);
   text-decoration: none;
-  font-size: var(--fs);
-  line-height: 1.5;
-  transition: color 0.2s;
-  word-break: break-word;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  transition: color var(--dur-fast) var(--ease-out);
 }
 
-.sub-item-link:hover {
+.subs-entry__title:hover {
   color: var(--c-accent);
 }
 
-/* ===== 分页 ===== */
-.sub-paginator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 2em;
-  padding-top: 1.5em;
-}
-
-.sub-paginator-btn {
+/* 源退成行内小标，不抢标题的注意力。 */
+.subs-entry__source {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 1.1rem;
-  color: var(--c-text-muted);
-  background: var(--c-bg-secondary);
-  border: 1px solid var(--c-border);
+  gap: 0.3em;
+  font-size: 0.72rem;
+  color: var(--c-text-faint);
   text-decoration: none;
-  transition: all 0.2s;
-  user-select: none;
+  white-space: nowrap;
+  max-width: 42%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.subs-entry__source:hover {
+  color: var(--c-accent);
+}
+
+.subs-entry__icon {
+  font-size: 0.85em;
   line-height: 1;
 }
 
-.sub-paginator-btn:hover {
-  color: var(--c-accent);
-  border-color: var(--c-accent);
-  background: var(--c-bg);
+/* ---- 分页 ---- */
+.subs-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1em;
+  margin-top: 2.4em;
+  padding-top: 1.4em;
+  border-top: 1px solid var(--c-hr-weak);
 }
 
-.sub-paginator-btn.disabled {
-  opacity: 0.3;
-  cursor: default;
+.subs-pager__btn {
+  font-size: 0.79rem;
+  color: var(--c-text-light);
+  text-decoration: none;
+  padding: 0.3em 0.7em;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+
+.subs-pager__btn:hover {
+  color: var(--c-accent);
+  border-color: var(--c-accent-line);
+}
+
+.subs-pager__btn.is-disabled {
+  opacity: 0.35;
   pointer-events: none;
 }
 
-.sub-paginator-info {
-  font-size: 0.85rem;
-  color: var(--c-text-light);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.3px;
-}
-
-/* ===== 空状态 ===== */
-.subscriptions-empty {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.subscriptions-empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.subscriptions-empty-text {
-  font-size: 1rem;
-  color: var(--c-text-muted);
-  margin: 0 0 4px;
-}
-
-.subscriptions-empty-hint {
-  font-size: 0.85rem;
-  color: var(--c-text-light);
-  margin: 0;
-}
-
-.subscriptions-empty-hint code {
+.subs-pager__info {
+  font-size: 0.76rem;
+  color: var(--c-text-faint);
   font-family: var(--font-mono);
-  font-size: 0.82em;
-  padding: 1px 6px;
-  background: var(--c-code-bg);
-  border-radius: 3px;
+  font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 768px) {
-  .subscriptions-page {
-    padding: 12px 0 40px;
+/* ---- 正在关注（页脚区的源清单） ----
+   做成一行一个的紧凑清单：名字、简介、可复制的 RSS 地址。
+   它承担「订阅入口」的职责，所以地址必须能直接拿走；
+   但排在内容之后，不跟文章抢位置。 */
+.subs-follow {
+  margin-top: 3.4em;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--c-hr);
+}
+
+.subs-follow__title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--c-text-faint);
+  margin: 0 0 1.1em;
+}
+
+.subs-follow__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.subs-follow__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  padding: 0.62em 0;
+  border-bottom: 1px solid var(--c-hr-weak);
+}
+
+.subs-follow__item:last-child {
+  border-bottom: none;
+}
+
+.subs-follow__icon {
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.subs-follow__name {
+  flex: 0 0 auto;
+  font-size: 0.86rem;
+  color: var(--c-text);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-bottom-color var(--dur-fast) var(--ease-out);
+}
+
+.subs-follow__name:hover {
+  color: var(--c-accent);
+  border-bottom-color: var(--c-accent-line);
+}
+
+.subs-follow__desc {
+  flex: 1 1 100%;
+  order: 3;
+  font-size: 0.75rem;
+  color: var(--c-text-faint);
+  line-height: 1.6;
+  padding-left: 1.35em;
+  margin-top: 0.15em;
+}
+
+.subs-follow__url {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--c-text-muted);
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-code-border);
+  border-radius: var(--radius-sm);
+  padding: 0.18em 0.45em;
+  margin-left: auto;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.subs-follow__copy {
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: 0.7rem;
+  color: var(--c-text-light);
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  padding: 0.18em 0.6em;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+
+.subs-follow__copy:hover,
+.subs-follow__copy.is-done {
+  color: var(--c-accent);
+  border-color: var(--c-accent-line);
+}
+
+.subs-follow__copy:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.subs-follow__err {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--c-text-faint);
+  font-style: italic;
+}
+
+.subs-follow__item.is-error .subs-follow__name {
+  color: var(--c-text-muted);
+}
+
+/* ---- 空状态 ---- */
+.subs-empty {
+  padding: 2.4em 0;
+  text-align: center;
+}
+
+.subs-empty__text {
+  margin: 0 0 0.4em;
+  font-size: 0.9rem;
+  color: var(--c-text-muted);
+}
+
+.subs-empty__hint {
+  margin: 0;
+  font-size: 0.79rem;
+  color: var(--c-text-faint);
+}
+
+/* ---- 窄屏 ---- */
+@media (max-width: 600px) {
+  .subs {
+    padding: 0 0 40px;
   }
 
-  .sub-item {
-    padding: 8px 0;
+  .subs-note {
+    margin-bottom: 1.9em;
+    font-size: 0.84rem;
   }
 
-  .sub-item-date {
-    font-size: 0.7rem;
+  /* 标题换行后源标挂到下一行，避免把标题挤成一列窄字。 */
+  .subs-entry {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15em;
+    padding: 0.6em 0;
   }
 
-  .sub-item-source {
-    font-size: 0.72rem;
+  .subs-entry__source {
+    max-width: 100%;
   }
 
-  .sub-source-name {
-    max-width: 80px;
+  .subs-follow__item {
+    gap: 0.45em;
   }
 
-  .sub-item-link {
-    font-size: 1rem;
+  .subs-follow__url {
+    margin-left: 0;
+    flex: 1 1 auto;
+  }
+
+  .subs-follow__desc {
+    padding-left: 0;
   }
 }
 

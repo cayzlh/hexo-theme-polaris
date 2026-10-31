@@ -298,20 +298,18 @@ subscriptions:
   default_limit: 3
   # 是否显示订阅源描述
   show_description: true
-  # 是否显示更新条数
-  show_count: true
-  # 页面标题
+  # 页面标题（仅用于 <title>/SEO，页面上不渲染大标题）
   page_title: 订阅
-  # 页面描述模板（%d 会被替换为成功抓取的订阅源数量）
-  page_subtitle: '正在关注 %d 个博客'
   # 请求超时（毫秒）
   timeout: 10000
+  # 文章流上方的一句说明；留空则不显示。
+  # page_note: '我一直在读的东西，按时间倒序排列。'
 
 # =============================================
 # Runtime (实时运行时间)
 # =============================================
 runtime:
-  enable: true                          # 是否在页脚显示实时时钟和运行时长
+  enable: true                          # 是否在首页简介下方显示运行时长
   start_time: '2020-01-01 00:00:00'     # 起始时间，用于计算"已平稳运行"的时长
 
 
@@ -332,6 +330,21 @@ footer:
   #     external: true
   #   - name: RSS
   #     url: /atom.xml
+
+  # 十年之约 · 虫洞印章（默认关闭，按需开启）
+  # 在页脚顶部渲染一条 hairline 分隔的「印章栏」：
+  #   左：虫洞入口（随机跳转到另一位成员博客）
+  #   右：官方成员标识
+  # 素材随主题分发（source/img/foreverblog-*.webp），深浅色各一张，由 CSS 切换。
+  # foreverblog:
+  #   enable: true
+  #   wormhole_text: 穿过虫洞
+  #   wormhole_url: https://www.foreverblog.cn/go.html
+  #   wormhole_title: 虫洞 · 随机访问十年之约成员博客
+  #   site_text: 十年之约
+  #   site_url: https://www.foreverblog.cn/
+  #   site_title: 十年之约成员博客
+  #   mark: wormhole          # wormhole（虫洞按钮）| member（B 字标）| both | none
 
 # =============================================
 # Archive 归档页搜索

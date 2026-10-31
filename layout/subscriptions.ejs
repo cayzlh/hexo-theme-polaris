@@ -1,49 +1,144 @@
-<!-- Subscriptions Page — Polaris theme -->
-<div class="subscriptions-page">
-  <div class="subscriptions-list">
-    <% if (page.isEmpty || !page.items || page.items.length === 0) { %>
-      <div class="subscriptions-empty">
-        <div class="subscriptions-empty-icon">📡</div>
-        <p class="subscriptions-empty-text">暂无订阅内容</p>
-        <p class="subscriptions-empty-hint">请在 <code>source/_data/subscriptions.yml</code> 中配置订阅源</p>
-      </div>
-    <% } else { %>
-      <% for (var i = 0; i < page.items.length; i++) {
-        var item = page.items[i];
-        if (!item) continue;
-      %>
-        <div class="sub-item">
-          <div class="sub-item-header">
-            <a class="sub-item-source" href="<%= item.sourceHomepage || '#' %>" target="_blank" rel="noopener">
-              <span class="sub-source-icon"><%= item.sourceIcon || '📡' %></span>
-              <span class="sub-source-name"><%= item.sourceName %></span>
-            </a>
-            <span class="sub-item-date"><%= formatDate(item.pubDate) %></span>
-          </div>
-          <a class="sub-item-link" href="<%= item.link || '#' %>" target="_blank" rel="noopener">
-            <%= item.title || '无标题' %>
-          </a>
-        </div>
-      <% } %>
-    <% } %>
-  </div>
+<%
+  /* ==========================================================================
+     订阅页
+     --------------------------------------------------------------------------
+     结构（从上到下）：
+       1. 一句说明（不要大标题——导航已经标明当前是「订阅」了）
+       2. 文章流：按日期分组，日期是 mono 小标题
+       3. 页脚区「正在关注」：紧凑的源清单，附带每个源的 RSS 地址
 
-  <!-- ====== 分页 ====== -->
-  <% if (!page.isEmpty && page.total > 1) { %>
-  <div class="sub-paginator">
-    <% if (page.prev) { %>
-      <a class="sub-paginator-btn prev" href="<%= url_for(page.prev_link) %>" aria-label="上一页">‹</a>
-    <% } else { %>
-      <span class="sub-paginator-btn disabled">‹</span>
-    <% } %>
+     为什么日期提到结构层：原来 10 条平铺，「哪个源、哪天」全靠扫小字。
+     现在先沿时间轴走，再决定看哪一条；源退成行内标记，不抢标题。
 
-    <span class="sub-paginator-info"><%= page.current %> / <%= page.total %></span>
+     为什么「正在关注」放最后且做成紧凑清单：它是订阅入口（每个源给出
+     RSS 地址供复制），但读者打开这页首先想看的是「最近有什么更新」，
+     不是源目录。所以目录让位给内容。
+     ========================================================================== */
+  var subCfg = (theme.subscriptions) || {};
+  var sources = page.sources || [];
+  var showDesc = subCfg.show_description !== false;
 
-    <% if (page.next) { %>
-      <a class="sub-paginator-btn next" href="<%= url_for(page.next_link) %>" aria-label="下一页">›</a>
-    <% } else { %>
-      <span class="sub-paginator-btn disabled">›</span>
-    <% } %>
-  </div>
+  /* 按 YYYY-MM-DD 分组，保持原有倒序。 */
+  var groups = [];
+  var groupIndex = {};
+  (page.items || []).forEach(function (item) {
+    var d = item.pubDate ? new Date(item.pubDate) : null;
+    var key = (d && !isNaN(d.getTime())) ? date(d, 'YYYY-MM-DD') : '未知日期';
+    if (!(key in groupIndex)) {
+      groupIndex[key] = groups.length;
+      groups.push({ date: key, items: [] });
+    }
+    groups[groupIndex[key]].items.push(item);
+  });
+%>
+
+<div class="subs">
+
+  <%# ===== 1. 一句说明（无大标题） ===== %>
+  <% if (subCfg.page_note) { %>
+  <p class="subs-note"><%= subCfg.page_note %></p>
   <% } %>
+
+  <%# ===== 2. 文章流 ===== %>
+  <% if (page.isEmpty || !page.items || page.items.length === 0) { %>
+    <div class="subs-empty">
+      <p class="subs-empty__text">暂时没有抓到更新</p>
+      <p class="subs-empty__hint">可能是订阅源暂时不可达，下次构建会自动重试。</p>
+    </div>
+  <% } else { %>
+    <% groups.forEach(function (group) { %>
+    <div class="subs-day">
+      <h2 class="subs-day__date"><%= group.date %></h2>
+      <ul class="subs-day__list">
+        <% group.items.forEach(function (item) { %>
+        <li class="subs-entry">
+          <a class="subs-entry__title" href="<%= item.link || '#' %>" target="_blank" rel="noopener"><%= item.title || '无标题' %></a>
+          <a class="subs-entry__source" href="<%= item.sourceHomepage || '#' %>" target="_blank" rel="noopener"><span class="subs-entry__icon" aria-hidden="true"><%= item.sourceIcon || '📡' %></span><%= item.sourceName %></a>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
+    <% }); %>
+
+    <%# ===== 分页 ===== %>
+    <% if (page.total > 1) { %>
+    <nav class="subs-pager" aria-label="翻页">
+      <% if (page.prev) { %>
+        <a class="subs-pager__btn" href="<%= url_for(page.prev_link) %>" rel="prev">‹ 上一页</a>
+      <% } else { %>
+        <span class="subs-pager__btn is-disabled">‹ 上一页</span>
+      <% } %>
+      <span class="subs-pager__info"><%= page.current %> / <%= page.total %></span>
+      <% if (page.next) { %>
+        <a class="subs-pager__btn" href="<%= url_for(page.next_link) %>" rel="next">下一页 ›</a>
+      <% } else { %>
+        <span class="subs-pager__btn is-disabled">下一页 ›</span>
+      <% } %>
+    </nav>
+    <% } %>
+  <% } %>
+
+  <%# ===== 3. 正在关注（页脚区） ===== %>
+  <% if (sources.length) { %>
+  <section class="subs-follow" aria-labelledby="subs-follow-title">
+    <h2 class="subs-follow__title" id="subs-follow-title">正在关注 · <%= sources.length %> 个源</h2>
+    <ul class="subs-follow__list">
+      <% sources.forEach(function (src, i) { %>
+      <li class="subs-follow__item<%= src.error ? ' is-error' : '' %>">
+        <span class="subs-follow__icon" aria-hidden="true"><%= src.icon || '📡' %></span>
+        <a class="subs-follow__name" href="<%= src.homepage || src.url %>" target="_blank" rel="noopener"><%= src.name %></a>
+        <% if (showDesc && src.description) { %>
+          <span class="subs-follow__desc"><%= src.description %></span>
+        <% } %>
+        <% if (src.error) { %>
+          <span class="subs-follow__err">抓取失败</span>
+        <% } else { %>
+          <code class="subs-follow__url" id="subs-feed-<%= i %>"><%= src.url %></code>
+          <button class="subs-follow__copy" type="button" data-copy-target="subs-feed-<%= i %>"
+                  aria-label="复制 <%= src.name %> 的订阅地址">复制</button>
+        <% } %>
+      </li>
+      <% }); %>
+    </ul>
+  </section>
+  <% } %>
+
 </div>
+
+<script>
+/* 「复制订阅地址」：优先 Clipboard API，失败回退到选中文本的旧办法。 */
+(function () {
+  document.querySelectorAll('.subs-follow__copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = document.getElementById(btn.getAttribute('data-copy-target'));
+      if (!target) return;
+      var text = target.textContent.trim();
+
+      function done() {
+        var old = btn.textContent;
+        btn.textContent = '已复制';
+        btn.classList.add('is-done');
+        setTimeout(function () {
+          btn.textContent = old;
+          btn.classList.remove('is-done');
+        }, 2000);
+      }
+      function fallback() {
+        var range = document.createRange();
+        range.selectNodeContents(target);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        sel.removeAllRanges();
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
+})();
+</script>

@@ -1,0 +1,50 @@
+<%
+  /* ==========================================================================
+     运行时长 · 首页简介下方的一行元信息
+     --------------------------------------------------------------------------
+     原来这行在页脚，逐秒闪动、还带完整日期，信息噪音大且没有落点。
+     现在收进首页简介之后：只说两件事——写了多久、此刻几点，日期交给
+     上面的文章列表去体现。
+
+     仍然每秒更新，但只在「分钟」变化时才写 DOM，避免无意义的 layout。
+     ========================================================================== */
+%>
+<% if (theme.runtime && theme.runtime.enable) { %>
+<div id="site-runtime" class="intro-meta" aria-live="off"></div>
+<script>
+(function () {
+  var startTimeStr = '<%= theme.runtime.start_time || "2022-06-01 00:00:00" %>';
+  var tzOffset = 8; /* Asia/Shanghai */
+
+  var parts = startTimeStr.match(/(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})/);
+  if (!parts) return;
+  var startUtc = Date.UTC(+parts[1], +parts[2] - 1, +parts[3], +parts[4] - tzOffset, +parts[5], +parts[6]);
+
+  var el = document.getElementById('site-runtime');
+  if (!el) return;
+
+  var last = '';
+  function render() {
+    var now = new Date();
+    var local = new Date(now.getTime() + tzOffset * 3600000);
+    var hh = local.getUTCHours();
+    var mm = local.getUTCMinutes();
+    var stamp = hh + ':' + mm;
+    if (stamp === last) return;   /* 同一分钟内不重排 */
+    last = stamp;
+
+    var diff = now.getTime() - startUtc;
+    if (diff < 0) diff = 0;
+    var days = Math.floor(diff / 86400000);
+
+    var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+    el.innerHTML = '这串代码已安静运行 <b>' + days + '</b> 天'
+      + '<span class="intro-meta__sep" aria-hidden="true">·</span>'
+      + '此刻 <b>' + pad(hh) + ':' + pad(mm) + '</b>';
+  }
+
+  render();
+  setInterval(render, 1000);
+})();
+</script>
+<% } %>

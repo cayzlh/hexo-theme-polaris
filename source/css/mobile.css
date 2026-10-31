@@ -977,6 +977,29 @@
     border-bottom: none !important;
   }
 
+  /* 虫洞印章：不在 .footer-nav 里，得单独豁免上面那条强制下划线，
+     否则「穿过虫洞 · 十年之约」会变成两段下划线。窄屏改为竖排居中，
+     回到页脚原有的居中单列习惯。 */
+  .wh-seal {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85em;
+    padding-top: 0.95em;
+    margin-bottom: 1.4em;
+    text-align: center;
+  }
+
+  .wh-seal .wh-link,
+  .wh-seal .wh-mark,
+  .wh-seal .wh-link:hover,
+  .wh-seal .wh-mark:hover {
+    text-decoration: none !important;
+  }
+
+  .wh-mark img {
+    height: 24px;
+  }
+
   /* Dossier 面包屑链接 */
   .dossier-bread a {
     text-decoration: underline !important;

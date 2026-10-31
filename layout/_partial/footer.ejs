@@ -1,8 +1,8 @@
 <footer class="footer">
   <% var footerLinks = (theme.footer && theme.footer.links) || [] %>
+  <%- partial('_partial/footer_seal') %>
   <div class="footer-inner<%= footerLinks.length ? ' footer-inner--split' : '' %>">
     <div class="footer-main">
-      <%- partial('_partial/runtime') %>
       <div class="footer-info">
         <% if (theme.footer && theme.footer.text) { %>
           <span class="footer-text">
