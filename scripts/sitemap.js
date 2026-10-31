@@ -26,7 +26,13 @@ function xmlEscape(str) {
     .replace(/'/g, '&apos;');
 }
 
-/** Normalise a page path to the URL form the host actually serves. */
+/**
+ * Normalise a page path to the URL form the host actually serves.
+ *
+ * Percent-encoding is required: sitemap <loc> values must be URI-encoded, and
+ * this site has Chinese tag/category slugs. Leaving them raw made the host answer
+ * 307 for every such URL, which crawlers report as a redirect instead of a page.
+ */
 function absoluteUrl(siteUrl, path) {
   var p = String(path || '')
     .replace(/^\/+/, '')
@@ -34,7 +40,12 @@ function absoluteUrl(siteUrl, path) {
     // The host rewrites `/foo.html` -> `/foo`; listing the .html form would put
     // a redirecting URL in the sitemap, which crawlers report as an error.
     .replace(/\.html?$/, '');
-  return siteUrl.replace(/\/+$/, '') + '/' + p;
+
+  // encodeURI keeps the existing slashes intact while escaping non-ASCII and
+  // spaces; skip it for the empty (home) path so the root stays a clean "/".
+  var encoded = p === '' ? '' : encodeURI(p.replace(/^\/+/, '').replace(/\/+$/, '')) + '/';
+  if (encoded === '/') encoded = '';
+  return siteUrl.replace(/\/+$/, '') + '/' + encoded;
 }
 
 /**
