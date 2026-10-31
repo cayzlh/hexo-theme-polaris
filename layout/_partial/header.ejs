@@ -44,7 +44,8 @@
             </div>
           </div>
           <% } else { %>
-          <a href="<%= url_for(item.url) %>" class="nav-link<%= isActive ? ' active' : '' %>"><%= item.name %></a>
+          <%# 一级项也支持 target：站外友链（如「开往」）需要新窗口打开。 %>
+          <a href="<%= url_for(item.url) %>" class="nav-link<%= isActive ? ' active' : '' %>"<%- item.target ? ' target="' + item.target + '"' : '' %><%- item.target === '_blank' ? ' rel="noopener"' : '' %>><%= item.name %></a>
           <% } %>
         <% }); } %>
         <% if (theme.dark_mode && (theme.dark_mode.mode === 'manual' || theme.dark_mode.mode === 'system')) { %>
@@ -94,7 +95,7 @@
         </div>
       </div>
       <% } else { %>
-      <a href="<%= url_for(item.url) %>" class="nav-link<%= isActive ? ' active' : '' %>"><%= item.name %></a>
+      <a href="<%= url_for(item.url) %>" class="nav-link<%= isActive ? ' active' : '' %>"<%- item.target ? ' target="' + item.target + '"' : '' %><%- item.target === '_blank' ? ' rel="noopener"' : '' %>><%= item.name %></a>
       <% } %>
     <% }); } %>
     <div class="dark-toggle-wrapper">

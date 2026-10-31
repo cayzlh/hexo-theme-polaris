@@ -10,46 +10,20 @@ info:
 
 # Navigation links
 # ========================================
-# 导航菜单配置（支持下拉菜单）
-# ========================================
-# 字段说明：
-#   name     - 菜单显示名称
-#   url      - 链接地址（内部路径或完整 URL），有 children 时可省略
-#   icon     - 可选，菜单项图标或指示符
-#   children - 子菜单列表，有此字段则表示为下拉菜单
-#   divider  - boolean，是否为分割线（仅用于 children 中）
-#   target   - '_self'（同窗口）/ '_blank'（新窗口），默认 '_self'
-menu:
-  - name: Home
-    url: /
-  - name: Blog
-    url: /archives/
-  - name: Dossier
-    url: /dossier/
-  - name: 拾遗
-    url: /curio/
-  - name: News
-    url: /news/
-  - name: Rss
-    url: /subscriptions/
-  - name: Tools
-    children:
-      - name: 标签
-        url: /tags/
-      - name: 分类
-        url: /categories/
-      - name: 归档
-        url: /archives/
-      - name: ───────
-        divider: true
-      - name: 打印数独
-        url: /custom/sudoku/
-        target: _self
-      - name: 在线工具
-        url: /custom/demo.html
-        target: _self
-      - name: 作品集
-        url: /custom/workspace.html
+# 导航菜单。这里刻意留空：菜单完全由站点的 _config.<theme>.yml 提供。
+#
+# 为什么不留示例菜单：Hexo 的主题二级配置用 deepMerge 合并，而它对数组是
+# **按索引**递归合并的。如果主题里预留了带 children 的示例项，站点菜单在
+# 同一索引上新增一项时，会把那个示例项的 children 继承过去——表现为
+# 一个普通外链莫名变成下拉菜单。留空数组可彻底避免这类串味。
+#
+# 字段说明（在站点配置里写）：
+#   name     - 显示名称
+#   url      - 内部路径或完整 URL
+#   target   - '_self' | '_blank'，外链建议 _blank（模板会自动补 rel=noopener）
+#   children - 子菜单；有此项则渲染为下拉
+#   divider  - 仅用于 children，true 表示分割线
+menu: []
 
 # =============================================
 # Homepage
