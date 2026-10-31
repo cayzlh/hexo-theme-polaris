@@ -989,15 +989,22 @@
     text-align: center;
   }
 
+  /* .wh-tv-badge 是开往的官方徽章模式，同样不能被加上下划线。 */
   .wh-seal .wh-link,
   .wh-seal .wh-mark,
+  .wh-seal .wh-tv-badge,
   .wh-seal .wh-link:hover,
-  .wh-seal .wh-mark:hover {
+  .wh-seal .wh-mark:hover,
+  .wh-seal .wh-tv-badge:hover {
     text-decoration: none !important;
   }
 
   .wh-mark img {
     height: 24px;
+  }
+
+  .wh-tv-badge img {
+    height: 21px;
   }
 
   /* Dossier 面包屑链接 */

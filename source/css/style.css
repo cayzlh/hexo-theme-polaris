@@ -1625,6 +1625,29 @@ html.dark .footer a:hover{color:var(--c-link)}
 html.dark .wh-mark img.wh-mark__on-light{display:none}
 html.dark .wh-mark img.wh-mark__on-dark{display:block}
 
+/* 开往：文本模式和官方徽章模式共用这条印章栏。
+   文本模式的图标由主题自绘（细线地铁车厢），和「穿过虫洞」的螺旋同一套笔画语言，
+   所以它读起来像本站的一部分，而不是贴上去的第三方徽章。 */
+.wh-link--tv .wh-glyph--tv{transition:transform var(--dur-base) var(--ease-out)}
+.wh-link--tv:hover .wh-glyph--tv{transform:translateX(2px)}
+
+/* 官方徽章模式：b.png 是深色字（配浅底），w.png 是浅色字（配深底），
+   都是透明背景。用 `.wh-tv-badge img.xxx` 提高优先级，
+   否则会被 `.wh-tv-badge img` 盖掉，两枚同时显示。 */
+.wh-tv-badge{
+  display:inline-flex;
+  flex:none;
+  align-items:center;
+  border-bottom:none;
+  opacity:0.9;
+  transition:opacity var(--dur-fast) var(--ease-out);
+}
+.wh-tv-badge:hover{opacity:1}
+.wh-tv-badge img{height:22px;width:auto;display:block}
+.wh-tv-badge img.wh-tv-on-dark{display:none}
+html.dark .wh-tv-badge img.wh-tv-on-light{display:none}
+html.dark .wh-tv-badge img.wh-tv-on-dark{display:block}
+
 /* 键盘可达：印章是页脚里唯一的跨站出口，焦点必须看得见。 */
 .wh-seal a:focus-visible{
   outline:2px solid var(--c-accent);

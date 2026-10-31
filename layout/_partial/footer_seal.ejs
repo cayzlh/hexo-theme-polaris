@@ -1,27 +1,38 @@
 <%
   /* ==========================================================================
-     十年之约 · 虫洞印章
+     页脚印章栏
      --------------------------------------------------------------------------
-     一条 hairline 顶开的「页脚头」，左侧是可点的虫洞入口，右侧是官方成员标识。
-     为什么单独成条而不是塞进 .footer-nav：标识是站点级身份背书，和
-     「访问统计 / 归档 / 订阅」这类导航不是同一层级，混在竖排列表里会让人
-     以为它也是本站页面。
+     一条 hairline 顶开的「页脚头」。目前承载两个跨站出口：
+       左：十年之约（虫洞 + 成员站）  开往（友链接力）
+       右：十年之约官方成员标识
 
-     全部字段由 theme.footer.foreverblog 驱动，模板不假设任何域名；
-     theme.footer.foreverblog.enable 为 false 时整块不渲染（默认关）。
+     为什么单独成条而不是塞进 .footer-nav：这些是站点级身份背书，
+     和「访问统计 / 归档 / 订阅」这类本站导航不是同一层级；混进竖排列表里
+     会让人以为它们也是站内页面。
+
+     全部字段由 theme.footer.foreverblog / theme.footer.travellings 驱动，
+     模板不假设任何域名；两者都关闭时整块不渲染。
      ========================================================================== */
   var fb = (theme.footer && theme.footer.foreverblog) || {};
+  var tv = (theme.footer && theme.footer.travellings) || {};
+
   var fbMark = fb.mark || 'wormhole';   /* wormhole | member | both | none */
   /* 文件名约定：*-dark 是深色墨稿（配浅色背景），*-light 是浅色墨稿（配深色背景）。 */
   var fbArt = {
     wormhole: { onLight: '/img/foreverblog-wormhole-dark.webp',  onDark: '/img/foreverblog-wormhole-light.webp'  },
     member:   { onLight: '/img/foreverblog-member-dark.webp',    onDark: '/img/foreverblog-member-light.webp'    }
   };
-  var fbShowMark = (fbMark === 'wormhole' || fbMark === 'member' || fbMark === 'both');
+  var fbOn = fb.enable === true;
+  var tvOn = tv.enable === true;
+  var fbShowMark = fbOn && (fbMark === 'wormhole' || fbMark === 'member' || fbMark === 'both');
+  /* 开往：文本模式用主题内的细线图标；image 模式走官方徽章（b/w 两套按主题切）。 */
+  var tvMode = tv.mark || 'text';       /* text | image */
 %>
-<% if (fb.enable === true) { %>
+<% if (fbOn || tvOn) { %>
 <div class="wh-seal">
   <div class="wh-seal__links">
+
+    <% if (fbOn) { %>
     <a class="wh-link" href="<%= fb.wormhole_url || 'https://www.foreverblog.cn/go.html' %>"
        target="_blank" rel="noopener"
        title="<%= fb.wormhole_title || '虫洞 · 随机访问十年之约成员博客' %>"><svg class="wh-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M19.9 15.3a8.6 8.6 0 1 1 1.1-6.6" stroke-width="1.9"/><path d="M14.6 15.1a3.7 3.7 0 1 1-5.1-5.2" stroke-width="1.9"/></svg><%= fb.wormhole_text || '穿过虫洞' %></a>
@@ -29,7 +40,31 @@
     <a class="wh-link" href="<%= fb.site_url || 'https://www.foreverblog.cn/' %>"
        target="_blank" rel="noopener"
        title="<%= fb.site_title || '十年之约成员博客' %>"><%= fb.site_text || '十年之约' %></a>
+    <% } %>
+
+    <% if (fbOn && tvOn) { %><span class="wh-sep" aria-hidden="true">·</span><% } %>
+
+    <% if (tvOn) { %>
+      <% if (tvMode === 'image') { %>
+      <%# 官方徽章：b.png 深色字配浅底，w.png 浅色字配深底，透明背景。 %>
+      <a class="wh-tv-badge" href="<%= tv.url || 'https://www.travellings.cn/go.html' %>"
+         target="_blank" rel="noopener"
+         title="<%= tv.title || '开往 · 友链接力' %>">
+        <img class="wh-tv-on-light" src="<%= tv.badge_light || 'https://www.travellings.cn/assets/b.png' %>" alt="开往-友链接力" loading="lazy" decoding="async">
+        <img class="wh-tv-on-dark"  src="<%= tv.badge_dark  || 'https://www.travellings.cn/assets/w.png' %>" alt="开往-友链接力" loading="lazy" decoding="async">
+      </a>
+      <% } else { %>
+      <%# 文本模式：细线地铁图标 + 「开往」。
+          开往文档明确允许自选图标（推荐火车/地铁类），这样能和主题的
+          细线等宽字体系对齐，而不是插一块异形徽章。 %>
+      <a class="wh-link wh-link--tv" href="<%= tv.url || 'https://www.travellings.cn/go.html' %>"
+         target="_blank" rel="noopener"
+         title="<%= tv.title || '开往 · 友链接力' %>"><svg class="wh-glyph wh-glyph--tv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="3" width="14" height="13" rx="3" stroke-width="1.7"/><path d="M8 7.4h2.6M13.4 7.4H16" stroke-width="1.9"/><circle cx="8.7" cy="11.8" r="1.15" fill="currentColor" stroke="none"/><circle cx="13.9" cy="11.8" r="1.15" fill="currentColor" stroke="none"/><path d="M9.1 16.2 7.8 19M14.9 16.2 16.2 19" stroke-width="1.7"/></svg><%= tv.text || '开往' %></a>
+      <% } %>
+    <% } %>
+
   </div>
+
   <% if (fbShowMark) { %>
   <a class="wh-mark" href="<%= fb.site_url || 'https://www.foreverblog.cn/' %>"
      target="_blank" rel="noopener"

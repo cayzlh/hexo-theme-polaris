@@ -346,6 +346,16 @@ footer:
   #   site_title: 十年之约成员博客
   #   mark: wormhole          # wormhole（虫洞按钮）| member（B 字标）| both | none
 
+  # 开往 · 友链接力（travellings.cn）外链，与虫洞同处页脚印章栏。
+  # travellings:
+  #   enable: true
+  #   mark: text              # text（自绘细线图标 + 文字）| image（官方徽章）
+  #   text: 开往
+  #   url: https://www.travellings.cn/go.html
+  #   title: 开往 · 友链接力
+  #   badge_light: https://www.travellings.cn/assets/b.png
+  #   badge_dark: https://www.travellings.cn/assets/w.png
+
 # =============================================
 # Archive 归档页搜索
 # =============================================
