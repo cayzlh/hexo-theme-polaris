@@ -33,18 +33,28 @@ function xmlEscape(str) {
  * this site has Chinese tag/category slugs. Leaving them raw made the host answer
  * 307 for every such URL, which crawlers report as a redirect instead of a page.
  */
-function absoluteUrl(siteUrl, path) {
-  var p = String(path || '')
-    .replace(/^\/+/, '')
-    .replace(/index\.html$/, '')
-    // The host rewrites `/foo.html` -> `/foo`; listing the .html form would put
-    // a redirecting URL in the sitemap, which crawlers report as an error.
-    .replace(/\.html?$/, '');
+/**
+ * Normalise a page path to the URL the host actually serves.
+ *
+ * The host treats the two shapes differently, and getting it wrong costs a 307:
+ *   directory page  `/dir/`     -> trailing slash REQUIRED
+ *   single page     `/file`     -> trailing slash FORBIDDEN
+ *
+ * `path` may come from three places: hexo's `page.path` (ends in index.html for
+ * directory pages), a post path (`post/xxx/index.html`), or a path this generator
+ * built by hand (`tags/Java`, `archives/2022/03`). Only the first two announce
+ * themselves via index.html, so `isDir` is passed explicitly for the third kind.
+ */
+function absoluteUrl(siteUrl, path, isDir) {
+  var p = String(path || '').replace(/^\/+/, '');
 
-  // encodeURI keeps the existing slashes intact while escaping non-ASCII and
-  // spaces; skip it for the empty (home) path so the root stays a clean "/".
-  var encoded = p === '' ? '' : encodeURI(p.replace(/^\/+/, '').replace(/\/+$/, '')) + '/';
-  if (encoded === '/') encoded = '';
+  var directory = isDir === true || /index\.html$/.test(p);
+  p = p.replace(/index\.html$/, '').replace(/\.html?$/, '').replace(/\/+$/, '');
+
+  // encodeURI escapes non-ASCII while leaving slashes intact.
+  var encoded = p === '' ? '' : encodeURI(p);
+  if (directory && encoded !== '') encoded += '/';
+
   return siteUrl.replace(/\/+$/, '') + '/' + encoded;
 }
 
@@ -69,9 +79,9 @@ hexo.extend.generator.register('polaris_sitemap', function (locals) {
   var siteUrl = (config.url || '').replace(/\/+$/, '');
   var entries = new Map();
 
-  function add(path, updated, changefreq, priority) {
+  function add(path, updated, changefreq, priority, isDir) {
     if (isExcluded(path)) return;
-    var url = absoluteUrl(siteUrl, path);
+    var url = absoluteUrl(siteUrl, path, isDir);
     var prev = entries.get(url);
     var ts = updated instanceof Date ? updated.getTime() : new Date(updated || Date.now()).getTime();
     if (prev && prev.lastmod >= ts) return;
@@ -85,40 +95,43 @@ hexo.extend.generator.register('polaris_sitemap', function (locals) {
 
   // ---- Posts ----
   locals.posts.forEach(function (post) {
-    add(post.path, post.updated || post.date, 'monthly', '0.8');
+    add(post.path, post.updated || post.date, 'monthly', '0.8', true);
   });
 
   // ---- Pages, including the dossier routes the theme generates itself ----
   locals.pages.forEach(function (page) {
     // Listing pages carry a paginated path; the first page is the canonical one.
-    add(page.path, page.updated || page.date, 'weekly', '0.5');
+    // `page.path` has index.html stripped by pretty_urls, so it is a directory
+    // page unless it still ends in .html (dossier chapter files).
+    var pageIsDir = !/\.html$/i.test(page.path || '');
+    add(page.path, page.updated || page.date, 'weekly', '0.5', pageIsDir);
   });
 
   // ---- Home ----
-  add('', new Date(), 'daily', '1.0');
+  add('', new Date(), 'daily', '1.0', true);
 
   // ---- Tag index and every tag ----
   var tagDir = config.tag_dir || 'tags';
-  add(tagDir + '/', new Date(), 'weekly', '0.4');
+  add(tagDir, new Date(), 'weekly', '0.4', true);
   if (locals.tags) {
     locals.tags.forEach(function (tag) {
-      add(tag.path, tag.updated || tag.date || new Date(), 'weekly', '0.4');
+      add(tag.path, tag.updated || tag.date || new Date(), 'weekly', '0.4', true);
     });
   }
 
   // ---- Category index and every category ----
   var catDir = config.category_dir || 'categories';
-  add(catDir + '/', new Date(), 'weekly', '0.4');
+  add(catDir, new Date(), 'weekly', '0.4', true);
   if (locals.categories) {
     locals.categories.forEach(function (cat) {
-      add(cat.path, cat.updated || cat.date || new Date(), 'weekly', '0.4');
+      add(cat.path, cat.updated || cat.date || new Date(), 'weekly', '0.4', true);
     });
   }
 
   // ---- Archive index plus every year / month page ----
   // These are real, linked pages that were missing from the previous sitemap.
   var archiveDir = config.archive_dir || 'archives';
-  add(archiveDir + '/', new Date(), 'weekly', '0.5');
+  add(archiveDir, new Date(), 'weekly', '0.5', true);
   var years = new Map();
   locals.posts.forEach(function (post) {
     if (!post.date) return;
@@ -134,9 +147,9 @@ hexo.extend.generator.register('polaris_sitemap', function (locals) {
   });
   years.forEach(function (ts, key) {
     if (key.indexOf('/') > 0) {
-      add(archiveDir + '/' + key + '/', new Date(ts), 'monthly', '0.3');
+      add(archiveDir + '/' + key + '/', new Date(ts), 'monthly', '0.3', true);
     } else {
-      add(archiveDir + '/' + key + '/', new Date(ts), 'monthly', '0.4');
+      add(archiveDir + '/' + key + '/', new Date(ts), 'monthly', '0.4', true);
     }
   });
 
