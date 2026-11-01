@@ -222,86 +222,299 @@ var API_BASE = 'https://glance.cayzlh.com';
 (function(doc) {
   'use strict';
 
-  /* ---- copy zaobao ---- */
-  var copyBtn = doc.getElementById('copy-zaobao');
-  var zList2  = doc.getElementById('z-list');
-  if (copyBtn && zList2) {
-    copyBtn.addEventListener('click', function() {
-      var items = zList2.querySelectorAll('.dz-item');
-      var text = '';
-      for (var i = 0; i < items.length; i++) {
-        text += (i + 1) + '. ' + items[i].textContent.trim() + '\n';
-      }
-      navigator.clipboard.writeText(text.trim()).then(function() {
-        copyBtn.classList.add('done');
-        setTimeout(function() { copyBtn.classList.remove('done'); }, 2000);
-      }).catch(function() {});
-    });
-  }
-
-  /* ---- toggle zaobao ---- */
-  var toggle = doc.getElementById('z-toggle');
-  var zList  = doc.getElementById('z-list');
-  if (toggle && zList) {
-    zList.classList.add('collapsed');
-    toggle.addEventListener('click', function() {
-      var isOpen = !zList.classList.contains('collapsed');
-      zList.classList.toggle('collapsed');
-      this.textContent = isOpen ? ('展开全部 ' + zList.children.length + ' 条 ▾') : '收起 ▴';
-    });
-  }
-
-  /* ---- incremental refresh ---- */
-  var today = '<%= daily.date || "" %>';
-  if (!today) return;
-
-  var cacheKey = 'daily_v2_' + today;
-
-  fetch('<%= API_BASE %>/v2/60s')
-    .then(function(r) { return r.json(); })
-    .then(function(res) {
-      if (!res || res.code !== 200) return;
-      var d = res.data;
-      if (!d || d.date !== today) return;
-
-      /* update tip */
-      var tipEl = doc.getElementById('dm-tip');
-      if (tipEl && d.tip) tipEl.innerHTML = '&ldquo;' + d.tip + '&rdquo;';
-
-      /* update time */
-      var timeEl = doc.getElementById('update-time');
-      if (timeEl && d.api_updated) {
-        var t = d.api_updated;
-        var m = t.match(/\d{2}:\d{2}/);
-        if (m) timeEl.textContent = m[0];
-      }
-
-      /* fetch luck & weekend in parallel */
-      return Promise.all([
-        fetch('<%= API_BASE %>/v2/moyu').then(function(r) { return r.json(); }),
-        fetch('<%= API_BASE %>/v2/luck').then(function(r) { return r.json(); })
-      ]);
-    })
-    .then(function(results) {
-      if (!results) return;
-      var moyu = results[0], luck = results[1];
-
-      /* update weekend badge */
-      var wb = doc.getElementById('b-weekend');
-      if (wb && moyu && moyu.code === 200 && moyu.data) {
-        var nw = moyu.data.nextWeekend;
-        if (nw && nw.daysUntil != null) {
-          wb.textContent = '周末还有 ' + nw.daysUntil + ' 天';
+  /* ---- 交互（重渲染后需要重新绑定，故抽成函数） ---- */
+  function bindInteractions() {
+    var copyBtn = doc.getElementById('copy-zaobao');
+    var zList2  = doc.getElementById('z-list');
+    if (copyBtn && zList2) {
+      copyBtn.addEventListener('click', function() {
+        var items = zList2.querySelectorAll('.dz-item');
+        var text = '';
+        for (var i = 0; i < items.length; i++) {
+          text += (i + 1) + '. ' + items[i].textContent.trim() + '\n';
         }
-      }
+        navigator.clipboard.writeText(text.trim()).then(function() {
+          copyBtn.classList.add('done');
+          setTimeout(function() { copyBtn.classList.remove('done'); }, 2000);
+        }).catch(function() {});
+      });
+    }
 
-      /* update luck badge */
-      var lb = doc.getElementById('b-luck');
-      if (lb && luck && luck.code === 200 && luck.data) {
-        lb.textContent = '🍀 运势 ' + luck.data.luck_rank;
+    var toggle = doc.getElementById('z-toggle');
+    var zList  = doc.getElementById('z-list');
+    if (toggle && zList) {
+      zList.classList.add('collapsed');
+      toggle.addEventListener('click', function() {
+        var isOpen = !zList.classList.contains('collapsed');
+        zList.classList.toggle('collapsed');
+        this.textContent = isOpen ? ('展开全部 ' + zList.children.length + ' 条 ▾') : '收起 ▴';
+      });
+    }
+  }
+
+  bindInteractions();
+
+  /* ==========================================================
+     数据自愈
+     ----------------------------------------------------------
+     构建产物的期号是「构建那一刻」的日期。GitHub Actions 的
+     schedule 经常晚 1~3 小时，00:00 到构建完成之间，页面挂的是
+     前一天的资讯。旧实现只做同一天内的原地刷新，遇到期号不一致
+     直接 return —— 页面只能等下一次构建，用户刷新无效。
+
+     现在：API 期号比页面新时，用 API 数据整块重渲染。不 reload，
+     因为 reload 拿到的还是同一份构建好的旧 HTML。
+     ========================================================== */
+  var API = '<%= API_BASE %>';
+  var pageDate = '<%= daily.date || "" %>';
+  var appEl = doc.getElementById('daily-app');
+  if (!appEl) return;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function trunc(s, n) {
+    s = String(s == null ? '' : s);
+    return s.length > n ? s.slice(0, n) + '…' : s;
+  }
+  function fmtHot(n) {
+    if (n == null || n === '') return '';
+    n = Number(n);
+    if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '万';
+    return String(n);
+  }
+  function fmtDateDisplay(ds) {
+    if (!ds) return '';
+    var p = String(ds).split('-');
+    if (p.length !== 3) return ds;
+    return parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
+  }
+  /* "2026/11/01 05:33" 或 "2026/11/01 09:37:14" -> "11-01 05:33" */
+  function fmtUpdated(s) {
+    if (!s) return '';
+    var m = String(s).match(/(\d{4})[-\/](\d{2})[-\/](\d{2})[ T](\d{2}):(\d{2})/);
+    if (m) return m[2] + '-' + m[3] + ' ' + m[4] + ':' + m[5];
+    m = String(s).match(/(\d{2}):(\d{2})/);
+    return m ? m[0] : String(s);
+  }
+  function getData(url) {
+    return fetch(url, { cache: 'no-store' })
+      .then(function(r) { return r.json(); })
+      .then(function(j) { return j && j.code === 200 ? j.data : null; })
+      .catch(function() { return null; });
+  }
+
+  /* ---------- 各区块 HTML（与服务端模板保持一致） ---------- */
+  function htmlHead(daily, updated) {
+    var h = '<div class="dm-head"><div class="dm-head-row">';
+    h += '<div class="dm-date">';
+    h += '<span class="dm-date-main">' + esc(daily.dateDisplay || fmtDateDisplay(daily.date)) + '</span>';
+    h += '<span class="dm-date-sub">' + esc(daily.dayOfWeek || '');
+    if (daily.lunarDate) h += ' · ' + esc(daily.lunarDate);
+    h += '</span></div>';
+    h += '<div class="dm-badges" id="dm-badges">';
+    if (daily.nextWeekend != null) {
+      h += '<span class="dm-badge" id="b-weekend">周末还有 ' + esc(daily.nextWeekend) + ' 天</span>';
+    }
+    if (daily.luckRank != null) {
+      h += '<span class="dm-badge" id="b-luck">🍀 运势 ' + esc(daily.luckRank) + '</span>';
+    }
+    h += '</div></div>';
+    if (daily.tip) h += '<blockquote class="dm-tip" id="dm-tip">“' + esc(daily.tip) + '”</blockquote>';
+    h += '</div>';
+    return h;
+  }
+  function htmlZaobao(news) {
+    if (!news || !news.length) return '';
+    var h = '<section class="ds"><h2 class="ds-title">📰 每日早报';
+    h += '<button class="ds-copy" id="copy-zaobao" title="复制全部"></button></h2>';
+    h += '<ol class="dz-list" id="z-list">';
+    for (var i = 0; i < news.length; i++) {
+      h += '<li class="dz-item"' + (i >= 5 ? ' aria-hidden="true"' : '') + '>' + esc(news[i]) + '</li>';
+    }
+    h += '</ol>';
+    if (news.length > 5) {
+      h += '<button class="dm-toggle" id="z-toggle">展开全部 ' + news.length + ' 条 ▾</button>';
+    }
+    h += '</section>';
+    return h;
+  }
+  function htmlAi(news) {
+    if (!news || !news.length) return '';
+    var h = '<section class="ds"><h2 class="ds-title">🤖 AI 资讯</h2><div class="dai" id="ai-list">';
+    for (var i = 0; i < Math.min(news.length, 4); i++) {
+      var it = news[i];
+      h += '<div class="dai-item">';
+      h += '<a href="' + esc(it.link) + '" target="_blank" rel="noopener" class="dai-title">' + esc(it.title) + '</a>';
+      h += '<span class="dai-detail">' + esc(trunc(it.detail, 100)) + '</span>';
+      h += '<span class="dai-source">' + esc(it.source) + '</span>';
+      h += '</div>';
+    }
+    h += '</div></section>';
+    return h;
+  }
+  function htmlHistory(items) {
+    if (!items || !items.length) return '';
+    var h = '<section class="ds"><h2 class="ds-title">📅 历史上的今天</h2><div class="dtl" id="dtl-list">';
+    for (var i = 0; i < Math.min(items.length, 5); i++) {
+      var ev = items[i];
+      var tag = ev.event_type === 'birth' ? '诞辰' : (ev.event_type === 'death' ? '逝世' : '');
+      h += '<div class="dtl-item"><time class="dtl-year">' + esc(ev.year) + '</time>';
+      h += '<div class="dtl-body">';
+      h += '<a href="' + esc(ev.link || '#') + '" target="_blank" rel="noopener" class="dtl-title">' + esc(ev.title) + '</a>';
+      if (tag) h += '<span class="dtl-tag">' + tag + '</span>';
+      h += '<span class="dtl-desc">' + esc(trunc(ev.description, 80)) + '</span>';
+      h += '</div></div>';
+    }
+    h += '</div></section>';
+    return h;
+  }
+  function htmlHot(zhihu, weibo) {
+    if ((!zhihu || !zhihu.length) && (!weibo || !weibo.length)) return '';
+    var h = '<section class="ds"><h2 class="ds-title">🔥 热搜榜</h2><div class="dgrid" id="dgrid">';
+    if (zhihu && zhihu.length) {
+      h += '<div class="dgrid-col" id="zhihu-col"><h3 class="dgrid-ct">💡 知乎热榜</h3><ol class="dgrid-list">';
+      for (var i = 0; i < Math.min(zhihu.length, 8); i++) {
+        var z = zhihu[i];
+        h += '<li><a href="' + esc(z.url) + '" target="_blank" rel="noopener">';
+        h += '<span class="dgrid-t">' + esc(z.title) + '</span>';
+        h += '<span class="dgrid-m">' + esc(z.hint) + '</span></a></li>';
       }
-    })
-    .catch(function() { /* silent */ });
+      h += '</ol></div>';
+    }
+    if (weibo && weibo.length) {
+      h += '<div class="dgrid-col" id="weibo-col"><h3 class="dgrid-ct">🔥 微博热搜</h3><ol class="dgrid-list">';
+      for (var j = 0; j < Math.min(weibo.length, 10); j++) {
+        var w = weibo[j];
+        var hot = fmtHot(w.hot);
+        h += '<li><a href="' + esc(w.url) + '" target="_blank" rel="noopener">';
+        h += '<span class="dgrid-t">' + esc(w.title) + '</span>';
+        if (hot) h += '<span class="dgrid-hot">' + esc(hot) + '</span>';
+        h += '</a></li>';
+      }
+      h += '</ol></div>';
+    }
+    h += '</div></section>';
+    return h;
+  }
+  function htmlHN(news) {
+    if (!news || !news.length) return '';
+    var h = '<section class="ds"><h2 class="ds-title">🌐 Hacker News</h2><div class="dhn" id="hn-list">';
+    for (var i = 0; i < Math.min(news.length, 8); i++) {
+      var n = news[i];
+      h += '<div class="dhn-item">';
+      h += '<a href="' + esc(n.link) + '" target="_blank" rel="noopener" class="dhn-title">' + esc(n.title) + '</a>';
+      h += '<span class="dhn-meta">' + esc(n.score) + ' 分 · by ' + esc(n.author) + '</span>';
+      h += '</div>';
+    }
+    h += '</div></section>';
+    return h;
+  }
+  function htmlFooter(updated) {
+    return '<div class="daily-footer"><span>更新于 <time id="update-time">' +
+      esc(updated) + '</time></span></div>';
+  }
+
+  /* ---------- 整页重渲染 ---------- */
+  function renderAll(d) {
+    var daily = d.daily || {};
+    var html = htmlHead(daily, fmtUpdated(daily.published)) +
+      htmlZaobao(d.zaobao) + htmlAi(d.ai) + htmlHistory(d.history) +
+      htmlHot(d.zhihu, d.weibo) + htmlHN(d.hn);
+
+    if (!html) {
+      appEl.innerHTML = '<div class="daily-empty">' +
+        '<div class="daily-empty-icon">&#128235;</div>' +
+        '<p class="daily-empty-text">今日资讯加载中…</p>' +
+        '<p class="daily-empty-hint">请稍后再来</p></div>';
+      return;
+    }
+    appEl.innerHTML = html + htmlFooter(fmtUpdated(daily.published));
+    bindInteractions();
+  }
+
+  /* ---------- 同一期号：只更新会变的部分 ---------- */
+  function lightRefresh(s, moyu, luck) {
+    var tipEl = doc.getElementById('dm-tip');
+    if (tipEl && s.tip) tipEl.textContent = '“' + s.tip + '”';
+
+    var timeEl = doc.getElementById('update-time');
+    if (timeEl) {
+      var t = fmtUpdated(s.api_updated) || fmtUpdated(s.updated);
+      if (t) timeEl.textContent = t;
+    }
+    var wb = doc.getElementById('b-weekend');
+    if (wb && moyu && moyu.nextWeekend && moyu.nextWeekend.daysUntil != null) {
+      wb.textContent = '周末还有 ' + moyu.nextWeekend.daysUntil + ' 天';
+    }
+    var lb = doc.getElementById('b-luck');
+    if (lb && luck && luck.luck_rank != null) {
+      lb.textContent = '🍀 运势 ' + luck.luck_rank;
+    }
+  }
+
+  /* ---------- 主流程 ---------- */
+  getData(API + '/v2/60s').then(function(s) {
+    if (!s || !s.date) return;
+
+    /* API 比页面旧（构建比发刊还早）→ 保留页面现状 */
+    if (pageDate && s.date < pageDate) return;
+
+    if (s.date === pageDate) {
+      return Promise.all([
+        getData(API + '/v2/moyu'),
+        getData(API + '/v2/luck')
+      ]).then(function(r) { lightRefresh(s, r[0], r[1]); });
+    }
+
+    /* 期号不一致 → 页面是旧的，用 API 数据整体重建 */
+    return Promise.all([
+      getData(API + '/v2/today-in-history'),
+      getData(API + '/v2/zhihu'),
+      getData(API + '/v2/weibo'),
+      getData(API + '/v2/ai-news'),
+      getData(API + '/v2/hacker-news/top'),
+      getData(API + '/v2/moyu'),
+      getData(API + '/v2/luck')
+    ]).then(function(r) {
+      var moyu = r[5], luck = r[6];
+      renderAll({
+        daily: {
+          date: s.date,
+          dateDisplay: fmtDateDisplay(s.date),
+          dayOfWeek: s.day_of_week || '',
+          lunarDate: s.lunar_date || '',
+          tip: s.tip || '',
+          nextWeekend: moyu && moyu.nextWeekend ? moyu.nextWeekend.daysUntil : null,
+          luckRank: luck ? luck.luck_rank : null,
+          published: s.updated || s.created || s.api_updated
+        },
+        zaobao: (s.news || []).map(function(t) {
+          return String(t).replace(/^\d+[、.．\s]\s*/, '');
+        }),
+        history: (r[0] && r[0].items) || [],
+        zhihu: ((r[1] || [])).map(function(x) {
+          var hint = x.hot_value_desc || '';
+          if (x.answer_cnt) hint = (hint ? hint + ' · ' : '') + x.answer_cnt + '回答';
+          return {
+            title: x.title || '',
+            url: x.link || '',
+            hint: hint,
+            image: x.cover || (x.images && x.images[0]) || ''
+          };
+        }),
+        weibo: ((r[2] || [])).map(function(x) {
+          return { title: x.title || '', hot: x.hot_value || x.hot_num || 0, url: x.link || '' };
+        }),
+        ai: ((r[3] && r[3].news) || []),
+        hn: (r[4] || [])
+      });
+      /* 重渲染后再校正一次时间与徽章 */
+      lightRefresh(s, moyu, luck);
+    });
+  }).catch(function() { /* silent */ });
 
 })(document);
 </script>

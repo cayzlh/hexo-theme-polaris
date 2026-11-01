@@ -1,0 +1,71 @@
+{
+  "code": 200,
+  "message": "获取成功。开源地址 https://github.com/vikiboss/60s，反馈群 595941841。",
+  "data": {
+    "date": {
+      "gregorian": "2026-11-01",
+      "weekday": "星期日",
+      "dayOfWeek": 0,
+      "lunar": {
+        "year": 2026,
+        "month": 9,
+        "day": 23,
+        "yearCN": "二零二六",
+        "monthCN": "九月",
+        "dayCN": "廿三",
+        "isLeapMonth": false,
+        "yearGanZhi": "丙午",
+        "monthGanZhi": "戊戌",
+        "dayGanZhi": "己卯",
+        "zodiac": "马"
+      }
+    },
+    "today": {
+      "isWeekend": true,
+      "isHoliday": true,
+      "isWorkday": false,
+      "holidayName": "Sunday",
+      "solarTerm": null,
+      "lunarFestivals": []
+    },
+    "progress": {
+      "week": {
+        "passed": 7,
+        "total": 7,
+        "remaining": 0,
+        "percentage": 100
+      },
+      "month": {
+        "passed": 1,
+        "total": 30,
+        "remaining": 29,
+        "percentage": 3
+      },
+      "year": {
+        "passed": 305,
+        "total": 365,
+        "remaining": 60,
+        "percentage": 84
+      }
+    },
+    "currentHoliday": {
+      "name": "Sunday",
+      "dayOfHoliday": 2,
+      "daysRemaining": 1,
+      "totalDays": 2
+    },
+    "nextHoliday": null,
+    "nextWeekend": {
+      "date": "2026-11-07",
+      "weekday": "星期六",
+      "daysUntil": 6
+    },
+    "countdown": {
+      "toWeekEnd": 6,
+      "toFriday": 5,
+      "toMonthEnd": 29,
+      "toYearEnd": 60
+    },
+    "moyuQuote": "老板赚的是我们加班的钱，我摸的是老板的鱼。谁占便宜还不一定呢。"
+  }
+}
