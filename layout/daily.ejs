@@ -35,7 +35,11 @@ var hasWeibo  = weibo.news.length  > 0;
 var hasAi     = aiNews.news.length > 0;
 var hasAny    = hasZaobao || hasHistory || hasZhihu || hasWeibo || hasAi;
 
-var API_BASE = 'https://glance.cayzlh.com';
+// ===== 数据源地址 =====
+// 由主题配置 daily.api_base 提供，站点配置 <theme 名>.daily.api_base 可覆盖。
+// 未配置时回落到官方公共实例 https://60s.viki.moe。
+var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
+  .replace(/\/+$/, '');
 %>
 
 <div class="daily-page" id="daily-app">
@@ -98,7 +102,7 @@ var API_BASE = 'https://glance.cayzlh.com';
         var item = aiNews.news[i];
       %>
       <div class="dai-item">
-        <a href="<%= item.link %>" target="_blank" rel="noopener" class="dai-title"><%= item.title %></a>
+        <a href="<%= item.link || '#' %>" target="_blank" rel="noopener" class="dai-title"><%= item.title %></a>
         <span class="dai-detail"><%= trunc(item.detail, 100) %></span>
         <span class="dai-source"><%= item.source %></span>
       </div>
@@ -148,7 +152,7 @@ var API_BASE = 'https://glance.cayzlh.com';
             var item = zhihu.news[i];
           %>
           <li>
-            <a href="<%= item.url %>" target="_blank" rel="noopener">
+            <a href="<%= item.url || '#' %>" target="_blank" rel="noopener">
               <span class="dgrid-t"><%= item.title %></span>
               <span class="dgrid-m"><%= item.hint %></span>
             </a>
@@ -166,7 +170,7 @@ var API_BASE = 'https://glance.cayzlh.com';
             var h = fmtHot(item.hot);
           %>
           <li>
-            <a href="<%= item.url %>" target="_blank" rel="noopener">
+            <a href="<%= item.url || '#' %>" target="_blank" rel="noopener">
               <span class="dgrid-t"><%= item.title %></span>
               <% if (h) { %><span class="dgrid-hot"><%= h %></span><% } %>
             </a>
@@ -190,7 +194,7 @@ var API_BASE = 'https://glance.cayzlh.com';
         var hn = page.hackerNews.news[i];
       %>
       <div class="dhn-item">
-        <a href="<%= hn.link %>" target="_blank" rel="noopener" class="dhn-title"><%= hn.title %></a>
+        <a href="<%= hn.link || '#' %>" target="_blank" rel="noopener" class="dhn-title"><%= hn.title %></a>
         <span class="dhn-meta"><%= hn.score %> 分 · by <%= hn.author %></span>
       </div>
       <% } %>

@@ -16,7 +16,8 @@
  *
  * 用法：
  *   node tools/test-daily-selfheal.js            # 用内置 fixture
- *   node tools/test-daily-selfheal.js --fetch    # 拉真实的 glance API 当 fixture
+ *   node tools/test-daily-selfheal.js --fetch    # 拉真实 API 当 fixture
+ *   DAILY_API_BASE=https://your-60s-host node tools/test-daily-selfheal.js --fetch
  *
  * 退出码 0 = 全部通过，1 = 有场景失败。
  * 不依赖 jsdom / puppeteer：只模拟用到的 DOM 与 fetch 接口。
@@ -28,7 +29,9 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const LAYOUT = path.join(ROOT, 'layout', 'daily.ejs');
 const FIXTURE_DIR = path.join(__dirname, 'fixtures', 'daily');
-const API = 'https://glance.cayzlh.com';
+/* 与主题默认值保持一致（themes/polaris/_config.yml 的 daily.api_base）。
+ * 自部署实例用环境变量覆盖，避免把任何私有域名写进脚本。 */
+const API = (process.env.DAILY_API_BASE || 'https://60s.viki.moe').replace(/\/+$/, '');
 
 /* 布局里只用到这两个 EJS 表达式，这里自己替换，避免为了测试去跑 hexo */
 const EJS_SUBS = [

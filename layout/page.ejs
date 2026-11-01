@@ -46,7 +46,8 @@
 
 <script>
 (function(d) {
-  var API = 'https://glance.cayzlh.com';
+  /* 数据源地址与 /news/ 共用 daily.api_base（默认官方实例 60s.viki.moe）。 */
+  var API = '<%= ((theme.daily && theme.daily.api_base) || "https://60s.viki.moe").replace(/\/+$/, "") %>';
 
   /* ---- Bing wallpaper ---- */
   fetch(API + '/v2/bing').then(function(r) { return r.json(); }).then(function(res) {

@@ -23,6 +23,9 @@
       return (page.projects[b].sort || 0) - (page.projects[a].sort || 0);
     });
 
+    // 卡片字段开关（dossier.card.*）：只影响「显示/不显示」，
+    // 不改变文档顺序或 URL，属于纯展示层配置。
+    var dcfg = (theme.dossier && theme.dossier.card) || {};
     for (var i = 0; i < projKeys.length; i++) {
       var pid = projKeys[i];
       var proj = page.projects[pid];
@@ -31,7 +34,7 @@
   %>
     <div class="project-card">
       <a href="/<%= dp %>/<%= pid %>/" class="project-card-link">
-        <% if (proj.tags && proj.tags.length > 0) { %>
+        <% if (dcfg.show_tags !== false && proj.tags && proj.tags.length > 0) { %>
           <div class="project-tags">
             <% proj.tags.forEach(function(t) { %>
               <span class="project-tag"><%= t %></span>
@@ -39,14 +42,15 @@
           </div>
         <% } %>
         <div class="project-title"><%= proj.title || proj.name %></div>
-        <% if (proj.description) { %>
-          <p class="project-desc"><%= proj.description %></p>
+        <% if (dcfg.show_description !== false && proj.description) { %>
+          <p class="project-desc<%= dcfg.description_lines ? ' project-desc-clamp' : '' %>"<% if (dcfg.description_lines) { %> style="-webkit-line-clamp:<%= dcfg.description_lines %>"<% } %>><%= proj.description %></p>
         <% } %>
-        <% if (pageCount > 0) { %>
+        <% if (dcfg.show_count !== false && pageCount > 0) { %>
           <span class="project-count"><%= pageCount %> 篇文档</span>
         <% } %>
       </a>
     </div>
   <% }
   } %>
+
 </div>

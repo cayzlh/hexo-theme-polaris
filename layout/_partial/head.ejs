@@ -60,7 +60,9 @@
     <link rel="alternate" href="<%= url_for(config.feed.path) %>" type="application/atom+xml" title="<%= config.title %>">
   <% } %>
 
-  <!-- Fonts are self-hosted (Maple Mono NF CN, OFL-1.1) — no third-party origin
+  <!-- Fonts are self-hosted (Maple Mono NF CN by The Maple Mono Project Authors,
+       https://github.com/subframe7536/maple-font, SIL OFL-1.1 — a third-party
+       typeface we subset, not our own work) — no third-party origin
        is on the critical path any more. Preload only the two chunks that the
        first screen needs; the BMP ideograph chunk is fetched on demand via
        unicode-range and falls back with font-display: swap. -->
@@ -75,6 +77,74 @@
   <link rel="stylesheet" href="<%= url_for('/css/appearance.css') %>">
   <% if (theme.mobile && theme.mobile.enable !== false) { %>
   <link rel="stylesheet" href="<%= url_for('/css/mobile.css') %>">
+  <% } %>
+
+  <%
+  /* ==========================================================
+     配置 → CSS 变量 桥接
+     ----------------------------------------------------------
+     tokens.css 定义的是**默认值**，它不读 YAML。这里把 _config.yml 里
+     的 color / dark / link / 排版字段投影成 :root 上的自定义属性覆盖，
+     让「改 YAML 就能换配色」这句话真的成立，而不是让读者去手改 CSS。
+
+     只输出**显式配置过**的字段：没写的键保持 tokens.css 的原值，
+     所以清空这几段配置就等于回到主题默认观感。
+     ========================================================== */
+  function cssVars(map) {
+    var out = [];
+    for (var k in map) {
+      var v = map[k];
+      if (v === undefined || v === null || v === '') continue;
+      out.push(k + ':' + v);
+    }
+    return out.join(';');
+  }
+  var lightMap = {
+    '--c-text': theme.color && (theme.color.text),
+    '--c-text-light': theme.color && (theme.color['text-light']),
+    '--c-text-muted': theme.color && (theme.color['text-muted']),
+    '--c-bg': theme.color && (theme.color.background),
+    '--c-bg-secondary': theme.color && (theme.color['background-secondary']),
+    '--c-bg-tertiary': theme.color && (theme.color['background-tertiary']),
+    '--c-link': (theme.link && theme.link.color) || (theme.color && theme.color.link),
+    '--c-link-hover': (theme.link && theme.link.hover_color) || (theme.color && theme.color['link-hover']),
+    '--c-accent': theme.color && (theme.color.accent),
+    /* 改了 accent 之后填充块上的字色可能要跟着换，所以留了配置口子。
+       不配就沿用 tokens.css 里按默认 accent 算好的值。 */
+    '--c-on-accent': theme.color && (theme.color['on-accent']),
+    '--c-border': theme.color && (theme.color.border),
+    '--c-border-strong': theme.color && (theme.color['border-dark']),
+    '--c-code-bg': theme.color && (theme.color['code-bg']),
+    '--c-code-border': theme.color && (theme.color['code-border']),
+    '--c-sel': theme.color && (theme.color.selection),
+    '--fs': theme.font_size,
+    '--lh': theme.line_height,
+    '--mw': theme.max_width
+  };
+  var darkMap = {
+    '--c-text': theme.dark && (theme.dark.text),
+    '--c-text-light': theme.dark && (theme.dark['text-light']),
+    '--c-text-muted': theme.dark && (theme.dark['text-muted']),
+    '--c-bg': theme.dark && (theme.dark.background),
+    '--c-bg-secondary': theme.dark && (theme.dark['background-secondary']),
+    '--c-bg-tertiary': theme.dark && (theme.dark['background-tertiary']),
+    '--c-link': theme.dark && (theme.dark.link),
+    '--c-link-hover': theme.dark && (theme.dark['link-hover']),
+    '--c-accent': theme.dark && (theme.dark.accent),
+    '--c-on-accent': theme.dark && (theme.dark['on-accent']),
+    '--c-border': theme.dark && (theme.dark.border),
+    '--c-code-bg': theme.dark && (theme.dark['code-bg']),
+    '--c-hover-bg': theme.dark && (theme.dark['hover-bg']),
+    '--c-sel': theme.dark && (theme.dark.selection)
+  };
+  var rootVars = cssVars(lightMap);
+  var darkVars = cssVars(darkMap);
+  %>
+  <% if (rootVars) { %>
+  <style>:root{<%= rootVars %>}</style>
+  <% } %>
+  <% if (darkVars) { %>
+  <style>html.dark{<%= darkVars %>}</style>
   <% } %>
 
   <!-- Favicon (theme.favicon > config.avatar > /favicon.ico) -->

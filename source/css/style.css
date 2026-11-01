@@ -1032,6 +1032,9 @@ html.dark .post-body pre:not(.highlight):not(.code-block pre) {
 /* ★ 约束：.toc-fixed 依赖 position:fixed，不可在其祖先元素上使用
      transform/filter/perspective，否则包含块变为该祖先。 */
 @media(min-width:1280px){
+  /* --toc-w 可被 toc.width 覆盖（模板在 .toc 上写内联变量，
+     这里用 fallback 保证未配置时仍是 200px）。
+     右定位从 --toc-w 推导，所以改宽度不会让 TOC 跑出视口。 */
   .main.has-toc{
     --toc-w:200px;--toc-gap:40px;
   }
@@ -1041,12 +1044,12 @@ html.dark .post-body pre:not(.highlight):not(.code-block pre) {
   }
   .toc{display:block}
   .toc-fixed{
-    position:fixed;top:4rem;width:var(--toc-w);
+    position:fixed;top:4rem;width:var(--toc-w,200px);
     max-height:calc(100vh - 9rem);overflow-y:auto;
-    /* TOC 右边缘 = 正文右边缘 + 40px gap + 200px 宽度
-       正文右边缘 = (50vw - 360) + 720 = 50vw + 360
-       → right = 100vw - (50vw + 360 + 40 + 200) = 50vw - 600 */
-    right:calc(50vw - 600px);
+    /* TOC 右边缘 = 正文右边缘(mw 居中) + gap + toc 宽度
+       → right = 50vw - (mw/2) - gap - toc-w + 20
+       用 --mw 与 --toc-w 表达，改 max_width / toc.width 时无需再算常数 */
+    right:calc(50vw - var(--mw) / 2 - var(--toc-gap) - var(--toc-w,200px));
   }
 }
 @media(min-width:1024px) and (max-width:1279px){
@@ -1067,6 +1070,21 @@ html.dark .post-body pre:not(.highlight):not(.code-block pre) {
 /* Content blocks never overflow */
 .post-body pre,.post-body .highlight,.post-body table{max-width:100%;overflow-x:auto}
 .post-body img{max-width:100%;height:auto}
+
+/* TOC 左置变体（toc.position: left）
+   .toc-fixed 是 position:fixed，靠 right 定位；左置时改挂 left，
+   并把 right 复位，两边不会互相打架。 */
+@media(min-width:1024px){
+  .toc-left .toc-fixed{
+    right:auto;
+    left:max(20px, calc(50vw - 590px));
+  }
+}
+@media(min-width:1280px){
+  .toc-left .toc-fixed{
+    left:calc(50vw - 600px);
+  }
+}
 
 /* ===== TOC Container ===== */
 .toc-wrapper {
@@ -1461,6 +1479,84 @@ html.dark .project-card-start--outline{
 html.dark .project-card-start--outline:hover{
   border-color:var(--c-link);
   background:var(--c-bg-secondary);
+}
+
+/* 「开始阅读」入口 — 档案项目首页底部
+   ------------------------------------------------------------------
+   唯一来源。三种样式由 dossier.card.start_button_style 决定
+   （default / minimal / outline），dossier_page.ejs 不再内联一份。
+
+   default 是实心强调按钮：整页只有这一个动作，值得最强的视觉权重。
+
+   前景色刻意用 --c-on-accent 而不是写死 #fff：
+   浅色模式下 --c-accent 是深青（#0E6E63），白字对比 6.1:1，没问题；
+   但深色模式下 --c-accent 变成浅青（#6DB3A3），白字只剩 2.4:1 ——
+   远低于 WCAG AA 的 4.5:1，浅色字浮在浅色底上，几乎糊成一片。
+   所以深色模式用近黑的前景（6.4:1），对比度反而更高。 */
+.dossier-start-reading{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.86rem;
+  font-weight:500;
+  color:var(--c-on-accent);
+  background:var(--c-accent);
+  text-decoration:none;
+  padding:9px 18px;
+  border-radius:var(--radius-md);
+  transition:background 0.2s, color 0.2s, transform 0.2s;
+}
+.dossier-start-reading:hover{
+  background:var(--c-link-hover);
+  color:var(--c-on-accent);
+  transform:translateX(2px);
+}
+.dossier-start-reading:hover .start-arrow{
+  transform:translateX(3px);
+}
+
+/* minimal：纯文字，无底色 */
+.dossier-start-reading.dossier-start-minimal{
+  background:none;
+  color:var(--c-accent);
+  padding:4px 2px;
+}
+.dossier-start-reading.dossier-start-minimal:hover{
+  background:none;
+  color:var(--c-link-hover);
+  transform:none;
+}
+html.dark .dossier-start-reading.dossier-start-minimal,
+html.dark .dossier-start-reading.dossier-start-minimal:hover{
+  color:var(--c-link);
+}
+
+/* outline：描边 */
+.dossier-start-reading.dossier-start-outline{
+  background:transparent;
+  color:var(--c-accent);
+  border:1px solid var(--c-border-strong);
+}
+.dossier-start-reading.dossier-start-outline:hover{
+  background:var(--c-bg-secondary);
+  color:var(--c-link-hover);
+  border-color:var(--c-accent);
+  transform:none;
+}
+html.dark .dossier-start-reading.dossier-start-outline{
+  color:var(--c-link);
+  border-color:var(--c-border);
+}
+html.dark .dossier-start-reading.dossier-start-outline:hover{
+  color:var(--c-link-hover);
+  border-color:var(--c-link);
+}
+
+/* 项目卡片描述行数限制（dossier.card.description_lines） */
+.project-desc-clamp{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 
 /* ===== Footer =====

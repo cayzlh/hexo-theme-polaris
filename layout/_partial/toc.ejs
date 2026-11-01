@@ -31,7 +31,13 @@ function renderToc(items) {
 </div>
 
 <!-- Desktop TOC -->
-<div class="toc">
+<%
+/* toc.width / toc.position 由模板投影成内联变量，供 style.css 的
+   --toc-w 覆盖使用。未配置时保持 CSS 里的 200px / 右侧。 */
+var tocW = (theme.toc && theme.toc.width) || '';
+var tocPos = (theme.toc && theme.toc.position) || 'right';
+%>
+<div class="toc<%= tocPos === 'left' ? ' toc-left' : '' %>"<% if (tocW) { %> style="--toc-w:<%= tocW %>"<% } %>>
   <div class="toc-fixed">
     <div class="toc-wrapper<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
       <div class="toc-title">目录</div>

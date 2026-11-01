@@ -95,10 +95,11 @@ var bodyHtml = page.content_html || render_md(page.content);
       <div class="post-body">
         <%- bodyHtml %>
       </div>
-      <% if (page.project.firstArticleUrl) { %>
+      <% var dcard = (theme.dossier && theme.dossier.card) || {};
+         if (page.project.firstArticleUrl && dcard.show_start_button !== false) { %>
       <div class="dossier-home-footer">
-        <a href="<%= page.project.firstArticleUrl %>" class="dossier-start-reading">
-          <span class="start-label"><%= (theme.dossier && theme.dossier.card && theme.dossier.card.start_button_text) || '开始阅读' %></span>
+        <a href="<%= page.project.firstArticleUrl %>" class="dossier-start-reading<%= dcard.start_button_style === 'minimal' ? ' dossier-start-minimal' : (dcard.start_button_style === 'outline' ? ' dossier-start-outline' : '') %>">
+          <span class="start-label"><%= dcard.start_button_text || '开始阅读' %></span>
           <span class="start-arrow">→</span>
         </a>
       </div>
@@ -450,53 +451,15 @@ var bodyHtml = page.content_html || render_md(page.content);
   }
 }
 
-/* ===== Home page start reading button ===== */
+/* ===== Home page start reading button =====
+   .dossier-start-reading 的全部样式在 source/css/style.css 里（唯一来源）。
+   这里只保留外层的间距，避免两处规则打架：
+   模板内联 <style> 排在 head 里的样式表之后，同优先级下会胜出，
+   之前正是这段旧规则把按钮涂成了「青底青字」，夜间模式下几乎看不清。 */
 .dossier-home-footer {
   margin-top: 36px;
   padding-top: 0;
   border-top: none;
-}
-
-.dossier-start-reading {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: var(--c-accent, #3b82f6);
-  text-decoration: none;
-  padding: 10px 0 10px 16px;
-  border-left: 3px solid var(--c-border);
-  transition: border-color 0.25s, color 0.25s;
-  line-height: 1.4;
-}
-
-.dossier-start-reading:hover {
-  color: var(--c-accent, #3b82f6);
-  border-left-color: var(--c-accent, #3b82f6);
-}
-
-html.dark .dossier-start-reading {
-  color: var(--c-accent, #5b9aff);
-}
-
-.dossier-start-reading .start-arrow {
-  font-size: 1.1rem;
-  transition: transform 0.25s ease;
-  display: inline-block;
-  line-height: 1;
-}
-
-.dossier-start-reading:hover .start-arrow {
-  transform: translateX(5px);
-}
-
-/* Subtle hint text */
-.dossier-start-reading .start-label {
-  font-size: 0.78rem;
-  font-weight: 400;
-  color: var(--c-text-light);
-  display: block;
 }
 
 /* ===== Responsive ===== */
@@ -565,12 +528,35 @@ html.dark .dossier-start-reading {
 @media (max-width: 768px) {
   .dossier-layout {
     padding: 0 12px;
+    /* 单列后必须允许收缩：上面桌面的 flex 基线是 0 0 720px 固定宽，
+       不在这里复位的话，窄屏正文仍是 720px 宽，被容器裁掉右半部分。 */
+    max-width: 100%;
+    width: 100%;
   }
   .dossier-sidebar {
     max-height: 240px;
+    flex: none;
+    width: 100%;
   }
   .dossier-content {
     padding: 0;
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  /* 长 URL / 长代码行在窄屏不该撑破布局 */
+  .dossier-content .post-body,
+  .dossier-content .post-body p,
+  .dossier-content .post-body li {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .dossier-content .post-body table,
+  .dossier-content .post-body pre {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
   }
   .dossier-pagination {
     flex-direction: column;

@@ -39,6 +39,9 @@
   --c-accent: #0e6e63;
   --c-accent-soft: rgba(14, 110, 99, 0.1);
   --c-accent-line: rgba(14, 110, 99, 0.28);
+  /* 强调色填充块上的前景色。
+     浅色模式下 accent 是深青（#0E6E63），白字 6.1:1 -> 用白。 */
+  --c-on-accent: #ffffff;
 
   /* ---- lines ---- */
   --c-border: #e8e8e8;
@@ -112,6 +115,9 @@ html.dark {
   --c-accent: #6db3a3;
   --c-accent-soft: rgba(109, 179, 163, 0.14);
   --c-accent-line: rgba(109, 179, 163, 0.32);
+  /* 深色模式下 accent 变浅（#6DB3A3），白字只有 2.4:1 —— 不可读。
+     改用近黑前景，对比度 6.4:1，同时保持「浅色块」的视觉重量不变。 */
+  --c-on-accent: #201d1c;
 
   /* ---- lines ---- */
   --c-border: #3a3532;

@@ -171,8 +171,14 @@ function readProjectConfig(basePath, projectId, indexFm) {
     }
   } catch (e) { /* ignore */ }
 
-  // 4. Empty fallback
-  return { title: projectId, description: '', tags: [], sort: 0, source: 'default' };
+  // 4. 回到 index.md front-matter（若可用），否则用目录名兜底
+  //
+  // 这里必须返回 config 本身，不能无条件返回一个新的空对象：
+  // 项目里既没有 _config.yml、也没有 _data/dossier/*.yml 时（这是最常见的情形，
+  // 约定优于配置就是鼓励这么写），上面第 1 步读到的 front-matter 会在这里
+  // 被整个丢掉 —— 表现为索引页卡片和项目首页都显示目录名，
+  // 而 description / tags / sort 全部失效。
+  return config;
 }
 
 // ============================================

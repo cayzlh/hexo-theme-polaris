@@ -43,46 +43,41 @@ random_posts_count: 5
 random_posts_title: 'Random posts:'
 
 # =============================================
-# 分割线配置
+# 分割线（<hr>）
 # =============================================
-# 将分割线从功能性的「分隔元素」升级为具有设计感的「视觉停顿」。
+# 主题把 <hr> 当成「视觉停顿」而非功能性分隔，内置 6 种样式。
+#
+# 用法：在 Markdown 里直接写带 class 的 hr
+#   <hr class="short">
+#   <hr class="ornament">
+#   <hr class="style-short">   ← 等价的 style- 前缀写法
 #
 # 可用样式：
-#   gradient  — 渐变消退式（两端渐隐，适合首页文章之间）
-#   short     — 短横线式（64px 居中，适合文章内章节分隔）
-#   dotted    — 点线组合式（· — · — ·，适合文章收尾）
-#   double    — 超细双线式（极淡双线，适合侧边栏/卡片内）
-#   ornament  — 花饰分隔符（✦ ✦ ✦，适合 About 等独立页面）
-#   dash-dot  — 点线花饰变体（— · — · —）
-# =============================================
+#   gradient — 两端渐隐
+#   short    — 64px 居中短横线
+#   dotted   — 点线组合 ·
+#   double   — 超细双线
+#   ornament — ✦ ✦ ✦ 花饰
+#   dash-dot — — · — · — 变体
+#
+# 注意：主题只对**首页文章之间**的分隔线读取下面的 home_style；
+# 正文里的 <hr> 用什么样式，由你在 Markdown 中写的 class 决定。
 hr:
-  # 首页文章之间分隔线样式（默认 gradient）
   home_style: gradient
-  # 文章内章节分隔线样式（默认 short）
-  post_style: short
-  # 文章末尾/页脚分隔线样式（默认 ornament）
-  footer_style: ornament
-  # 侧边栏/卡片内分隔线样式（默认 double）
-  sidebar_style: double
-  # About 等独立页面分隔线样式（默认 ornament）
-  page_style: ornament
-  # 分割线宽度（百分比或像素，仅对 gradient 生效）
-  width: 70%
-  # 分割线上下间距
-  margin_vertical: 2.5em
 
 # =============================================
 # SEO
 # =============================================
 
-# Canonical URL & clone detection
-# Set originalHost to your domain to enable clone detection.
+# Canonical URL + 镜像站检测
+# ---------------------------------------------------------------
+# originalHost 留空 = 完全关闭这两个功能（本地开发时建议留空）。
+# 填了之后：
+#   1. 每页输出 <link rel="canonical">，指向你自己的域名
+#   2. 别人用其它域名镜像你的站点时，页面顶部出现一条提示条
 canonical:
-  originalHost: ''            # e.g. 'www.example.com'
-  officialHosts: []           # e.g. ['example.com']
-  checklink: /js/check.js
-  closeEnable: true
-  closeText: 关闭提示
+  originalHost: ''            # 你的主域名，例如 'www.example.com'
+  officialHosts: []           # 额外认可的域名，例如 ['example.com']
 
 # Open Graph (social sharing)
 open_graph:
@@ -97,52 +92,62 @@ structured_data:
   logo: ''
 
 # =============================================
-# Colors
 # =============================================
-
+# Colors — 浅色模式
+# =============================================
+# 这里的值会由 layout/_partial/head.ejs 投影成 :root 上的 CSS 自定义属性，
+# 覆盖 source/css/tokens.css 的默认值。也就是说：**改这里就生效**，不用碰 CSS。
+#
+# 留空（或整段删掉）则回落到 tokens.css 的默认值。
+# 想改颜色又不想改 YAML 的话，也可以直接在 CSS 里覆盖同名变量。
 color:
-  # OnePage 暖白纸张：米白底 + 深青强调
+  # OnePage：中性白底 + 深青强调。四个表面层级等亮度递增，
+  # 每一级相差 4~6%，既能分层又不会让页面读起来发灰。
   text: '#3D3730'
   text-light: '#79705F'
   text-muted: '#6B6255'
-  background: '#FAF7F1'
-  background-secondary: '#F3EFE7'
-  background-tertiary: '#EDE8DE'
+  background: '#FFFFFF'
+  background-secondary: '#F5F5F5'
+  background-tertiary: '#EDEDED'
   link: '#0E6E63'
   link-hover: '#0A544B'
   accent: '#0E6E63'
-  border: '#E6E0D4'
-  border-dark: '#D5CCBB'
-  code-bg: '#F3EFE7'
-  code-border: '#E2DBCD'
-  selection: '#E5DBCA'
+  # 强调色填充块（按钮等）上的文字颜色。
+  # 浅色模式 accent 是深青，白字对比 6.1:1；改成浅色 accent 时记得一起换。
+  on-accent: '#FFFFFF'
+  border: '#E8E8E8'
+  border-dark: '#D4D4D4'
+  code-bg: '#F5F5F5'
+  code-border: '#E3E3E3'
+  selection: '#E6E6E6'
 
 # =============================================
-# 链接样式配置
+# 链接颜色
 # =============================================
+# 这两个值会被投影成 --c-link / --c-link-hover，覆盖 color: 里的同名项。
+# 留空则沿用 color.link / color.link-hover。
 link:
   color: '#0E6E63'
   hover_color: '#0A544B'
-  visited_color: '#0E6E63'
-  underline: true
-  underline_style: solid
-  underline_opacity: 0.28
 
-# Typography
-# 等宽字体比同级 sans 更宽，18px 的观感相当于 sans 的 19-20px
-# 实际生效值见 source/css/tokens.css 的 --fs / --lh / --mw
+# Typography — 同样会被投影成 --fs / --lh / --mw
 font_size: 16.5px
 line_height: 1.72
 max_width: 680px
+
 
 # =============================================
 # Dark Mode
 # =============================================
 dark_mode:
-  mode: manual                # auto | manual | system
+  # 三种模式：
+  #   manual — 右上角开关手动切换，选择记在 localStorage（默认）
+  #   auto   — 按下面的日落/日出时间自动切换，不显示开关
+  #   system — 跟随操作系统的 prefers-color-scheme
+  mode: manual
+  # 仅 mode: auto 时生效
   sunset: '19:00'
   sunrise: '06:00'
-  switch_position: header
 
 dark:
   # OnePage 暖棕·冷锚：暖棕底 + 冷青强调
@@ -158,99 +163,100 @@ dark:
   code-bg: '#201D1C'
   hover-bg: '#332E2C'
   accent: '#6DB3A3'
+  # 深色模式 accent 变浅，白字只有 2.4:1，必须用深色前景（6.4:1）。
+  on-accent: '#201D1C'
   selection: '#43392F'
 
 # =============================================
-# 页面过渡动画配置
+# 页面过渡动画
 # =============================================
 transition:
+  # 关掉它就完全不做页面切换动画
   enable: true
-  # 降级方案类型：'view-transition' | 'fade'
-  # view-transition: 优先使用 View Transitions API（浏览器原生），不支持时自动降级为 fade
-  # fade: 始终使用 JS 淡入淡出
-  type: view-transition
-  # 动画时长（毫秒），与 CSS animation-duration 一致
+  # 动画时长（毫秒）。与 CSS 里的淡入时长保持一致，
+  # 改这里请同时改 source/js/transition.js 的 CONFIG.duration。
   duration: 350
 
 # =============================================
-# TOC (Table of Contents)
+# TOC（目录）
 # =============================================
+# 桌面：正文右侧（或左侧）的固定侧栏，滚动时跟随高亮
+# 移动：右下角悬浮球的「目录」格 → 底部面板
 toc:
+  # 总开关。false 时侧栏与移动面板都不渲染
   enable: true
-  max_depth: 3                       # max heading depth (1-6)
-  position: right                    # desktop position: right | left
-  show_number: false                 # show heading numbers
-  mobile_default: collapsed          # collapsed | expanded
-  show_back_to_top: true             # show "back to top" button
-  back_to_top_text: 回到顶部          # back to top button text
-  auto_collapse: true                # auto collapse sub-headings, expand only current section
-  # 光标跟随：滚动时高亮当前阅读标题
-  highlight_on_scroll: true
-  # 是否显示层级连接线（树形可视化）
-  show_tree_line: true
-  # 滚动条样式：'custom' | 'hidden' | 'default'
-  scrollbar_style: custom
-  # 是否启用渐变遮罩（顶部/底部渐变透明，暗示可滚动）
-  gradient_mask: true
-  threshold: 0.3
-  font_size_base: 0.85rem
+  # 收录到第几级标题（1-6）。标题更深的层级不进入目录
+  max_depth: 3
+  # 桌面侧栏位置：'right' | 'left'
+  position: right
+  # 桌面侧栏宽度。改它会自动重算定位，不会跑出视口
   width: 200px
-  content_padding_right: 240px
+  # 手机上目录面板的初始状态：'collapsed' | 'expanded'
+  mobile_default: collapsed
+  # 是否显示「回到顶部」按钮
+  show_back_to_top: true
+  back_to_top_text: 回到顶部
+  # 自动折叠：只展开当前所在章节，其余子层级收起
+  auto_collapse: true
+  # 滚动时高亮当前阅读的标题
+  highlight_on_scroll: true
+  # 是否绘制层级连接线（树形可视化）
+  show_tree_line: true
 
 # =============================================
-# Dossier 档案系统（精简版—约定优于配置）
+# Dossier 档案系统
 # =============================================
 #
-# 每个 Dossier 项目是一个目录，必须包含 index.md 作为项目首页。
-# index.md 的 front-matter 提供项目配置（title / description / tags / sort）。
-# 无需在 source/_data/dossier/ 下创建 YAML 配置文件。
+# 每个项目 = source/dossier/ 下的一个目录，必须含 index.md 作为项目首页。
+# index.md 的 front-matter 承担项目配置（title / description / tags / sort）。
 #
-# 配置优先级：index.md front-matter > _config.yml > _data/dossier/*.yml
+# 配置优先级：index.md front-matter > 这里的 _config.yml
 #
 dossier:
+  # 总开关。false 时整个 /dossier/ 不生成
   enable: true
-  path: dossier                        # URL 路径
-  root_dir: dossier                    # 源文件目录
-  # 菜单与导航
-  show_in_menu: true                   # 是否显示在导航菜单中
-  menu_name: 档案                       # 菜单名称
-  # TOC
-  show_toc: true                       # 是否显示 TOC
-  toc_depth: 3                         # TOC 最大层级
-  # 分页导航
-  show_pagination: true                # 是否显示底部导航（上一篇/下一篇）
-  # 排序（全局默认，单个页面可用 front-matter sort 覆盖）
-  sort_by: sort                        # 'sort' | 'title' | 'date' | 'filename'
-  sort_order: asc                      # 'asc' | 'desc'
-  # 显示选项
-  show_description: true               # 是否显示项目描述
-  # 卡片显示配置
+  # URL 路径（同时也是 source 下的目录名）
+  path: dossier
+  # 是否显示文档页底部的「上一篇 / 下一篇」
+  show_pagination: true
+  # 项目卡片（/dossier/ 索引页）的展示开关
   card:
     show_tags: true
     show_description: true
     show_count: true
+    # 描述最多显示几行，超出省略（设为 0 / 不填则不限制）
     description_lines: 2
-    # 「开始阅读」入口
-    show_start_button: true            # 是否显示「开始阅读」按钮
-    start_button_text: 开始阅读         # 按钮文字
-    start_button_style: default        # 按钮样式：'default' | 'minimal' | 'outline'
+    # 项目首页底部的「开始阅读」入口
+    show_start_button: true
+    start_button_text: 开始阅读
+    # 按钮样式：'default'（实心）| 'minimal'（纯文字）| 'outline'（描边）
+    start_button_style: default
+
 
 # =============================================
-# Custom pages
+# Custom pages（自定义页面）
 # =============================================
-custom_pages:
-  enable: true
-  dir: custom
-  show_in_menu: false
+# 不需要任何配置：把普通 Markdown/HTML 放到站点的 source/<任意目录>/ 下，
+# Hexo 会按常规页渲染，主题自动套用 page.ejs。
+#
+# 想给某个页面单独的布局/宽度，在它的 front-matter 里写 layout，
+# 然后在主题 layout/ 下放同名 .ejs。例如：
+#
+#   ---
+#   layout: sudoku
+#   title: 数独题目生成与打印
+#   ---
+#
+# 主题自带的 layout/sudoku.ejs 就是这样一个例子（把正文容器放宽到 800px）。
 
 # =============================================
 # 移动端体验配置
 # =============================================
 mobile:
-  # 是否启用移动端优化（总开关）
+  # 是否启用移动端优化（总开关）。
+  # false 时：不加载 mobile.css / mobile.js，
+  # 悬浮球与底部目录面板都不渲染，移动端回到「顶部汉堡菜单」形态。
   enable: true
-  # 触控目标最小尺寸（px）
-  touch_target_size: 44
 
   # 右下角悬浮球（借鉴 Stellar 的 site-dock）
   # 一枚竖向胶囊，每格一个入口：
@@ -351,25 +357,52 @@ archive:
   show_match_count: true
 
 # =============================================
-# Alapi (每日资讯数据源)
+# Daily News — 60s-API 数据源
 # =============================================
-# 60s-API 数据源配置，驱动 /news/ 页面的三个栏目：
-#   每日早报 / 知乎日报 / 微博热搜
+# 驱动 /news/ 页面（构建期抓取 → 静态产物），以及 /curio/ 页面的
+# 每日壁纸 / Epic 免费游戏小组件。
 #
-# 数据来源：自部署的 60s-API（Cloudflare Workers）
-# 缓存机制：首次构建后写入 .daily_cache.json，同一天内重复构建不再请求 API
-#           避免本地开发（hexo server）频繁请求
+# 数据源：任何兼容 60s-API 协议的实例。
+#   · 官方公共实例（默认）：https://60s.viki.moe
+#   · 自部署：https://github.com/vikiboss/60s
+#   · 反代 / 自定义域名亦可，只要路径前缀仍是 /v2/
+#
+# 官方实例的四种响应形态（同一个 /v2/60s 端点）：
+#   https://60s.viki.moe/v2/60s                    JSON（本主题使用这种）
+#   https://60s.viki.moe/v2/60s?encoding=text      纯文本
+#   https://60s.viki.moe/v2/60s?encoding=image     重定向到原图 CDN
+#   https://60s.viki.moe/v2/60s?encoding=image-proxy 代理直链，直接返回图片
+#
+# 缓存：首次构建后写入 .daily_cache.json（站点根目录，已在 .gitignore），
+#       同一天内重复构建不再请求 API，避免 hexo server 反复打接口。
 daily:
-  # 总开关（false 时所有资讯显示空状态，可用于本地开发）
+  # 总开关（false 时 /news/ 渲染为空状态，适合纯本地开发）
   enable: true
-  # 60s-API 地址
-  api_base: 'https://glance.cayzlh.com'
-  # 每日早报（来自 /v2/60s）
+  # 60s-API 地址。末尾斜杠会被自动去掉。
+  api_base: 'https://60s.viki.moe'
+
+  # ---- 各栏目开关 ----
+  # 每日早报（/v2/60s）
   zaobao:
     enable: true
-  # 知乎日报（来自 /v2/zhihu）
+  # 知乎热榜（/v2/zhihu）
   zhihu:
     enable: true
-  # 微博热搜（来自 /v2/weibo）
+  # 微博热搜（/v2/weibo）
   weibo:
+    enable: true
+  # 历史上的今天（/v2/today-in-history）
+  history:
+    enable: true
+  # AI 资讯（/v2/ai-news）
+  ai_news:
+    enable: true
+  # Hacker News（/v2/hacker-news/top）
+  hacker_news:
+    enable: true
+  # 摸鱼进度（/v2/moyu），提供「周末还有 N 天」徽章
+  moyu:
+    enable: true
+  # 今日运势（/v2/luck），提供「🍀 运势」徽章
+  luck:
     enable: true
