@@ -51,8 +51,9 @@
         <% if (theme.dark_mode && (theme.dark_mode.mode === 'manual' || theme.dark_mode.mode === 'system')) { %>
           <%- partial('_partial/dark_toggle') %>
         <% } %>
-        <!-- 汉堡菜单按钮（移动端显示） -->
-        <button class="nav-toggle" aria-label="Toggle navigation menu">
+        <!-- 汉堡菜单按钮（移动端显示）。默认由右下角悬浮球取代；
+             mobile.dock.enable=false 时它重新出现，移动端仍有导航入口。 -->
+        <button class="nav-toggle" aria-label="打开站点导航">
           <span class="nav-toggle-icon"></span>
         </button>
       </nav>
@@ -61,7 +62,7 @@
   </div>
 
   <!-- 移动端导航抽屉（移动端显示） -->
-  <div class="nav-drawer">
+  <div class="nav-drawer" id="navDrawer">
     <% if (theme.menu) { theme.menu.forEach(function(item) {
       var itemPath = item.url ? item.url.replace(/^\//, '').replace(/\/$/, '') : '';
       var isActive = (item.url === '/' && is_home()) || (item.url && item.url !== '/' && page.path.startsWith(itemPath + '/'));

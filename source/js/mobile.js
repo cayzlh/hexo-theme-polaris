@@ -3,6 +3,11 @@
  *
  * 所有逻辑通过 matchMedia 或 window.innerWidth 判断设备类型，
  * 仅在移动端（< 768px）执行，不对 PC 端产生任何影响。
+ *
+ * 悬浮球（dock）是站点导航与文章目录的统一入口：
+ *   · 「导航」格 → 展开右侧导航抽屉（.nav-drawer，样式与交互沿用原实现）
+ *   · 「目录」格 → 升起底部目录面板（.toc-panel，样式与交互沿用原实现）
+ * 两个面板互斥，同一时刻只允许一个打开，避免遮罩叠加、body 锁死。
  */
 (function () {
   'use strict';
@@ -28,51 +33,89 @@
   }
 
   // =============================================
-  // 2.3 导航 — 汉堡菜单
+  // 面板状态
+  //
+  // 抽屉与目录面板都是 fixed 全高/半高浮层，body 一旦 overflow:hidden
+  // 就必须保证「谁锁的谁开」。这里用一个显式状态对象收敛两处，
+  // 而不是让每个 init 各写一遍 —— 否则 A 打开时关 B，B 的清理回调
+  // 会把 A 刚设上的 overflow 一起清掉。
   // =============================================
+  var state = { nav: false, toc: false };
+
+  function lockBody() {
+    document.body.style.overflow = 'hidden';
+  }
+
+  function unlockBodyIfIdle() {
+    if (!state.nav && !state.toc) document.body.style.overflow = '';
+  }
+
+  // =============================================
+  // 2.3 导航 — 抽屉
+  // =============================================
+  var navEls = null;
+
+  function navParts() {
+    if (navEls) return navEls;
+    navEls = {
+      drawer: document.querySelector('.nav-drawer'),
+      overlay: document.querySelector('.nav-overlay'),
+      toggle: document.querySelector('.nav-toggle'),
+      btn: document.getElementById('dockNav')
+    };
+    return navEls;
+  }
+
+  function setNavOpen(open) {
+    var p = navParts();
+    if (!p.drawer) return;
+    state.nav = open;
+    p.drawer.classList.toggle('open', open);
+    if (p.overlay) p.overlay.classList.toggle('active', open);
+    if (p.toggle) p.toggle.classList.toggle('open', open);
+    if (p.btn) {
+      p.btn.classList.toggle('is-active', open);
+      p.btn.setAttribute('aria-expanded', String(open));
+    }
+    // 抽屉打开时把胶囊藏掉（样式见 mobile.css）：抽屉是不透明全高侧栏，
+    // 本来就会盖住它，这里再收一次焦点，键盘 Tab 就不会落进看不见的按钮。
+    document.body.classList.toggle('nav-open', open);
+    if (open) lockBody(); else unlockBodyIfIdle();
+  }
+
   function initMobileNav() {
-    if (!isMobileView()) return;
+    var p = navParts();
+    if (!p.drawer) return;
 
-    var toggle = document.querySelector('.nav-toggle');
-    var drawer = document.querySelector('.nav-drawer');
-    var overlay = document.querySelector('.nav-overlay');
-
-    if (!toggle || !drawer || !overlay) return;
-
-    function openDrawer() {
-      drawer.classList.add('open');
-      overlay.classList.add('active');
-      toggle.classList.add('open');
-      document.body.style.overflow = 'hidden';
+    if (p.btn) {
+      p.btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        // 互斥：开导航前先收起目录面板
+        if (state.toc) setTocOpen(false);
+        setNavOpen(!state.nav);
+      });
     }
 
-    function closeDrawer() {
-      drawer.classList.remove('open');
-      overlay.classList.remove('active');
-      toggle.classList.remove('open');
-      document.body.style.overflow = '';
+    // 顶部汉堡按钮在移动端已隐藏（空间让给悬浮球），但保留绑定：
+    // 平板 / 未来布局回退时仍然可用，成本只是一个事件监听。
+    if (p.toggle) {
+      p.toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setNavOpen(!state.nav);
+      });
     }
 
-    toggle.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (drawer.classList.contains('open')) {
-        closeDrawer();
-      } else {
-        openDrawer();
-      }
-    });
-
-    overlay.addEventListener('click', closeDrawer);
+    if (p.overlay) {
+      p.overlay.addEventListener('click', function () { setNavOpen(false); });
+    }
 
     // 点击导航链接后关闭抽屉
-    var drawerLinks = drawer.querySelectorAll('a');
-    drawerLinks.forEach(function (link) {
-      link.addEventListener('click', closeDrawer);
+    p.drawer.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () { setNavOpen(false); });
     });
 
     // 移动端子菜单切换
-    var subToggles = drawer.querySelectorAll('.drawer-sub-toggle');
-    subToggles.forEach(function (btn) {
+    p.drawer.querySelectorAll('.drawer-sub-toggle').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
         e.preventDefault();
@@ -83,115 +126,100 @@
         }
       });
     });
-
-    // 按 ESC 关闭
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && drawer.classList.contains('open')) {
-        closeDrawer();
-      }
-    });
   }
 
   // =============================================
-  // 2.7 TOC — 浮动按钮 + 底部面板
+  // 2.7 TOC — 底部面板
   // =============================================
+  var tocEls = null;
+
+  function tocParts() {
+    if (tocEls) return tocEls;
+    tocEls = {
+      panel: document.getElementById('tocPanel') || document.querySelector('.toc-panel'),
+      overlay: document.querySelector('.toc-panel-overlay'),
+      close: document.querySelector('.toc-panel-close'),
+      btn: document.getElementById('dockToc')
+    };
+    return tocEls;
+  }
+
+  function setTocOpen(open) {
+    var p = tocParts();
+    if (!p.panel) return;
+    state.toc = open;
+    p.panel.classList.toggle('open', open);
+    if (p.overlay) p.overlay.classList.toggle('active', open);
+    if (p.btn) {
+      p.btn.classList.toggle('is-active', open);
+      p.btn.setAttribute('aria-expanded', String(open));
+    }
+    // 面板升起时让出底部空间（样式见 mobile.css），胶囊浮在它上面。
+    document.body.classList.toggle('toc-open', open);
+    // 面板是 modal：打开时把焦点送进去，关闭时还给触发它的那一格。
+    // 不做这一步，键盘用户打开面板后按 Tab 会跑到面板背后的正文里。
+    if (open) {
+      lockBody();
+      if (!p.panel.contains(document.activeElement)) {
+        var first = p.close || p.panel.querySelector('.toc-link');
+        if (first) first.focus({ preventScroll: true });
+      }
+    } else {
+      unlockBodyIfIdle();
+      if (p.btn && p.btn !== document.activeElement && p.panel.contains(document.activeElement)) {
+        p.btn.focus({ preventScroll: true });
+      }
+    }
+  }
+
   function initMobileToc() {
-    if (!isMobileView()) return;
+    var p = tocParts();
+    if (!p.panel) return;
 
-    var fab = document.querySelector('.toc-fab');
-    var panel = document.querySelector('.toc-panel');
-    var panelOverlay = document.querySelector('.toc-panel-overlay');
-    var closeBtn = document.querySelector('.toc-panel-close');
-
-    if (!fab || !panel) return;
-
-    function openPanel() {
-      panel.classList.add('open');
-      if (panelOverlay) panelOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      // 打开面板时显示 FAB
-      fab.classList.remove('hidden');
-    }
-
-    function closePanel() {
-      panel.classList.remove('open');
-      if (panelOverlay) panelOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-
-    fab.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (panel.classList.contains('open')) {
-        closePanel();
-      } else {
-        openPanel();
-      }
-    });
-
-    if (panelOverlay) {
-      panelOverlay.addEventListener('click', closePanel);
-    }
-
-    // 关闭按钮
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function (e) {
+    if (p.btn) {
+      p.btn.addEventListener('click', function (e) {
         e.stopPropagation();
-        closePanel();
+        // 互斥：开目录前先收起导航抽屉
+        if (state.nav) setNavOpen(false);
+        setTocOpen(!state.toc);
       });
     }
 
-    // 点击 TOC 链接后关闭面板
-    var tocLinks = panel.querySelectorAll('.toc-link');
-    tocLinks.forEach(function (link) {
-      link.addEventListener('click', function () {
-        closePanel();
+    if (p.overlay) {
+      p.overlay.addEventListener('click', function () { setTocOpen(false); });
+    }
+
+    if (p.close) {
+      p.close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setTocOpen(false);
+      });
+    }
+
+    // 点击 TOC 链接后关闭面板，让跳转结果立刻可见。
+    // 平滑滚动在这里统一处理：正文页的侧栏 TOC 自己绑了一套（只认 .toc 里的
+    // 链接），dossier 页绑的是 #dossier-toc 里的；面板是第三处，且窄屏下
+    // 往往只有它可见，所以不依赖上面两套。
+    p.panel.querySelectorAll('.toc-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        var id = this.getAttribute('data-toc');
+        var target = id && document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          var top = target.getBoundingClientRect().top + window.pageYOffset - 80;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        }
+        setTocOpen(false);
       });
     });
 
-    // 点击面板内部不冒泡
-    panel.addEventListener('click', function (e) {
-      e.stopPropagation();
-    });
-
-    // ===== FAB 滚动自动隐藏 =====
-    var lastScrollY = window.scrollY;
-    var ticking = false;
-
-    function handleScroll() {
-      var currentScrollY = window.scrollY;
-      var panelOpen = panel.classList.contains('open');
-
-      // 面板打开时始终显示 FAB
-      if (panelOpen) {
-        fab.classList.remove('hidden');
-        lastScrollY = currentScrollY;
-        ticking = false;
-        return;
-      }
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        fab.classList.add('hidden');
-      } else {
-        fab.classList.remove('hidden');
-      }
-      lastScrollY = currentScrollY;
-      ticking = false;
-    }
-
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        window.requestAnimationFrame(handleScroll);
-        ticking = true;
-      }
-    });
+    p.panel.addEventListener('click', function (e) { e.stopPropagation(); });
   }
 
   // =============================================
   // 2.8 Dossier — 侧边栏折叠
   // =============================================
   function initDossierSidebar() {
-    if (!isMobileView()) return;
-
     var sidebarHeader = document.querySelector('.dossier-sidebar-header');
     var sidebarBody = document.querySelector('.dossier-sidebar-body');
     var arrow = document.querySelector('.dossier-sidebar-arrow');
@@ -208,8 +236,6 @@
   // 2.15 Dossier — 移动端顶部下拉导航
   // =============================================
   function initDossierMobileNav() {
-    if (!isMobileView()) return;
-
     var navCurrent = document.querySelector('.dossier-mobile-nav-current');
     var navList = document.querySelector('.dossier-mobile-nav-list');
     var arrow = document.querySelector('.dossier-mobile-nav-arrow');
@@ -224,8 +250,7 @@
     });
 
     // 点击列表项后关闭
-    var navItems = navList.querySelectorAll('.dossier-mobile-nav-item');
-    navItems.forEach(function (item) {
+    navList.querySelectorAll('.dossier-mobile-nav-item').forEach(function (item) {
       item.addEventListener('click', function () {
         navList.classList.remove('open');
         if (arrow) arrow.classList.remove('open');
@@ -242,86 +267,13 @@
   }
 
   // =============================================
-  // 2.16 组合悬浮球（TOC + MENU 融合）
+  // 全局：ESC 关闭、点页面空白处关闭
   // =============================================
-  function initFabGroup() {
-    if (!isMobileView()) return;
-
-    var fabMain = document.getElementById('fabMain');
-    var fabOverlay = document.getElementById('fabOverlay');
-    var fabChildren = document.querySelectorAll('.fab-child');
-    var fabToc = document.getElementById('fabToc');
-    var fabMenu = document.getElementById('fabMenu');
-    var fabDark = document.getElementById('fabDark');
-
-    if (!fabMain || !fabOverlay) return;
-
-    var isOpen = false;
-
-    function toggleFab() {
-      isOpen = !isOpen;
-      fabMain.classList.toggle('open', isOpen);
-      fabChildren.forEach(function (el) { el.classList.toggle('show', isOpen); });
-      fabOverlay.classList.toggle('active', isOpen);
-    }
-
-    function closeFab() {
-      if (isOpen) toggleFab();
-    }
-
-    fabMain.addEventListener('click', function (e) {
-      e.stopPropagation();
-      toggleFab();
-    });
-
-    fabOverlay.addEventListener('click', closeFab);
-
-    // TOC 子球：复用现有 TOC 面板
-    if (fabToc) {
-      fabToc.addEventListener('click', function (e) {
-        e.stopPropagation();
-        closeFab();
-        var panel = document.querySelector('.toc-panel');
-        var panelOverlay = document.querySelector('.toc-panel-overlay');
-        if (panel) {
-          panel.classList.add('open');
-          if (panelOverlay) panelOverlay.classList.add('active');
-          document.body.style.overflow = 'hidden';
-        }
-      });
-    }
-
-    // MENU 子球：展开导航抽屉
-    if (fabMenu) {
-      fabMenu.addEventListener('click', function (e) {
-        e.stopPropagation();
-        closeFab();
-        var drawer = document.querySelector('.nav-drawer');
-        var navOverlay = document.querySelector('.nav-overlay');
-        var toggle = document.querySelector('.nav-toggle');
-        if (drawer) {
-          drawer.classList.add('open');
-          if (navOverlay) navOverlay.classList.add('active');
-          if (toggle) toggle.classList.add('open');
-          document.body.style.overflow = 'hidden';
-        }
-      });
-    }
-
-    // 暗色模式子球：切换日间/夜间模式
-    if (fabDark) {
-      fabDark.addEventListener('click', function (e) {
-        e.stopPropagation();
-        closeFab();
-        document.documentElement.classList.toggle('dark');
-        localStorage.setItem('polaris-theme',
-          document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-      });
-    }
-
-    // ESC 关闭
+  function initDismissers() {
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && isOpen) closeFab();
+      if (e.key !== 'Escape') return;
+      if (state.nav) setNavOpen(false);
+      if (state.toc) setTocOpen(false);
     });
   }
 
@@ -333,37 +285,15 @@
     initMobileToc();
     initDossierSidebar();
     initDossierMobileNav();
-    initFabGroup();
+    initDismissers();
 
-    // 监听视口变化：当从移动端切换到 PC 端时，
-    // 清理可能残留的移动端状态
+    // 监听视口变化：从移动端切到 PC 端时清理可能残留的浮层状态
     var mql = window.matchMedia('(min-width: 768px)');
     mql.addEventListener('change', function (e) {
-      if (e.matches) {
-        // 恢复 body overflow
-        document.body.style.overflow = '';
-
-        // 关闭可能打开的抽屉/面板
-        var drawer = document.querySelector('.nav-drawer');
-        var overlay = document.querySelector('.nav-overlay');
-        var toggle = document.querySelector('.nav-toggle');
-        var panel = document.querySelector('.toc-panel');
-        var panelOverlay = document.querySelector('.toc-panel-overlay');
-
-        if (drawer) drawer.classList.remove('open');
-        if (overlay) overlay.classList.remove('active');
-        if (toggle) toggle.classList.remove('open');
-        if (panel) panel.classList.remove('open');
-        if (panelOverlay) panelOverlay.classList.remove('active');
-
-        // 关闭组合悬浮球
-        var fabMain = document.getElementById('fabMain');
-        var fabOverlay = document.getElementById('fabOverlay');
-        var fabChildren = document.querySelectorAll('.fab-child');
-        if (fabMain) fabMain.classList.remove('open');
-        if (fabOverlay) fabOverlay.classList.remove('active');
-        fabChildren.forEach(function (el) { el.classList.remove('show'); });
-      }
+      if (!e.matches) return;
+      setNavOpen(false);
+      setTocOpen(false);
+      document.body.style.overflow = '';
     });
   }
 

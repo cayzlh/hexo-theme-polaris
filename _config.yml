@@ -249,16 +249,21 @@ custom_pages:
 mobile:
   # 是否启用移动端优化（总开关）
   enable: true
-  # 是否启用汉堡菜单
-  hamburger_menu: true
-  # 移动端正文字号（px）
-  body_font_size: 16
-  # 是否显示 TOC 浮动按钮
-  toc_fab: true
-  # 是否启用页面切换动画（移动端建议关闭）
-  transition_enabled: false
   # 触控目标最小尺寸（px）
   touch_target_size: 44
+
+  # 右下角悬浮球（借鉴 Stellar 的 site-dock）
+  # 一枚竖向胶囊，每格一个入口：
+  #   · 目录 — 只有页面确实有标题时才渲染（无目录的页面不会出现死键）
+  #   · 导航 — 站点菜单，始终存在
+  # enable 为 false 时整块不渲染，移动端回到「无浮层入口」状态。
+  dock:
+    enable: true
+    # 距屏幕右侧 / 底部的距离（px；底部会自动叠加 iOS 安全区）
+    offset_x: 16
+    offset_y: 16
+    # 图标边长（px）。22 是 44px 触控区内的舒适比例。
+    icon_size: 22
 
 # =============================================
 # 订阅页面配置

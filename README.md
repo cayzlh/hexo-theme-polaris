@@ -24,7 +24,7 @@ Polaris is a personal blog theme for [Hexo](https://hexo.io/), designed with a f
 - **SEO Optimized** — Open Graph, JSON-LD structured data, canonical URL with clone detection
 - **Table of Contents** — Collapsible sidebar TOC with scroll following, tree lines, and gradient mask
 - **Page Transitions** — View Transitions API with JS fade fallback
-- **Responsive** — Mobile-first design, adapts from phone to desktop
+- **Responsive** — Mobile-first design, adapts from phone to desktop. On phones, a floating dock in the bottom-right corner carries two entries: **目录** (the article TOC, only rendered when the page actually has headings) and **导航** (the site menu). One tap each, no expand-then-choose.
 - **Custom Pages** — Drop plain Markdown/HTML into a `custom/` directory
 - **Typography-first** — Self-hosted **Maple Mono NF CN** across the whole site. Operator ligatures (`->` `!=` `=>` …) fire in code only; running prose always renders the literal characters
 - **OnePage visual language** — Warm-paper light mode + warm-brown dark mode, teal accent, colour-coded heading ranks (indigo → violet → teal → terracotta)
@@ -83,6 +83,7 @@ Key configuration is in `themes/polaris/_config.yml`. Below are the main section
 | `footer` | Footer text & copyright |
 | `hr` | Horizontal rule styles (gradient / short / dotted / double / ornament) |
 | `daily` | Daily news API settings (api_base, switches, cache) |
+| `mobile.dock` | Mobile floating dock: `enable`, `offset_x` / `offset_y`, `icon_size` |
 
 ### Daily News
 

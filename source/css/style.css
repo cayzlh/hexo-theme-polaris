@@ -146,9 +146,8 @@ hr.dash-dot::before,hr.style-dash-dot::before{
 .archive-date{font-size:.95rem;color:var(--c-text-light);font-variant-numeric:tabular-nums}
 .archive-title{font-size:var(--fs)}
 
-/* 在 PC 端隐藏移动端 FAB 元素（mobile.css 在媒体查询中显示） */
-.fab-group,
-.fab-overlay {
+/* 在 PC 端隐藏移动端悬浮球（mobile.css 在媒体查询里放开） */
+.dock {
   display: none;
 }
 
@@ -1298,8 +1297,7 @@ html.dark .toc-back-top:hover { color: var(--c-link); }
 
 /* ===== Mobile TOC ===== */
 .toc-mobile{display:none;margin-bottom:1em}
-/* 浮动按钮 + 底部面板（仅移动端可见，由 mobile.css 控制） */
-.toc-fab,
+/* 底部面板（仅移动端可见，由 mobile.css 控制显示） */
 .toc-panel-overlay,
 .toc-panel{display:none}
 @media(max-width:1023px){

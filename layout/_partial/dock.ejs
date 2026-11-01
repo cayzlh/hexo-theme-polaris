@@ -1,0 +1,42 @@
+<%
+/**
+ * 移动端悬浮球（dock）
+ * ---------------------------------------------------------------------------
+ * 借鉴 Stellar 2.0 的 `.site-dock`：右下角一枚竖向玻璃胶囊，容纳站点导航与
+ * 文章目录两个入口，取代原先的 ✦ 展开式组合球（要先点主球、再点子里）。
+ *
+ * 图标沿用 Stellar 的 `default:leftbar` / `default:rightbar` 造型，但改成描边
+ * 绘制，笔画 1.6 与 Maple Mono 的字重对齐，颜色走 currentColor —— 于是它读起来
+ * 像本站图标语言的一部分，而不是贴上去的那套填充图标。
+ *
+ * 有则显示：没有目录的页面只渲染「导航」一格，胶囊自动收成一格高。
+ * 目录的显隐条件与 layout.ejs 里挂载 TOC 面板的条件严格一致，
+ * 避免出现「有按钮、没面板」的死键。
+ */
+var dockCfg = (theme.mobile && theme.mobile.dock) || {};
+var dockEnabled = !(theme.mobile && theme.mobile.enable === false) && dockCfg.enable !== false;
+var dockStyle = '--dock-x:' + (dockCfg.offset_x != null ? dockCfg.offset_x : 16) + 'px;'
+  + '--dock-y:' + (dockCfg.offset_y != null ? dockCfg.offset_y : 16) + 'px;'
+  + '--dock-icon:' + (dockCfg.icon_size != null ? dockCfg.icon_size : 22) + 'px';
+%>
+<% if (dockEnabled) { %>
+<div class="dock" id="dock" role="group" aria-label="页面工具栏" style="<%- dockStyle %>">
+  <% if (showToc) { %>
+  <button type="button" class="dock-btn" id="dockToc"
+          aria-label="打开目录" aria-controls="tocPanel" aria-expanded="false">
+    <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M10.4 6.5h9.8M10.4 12h9.8M10.4 17.5h9.8"/>
+      <path d="M3.9 6.3h1.3v3.9m-1.7 0h2.1"/>
+      <path d="M3.2 15.1c0-1.3 2.7-1.3 2.7.1 0 1.2-2.7 2-2.7 3.4h2.8"/>
+    </svg>
+  </button>
+  <% } %>
+  <button type="button" class="dock-btn" id="dockNav"
+          aria-label="打开站点导航" aria-controls="navDrawer" aria-expanded="false">
+    <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/>
+      <path d="M5.5 10h6m-5 4h4m4.5 7V3"/>
+    </svg>
+  </button>
+</div>
+<% } %>

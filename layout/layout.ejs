@@ -1,19 +1,40 @@
 <!DOCTYPE html>
 <html lang="<%= page.lang || config.language %>">
+<%
+/* 目录相关的三个判断都在这里算一次，模板各段共用，避免出现
+   「有按钮、没面板」或「有面板、没按钮」的死键。
+
+   showToc    桌面侧栏 TOC 是否渲染（dossier 页面由它自己的三栏侧栏负责，不重复渲染）
+   panelToc   移动端底部目录面板是否渲染 —— 比 showToc 宽一档：dossier 文章的
+              侧栏目录在窄屏被整体隐藏，但它的 page.toc 是齐的，所以这里接上，
+              这类页面同样能从悬浮球的「目录」格拿到目录。
+   dockToc    悬浮球是否出现「目录」格。与 panelToc 严格一致。 */
+var tocReady = !!(theme.toc && theme.toc.enable !== false && page.toc && page.toc.length);
+var isDossier = page.layout === 'index_dossier' || page.layout === 'dossier_page';
+var showToc = tocReady && !isDossier;
+var panelToc = tocReady;
+var dockCfg = (theme.mobile && theme.mobile.dock) || {};
+/* 悬浮球是否真的会渲染。顶部汉堡按钮的显隐依赖这个结果：
+   有悬浮球时它让位，没有时它回来，移动端始终有导航入口。 */
+var hasDock = !(theme.mobile && theme.mobile.enable === false) && dockCfg.enable !== false;
+%>
 <%- partial('_partial/head') %>
-<body>
+<body<% if (hasDock) { %> class="has-dock"<% } %>>
   <%- partial('_partial/header') %>
-  <main class="main<%= (theme.toc && theme.toc.enable && page.toc && page.toc.length && page.layout !== 'index_dossier' && page.layout !== 'dossier_page') ? ' has-toc' : '' %>">
+  <main class="main<%= showToc ? ' has-toc' : '' %>">
     <div class="content">
       <%- body %>
-      <% if (theme.toc && theme.toc.enable && page.toc && page.toc.length && page.layout !== 'index_dossier' && page.layout !== 'dossier_page') { %>
+      <% if (showToc) { %>
         <%- partial('_partial/toc') %>
       <% } %>
     </div>
   </main>
   <%- partial('_partial/footer') %>
   <%- partial('_partial/dark_mode') %>
-  <%- partial('_partial/fab') %>
+  <%- partial('_partial/dock', { showToc: panelToc }) %>
+  <% if (panelToc) { %>
+    <%- partial('_partial/toc_panel') %>
+  <% } %>
   <% if (theme.mobile && theme.mobile.enable !== false) { %>
   <script src="<%= url_for('/js/mobile.js') %>" defer></script>
   <% } %>

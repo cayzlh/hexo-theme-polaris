@@ -371,7 +371,10 @@
 }
 
 /* ============================================
-   2.7 TOC — 浮动按钮 + 底部面板
+   2.7 TOC — 底部面板
+   ============================================
+   入口不再是独立的圆形浮动按钮，而是收进右下角那枚悬浮球的「目录」格
+   （见 2.16）。面板本身保持原来的行为：从底部升起、遮罩、点链接后收起。
    ============================================ */
 @media (max-width: 768px) {
   /* 隐藏 PC 端 TOC（覆盖 style.css 中已有的 display:none 逻辑） */
@@ -379,45 +382,9 @@
     display: none !important;
   }
 
-  /* 隐藏现有的 toc-mobile（由 FAB 方案替代） */
+  /* 隐藏 toc-mobile 内联折叠块（由底部面板替代） */
   .toc-mobile {
     display: none !important;
-  }
-
-  /* 浮动按钮 — 右下角固定 */
-  .toc-fab {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    bottom: 24px;
-    right: 20px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--c-accent, var(--c-accent));
-    color: var(--c-card-bg);
-    border: none;
-    font-size: 20px;
-    box-shadow: 0 2px 12px var(--c-accent-line);
-    cursor: pointer;
-    z-index: 100;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  html.dark .toc-fab {
-    box-shadow: 0 2px 12px rgba(59,130,246,0.2);
-  }
-
-  .toc-fab:active {
-    transform: scale(0.92);
-  }
-
-  /* FAB 隐藏状态 — 滚动时自动隐藏 */
-  .toc-fab.hidden {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
   }
 
   /* TOC 底部面板 */
@@ -1140,155 +1107,142 @@
 }
 
 /* ============================================
-   2.16 组合悬浮球（TOC + MENU 融合）
+   2.16 悬浮球（站点导航 + 文章目录）
+   ============================================
+   取自 Stellar 2.0 的 `.site-dock`：右下角一枚竖向玻璃胶囊，每格一个入口。
+   相比原来的 ✦ 展开式组合球（先点主球、再点子里），这里把两个入口直接
+   摆在台面上——少一步，而且一眼看见「这里还有一个目录」。
+
+   有则显示：非文章页只渲染「导航」一格，胶囊自动收成一格高。
+
+   层级：悬浮球 150，压在正文之上、面板遮罩（199）/抽屉（1000）之下。
+   面板打开时它被盖住，由面板自己的 ✕ 与遮罩负责关闭——避免两个关闭
+   入口在同一屏里竞争，也避免胶囊压在 TOC 末几条链接上。
    ============================================ */
 @media (max-width: 768px) {
-  /* 隐藏旧的独立 TOC FAB，由组合悬浮球替代 */
-  .toc-fab {
+  /* 悬浮球存在时，顶部汉堡按钮隐身：两个导航入口同时出现会让用户犹豫
+     该点哪个。挂在 body.has-dock 上（由 layout.ejs 按同一份配置计算），
+     而不是无条件 display:none —— 于是 mobile.dock.enable=false 时汉堡
+     按钮自动回归，移动端不会失去导航入口（顶栏导航在窄屏本来就隐藏）。 */
+  body.has-dock .nav-toggle {
     display: none !important;
   }
 
-  /* 顶部汉堡菜单按钮已由悬浮球 MENU 功能替代 */
-  .nav-toggle {
-    display: none !important;
-  }
-
-  /* 顶部导航栏暗色模式开关已由悬浮球暗色子球替代 */
-  .header .nav > .dark-toggle {
-    display: none !important;
-  }
-
-  /* ===== 组合悬浮球容器 ===== */
-  .fab-group {
+  /* ===== 胶囊本体 ===== */
+  .dock {
     position: fixed;
-    bottom: max(24px, env(safe-area-inset-bottom));
-    right: 20px;
-    z-index: 150;
+    /* 拇指舒适区：右下，避让 iOS 底部安全区。偏移量由 _config.yml
+       的 mobile.dock.offset_x / offset_y 注入（见 _partial/dock.ejs）。 */
+    inset-inline-end: var(--dock-x, 16px);
+    bottom: calc(var(--dock-y, 16px) + env(safe-area-inset-bottom, 0px));
+    /* 压在目录面板的遮罩(199)与面板(200)之上：点开目录后胶囊仍在，
+       那一格变绿，再点一次就收起 —— 和 Stellar 的 dock 一致。
+       导航抽屉(1000)是不透明全高侧栏，会自然盖住它，另外用 body.nav-open
+       把它整个藏掉，免得键盘 Tab 还能摸到被盖住的按钮。 */
+    z-index: 300;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    gap: 2px;
+    padding: 3px;
+    border-radius: calc(var(--radius-lg) + 3px);
+    border: 1px solid var(--c-border);
+    /* 半透明 + 模糊：滚过长正文时胶囊仍能透出底下的一点纸色，
+       像 Stellar 的 bar-glass，而不是一块贴在页面上的白板。 */
+    background: color-mix(in srgb, var(--c-bg) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    backdrop-filter: saturate(180%) blur(12px);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* ===== 子功能球 ===== */
-  .fab-child {
+  /* 不支持 color-mix 的旧内核：退回不透明底色，避免胶囊变透明看不清 */
+  @supports not (background: color-mix(in srgb, red 50%, transparent)) {
+    .dock { background: var(--c-bg); }
+  }
+
+  html.dark .dock {
+    background: color-mix(in srgb, var(--c-bg) 78%, transparent);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+  }
+
+  @supports not (background: color-mix(in srgb, red 50%, transparent)) {
+    html.dark .dock { background: var(--c-bg); }
+  }
+
+  /* ===== 每一格 ===== */
+  .dock-btn {
     width: 44px;
     height: 44px;
-    border-radius: 50%;
-    background: var(--c-bg-secondary);
-    border: 1px solid var(--c-border);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1),
-                opacity 0.25s ease;
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-    font-size: 18px;
-    color: var(--c-text);
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .fab-child.show {
-    transform: scale(1);
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .fab-child:active {
-    transform: scale(0.88);
-  }
-
-  .fab-child .fab-label {
-    font-size: 8px;
-    font-weight: 500;
-    color: var(--c-text-muted);
-    margin-top: 1px;
-    letter-spacing: 0.3px;
-    line-height: 1;
-  }
-
-  html.dark .fab-child {
-    background: var(--c-code-head);
-    border-color: var(--c-border);
-    color: var(--c-text);
-  }
-
-  html.dark .fab-child .fab-label {
-    color: var(--c-text-muted);
-  }
-
-  /* 暗色模式子球图标切换 */
-  #fabDark .icon-dark { display: none; }
-  html.dark #fabDark .icon-light { display: none; }
-  html.dark #fabDark .icon-dark { display: inline; }
-  #fabDark .fab-label { margin-top: 0; }
-
-  /* ===== 主悬浮球 ===== */
-  .fab-main {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--c-accent);
-    border: none;
-    box-shadow: 0 4px 16px var(--c-accent-line);
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--c-text);
     cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-                background 0.2s;
-    font-size: 22px;
-    color: var(--c-card-bg);
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    transition: color var(--dur-fast) var(--ease-out),
+                background-color var(--dur-fast) var(--ease-out);
   }
 
-  .fab-main:active {
-    transform: scale(0.92);
+  .dock-btn:active {
+    background: var(--c-hover-bg);
   }
 
-  .fab-main.open {
-    transform: rotate(45deg);
+  /* 当前打开的那一格：强调色 + 极淡底，和桌面导航的 active 同一种语言 */
+  .dock-btn.is-active {
+    color: var(--c-accent);
+    background: var(--c-accent-soft);
   }
 
-  html.dark .fab-main {
-    background: var(--c-link);
-    box-shadow: 0 4px 16px var(--c-accent-line);
+  .dock-btn:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: -2px;
   }
 
-  /* ===== 遮罩 ===== */
-  .fab-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.15);
-    z-index: 140;
-    opacity: 0;
+  /* 图标：22px 描边，笔画 1.6 —— 和 Maple Mono 的正文笔画落在同一档，
+     所以它不会像一套外来图标那样比正文「重」。尺寸可由
+     mobile.dock.icon_size 覆盖（--dock-icon）。 */
+  .dock-icon {
+    width: var(--dock-icon, 22px);
+    height: var(--dock-icon, 22px);
+    display: block;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    overflow: visible;
+  }
+
+  /* 正文底部留白：保证最后一行不被胶囊压住。 */
+  .main {
+    padding-bottom: 5.5rem;
+  }
+
+  /* 页脚也要让位。页脚右侧是竖排导航（访问统计 / 归档 / 订阅），而胶囊
+     固定在右下角 —— 不预留空间时，滚到页面最底部两者会直接压在一起
+     （实测胶囊 top 776、导航 bottom 790）。加的是 padding-bottom，
+     内容整体上移，胶囊才真正落在留白里。 */
+  .footer {
+    padding-bottom: calc(4rem + 56px);
+  }
+
+  /* 目录面板升起时胶囊浮在它右下角，给面板底部留出胶囊的高度，
+     否则最后几条目录会被压在下面。 */
+  body.toc-open .toc-panel-body {
+    padding-bottom: 84px;
+  }
+
+  /* 导航抽屉是不透明全高侧栏，会盖住胶囊；直接把胶囊藏掉，
+     同时把它移出 Tab 序列，避免键盘焦点落进看不见的按钮。 */
+  body.nav-open .dock {
     visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-  }
-
-  .fab-overlay.active {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* 深色模式遮罩 */
-  html.dark .fab-overlay {
-    background: rgba(0,0,0,0.35);
-  }
-
-  /* 在移动端默认显示（media query 已隔离 PC 端） */
-  .fab-group,
-  .fab-overlay {
-    display: flex;
+    pointer-events: none;
   }
 }
 
