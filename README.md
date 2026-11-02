@@ -2,8 +2,8 @@
 
 > 一个为 [Hexo](https://hexo.io/) 打造的极简博客主题。重心在**阅读体验**、**构建性能**和**可配置性**。
 
-![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)
-![Hexo](https://img.shields.io/badge/hexo-6.x%20%2F%207.x-brightgreen.svg)
+![Version](https://img.shields.io/badge/version-0.3.3-blue.svg)
+![Hexo](https://img.shields.io/badge/hexo-6.x%20%7C%207.x%20%7C%208.x-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ---
@@ -26,7 +26,12 @@
 
 ```bash
 cd your-hexo-site
+
+# 跟随主干
 git clone https://github.com/cayzlh/hexo-theme-polaris.git themes/polaris
+
+# 或者锁定到某个版本（推荐，升级前先看 Releases 的版本说明）
+git clone --branch v0.3.3 --depth 1 https://github.com/cayzlh/hexo-theme-polaris.git themes/polaris
 ```
 
 站点 `_config.yml` 里指定主题：

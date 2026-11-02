@@ -3,7 +3,7 @@
 
 info:
   name: Polaris
-  version: 0.3.2
+  version: 0.3.3
 
 # 主标题 & 副标题（来自站点 _config.yml 的 title / subtitle）
 # title 显示在 header 左侧，subtitle 显示在 header 右侧
