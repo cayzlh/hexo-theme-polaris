@@ -480,14 +480,14 @@ html.dark .dropdown-menu {
   color: var(--c-text-light);
 }
 
+/* 页脚链接的下划线由 style.css 统一定义（text-decoration），
+   这里只保留颜色，避免两处同时画线。 */
 .footer a {
   color: var(--c-text-light);
-  border-bottom: 1px solid transparent;
 }
 
 .footer a:hover {
   color: var(--c-accent);
-  border-bottom-color: var(--c-accent-line);
 }
 
 /* ==========================================================================

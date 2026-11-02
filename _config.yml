@@ -3,7 +3,7 @@
 
 info:
   name: Polaris
-  version: 3.0.0
+  version: 0.3.2
 
 # 主标题 & 副标题（来自站点 _config.yml 的 title / subtitle）
 # title 显示在 header 左侧，subtitle 显示在 header 右侧
@@ -239,15 +239,19 @@ dossier:
 # 不需要任何配置：把普通 Markdown/HTML 放到站点的 source/<任意目录>/ 下，
 # Hexo 会按常规页渲染，主题自动套用 page.ejs。
 #
-# 想给某个页面单独的布局/宽度，在它的 front-matter 里写 layout，
-# 然后在主题 layout/ 下放同名 .ejs。例如：
+# 页面级别的微调有两个现成的口子：
 #
-#   ---
-#   layout: sudoku
-#   title: 数独题目生成与打印
-#   ---
+#   1. 隐藏主题自动生成的标题（页面自己画了 <h1> 时用）
+#      ---
+#      title: 某个工具页
+#      hide_title: true
+#      ---
 #
-# 主题自带的 layout/sudoku.ejs 就是这样一个例子（把正文容器放宽到 800px）。
+#   2. 改正文宽度之类，直接在页面里写 <style>，它会随页面一起输出：
+#      <style>.content { max-width: 800px; }</style>
+#
+# 需要一整套不同的 DOM 结构时，才在主题 layout/ 下加同名 .ejs 并在
+# front-matter 里指定 layout——但那种页面通常属于站点自己，不建议塞进主题。
 
 # =============================================
 # 移动端体验配置
@@ -301,45 +305,43 @@ runtime:
 # =============================================
 # Footer
 # =============================================
+# 默认页脚只有一行署名：
+#   本博客由 Hexo 驱动，使用 Polaris 主题制作。
+# 下面每一项都是可选的，按需打开。
 footer:
-  text: |
-    Stay in touch — subscribe via <a href="/atom.xml">RSS</a>, or send comments by email to <a href="mailto:hello@example.com">hello@example.com</a>
-  # copyright: '© 2020–2026 Your Name'   # Uncomment to override the auto-generated © {year} {author}
-  # 页脚导航链接。配置后页脚变为左右两栏：
-  #   左：计时 + 联系方式 + 版权        右：竖排导航
-  # 未配置时保持原来的居中单列布局。
-  # 显式写出 url 与 external，模板不做任何域名假设。
+  # ---- 联系方式（可选）----
+  # 支持 HTML，留空则不渲染这一行。
+  # text: |
+  #   <a href="mailto:hello@example.com">发邮件到 hello@example.com</a>
+
+  # ---- 版权行（可选）----
+  # 留空则自动生成 © {年份} {站点标题}
+  # copyright: '© 2020–2026 Your Name'
+
+  # ---- 驱动 / 主题署名（默认开启）----
+  # 「本博客由 Hexo 驱动，使用 Polaris 主题制作。」
+  # 两个产品名自动带超链接。不想显示这一行就设 false。
+  # themed_by: false
+  # hexo_url: 'https://hexo.io/'
+  # polaris_url: 'https://github.com/cayzlh/hexo-theme-polaris'
+
+  # ---- 页脚导航（可选）----
+  # 配置后页脚变为左右两栏：左=联系方式 + 版权 + 署名，右=竖排导航。
+  # 未配置时保持居中单列布局。
   # links:
+  #   - name: 归档
+  #     url: /archives/
+  #   - name: RSS
+  #     url: /atom.xml
   #   - name: 访问统计
   #     url: https://stats.example.com
   #     external: true
-  #   - name: RSS
-  #     url: /atom.xml
 
-  # 十年之约 · 虫洞印章（默认关闭，按需开启）
-  # 在页脚顶部渲染一条 hairline 分隔的「印章栏」：
-  #   左：虫洞入口（随机跳转到另一位成员博客）
-  #   右：官方成员标识
-  # 素材随主题分发（source/img/foreverblog-*.webp），深浅色各一张，由 CSS 切换。
-  # foreverblog:
-  #   enable: true
-  #   wormhole_text: 穿过虫洞
-  #   wormhole_url: https://www.foreverblog.cn/go.html
-  #   wormhole_title: 虫洞 · 随机访问十年之约成员博客
-  #   site_text: 十年之约
-  #   site_url: https://www.foreverblog.cn/
-  #   site_title: 十年之约成员博客
-  #   mark: wormhole          # wormhole（虫洞按钮）| member（B 字标）| both | none
-
-  # 开往 · 友链接力（travellings.cn）外链，与虫洞同处页脚印章栏。
-  # travellings:
-  #   enable: true
-  #   mark: text              # text（自绘细线图标 + 文字）| image（官方徽章）
-  #   text: 开往
-  #   url: https://www.travellings.cn/go.html
-  #   title: 开往 · 友链接力
-  #   badge_light: https://www.travellings.cn/assets/b.png
-  #   badge_dark: https://www.travellings.cn/assets/w.png
+  # ---- 站点自己的挂件（可选）----
+  # 友链徽章、公约标识、备案号之类，原样输出到页脚最上方。
+  # 配套样式和素材请放在站点侧——这类东西属于站点，不属于主题的通用能力。
+  # custom_html: |
+  #   <div class="my-badge">...</div>
 
 # =============================================
 # Archive 归档页搜索

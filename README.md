@@ -2,7 +2,7 @@
 
 > 一个为 [Hexo](https://hexo.io/) 打造的极简博客主题。重心在**阅读体验**、**构建性能**和**可配置性**。
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)
 ![Hexo](https://img.shields.io/badge/hexo-6.x%20%2F%207.x-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 

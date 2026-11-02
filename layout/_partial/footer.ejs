@@ -1,26 +1,55 @@
 <footer class="footer">
-  <% var footerLinks = (theme.footer && theme.footer.links) || [] %>
-  <%- partial('_partial/footer_seal') %>
-  <div class="footer-inner<%= footerLinks.length ? ' footer-inner--split' : '' %>">
+  <%
+  /* ==========================================================================
+     页脚
+     --------------------------------------------------------------------------
+     三块内容，全部由 theme.footer 驱动，模板不假设任何域名：
+
+       themed_by    「本博客由 Hexo 驱动，使用 Polaris 主题制作」署名，默认开启
+       text         联系方式等自定义 HTML（原样输出），留空则不渲染
+       copyright    版权行；留空则自动生成 © {年份} {站点标题}
+       links        页脚导航（配了就变成左右两栏）
+       custom_html  任意自定义 HTML，渲染在页脚最上方，用于站点自己的挂件
+                    （友链徽章、公约章等——这些属于站点，不属于主题）
+     ========================================================================== */
+  var footer = theme.footer || {};
+  var links = footer.links || [];
+  var footerText = footer.text || '';
+  var copyright = footer.copyright || '';
+  var customHtml = footer.custom_html || '';
+
+  /* 「由 Hexo 驱动，使用 Polaris 主题制作」——默认开启，显式 false 才关。
+     两个产品名固定带超链接，所以整句由模板拼装，不做字符串替换。 */
+  var themedBy = footer.themed_by !== false;
+  var hexoUrl = footer.hexo_url || 'https://hexo.io/';
+  var polarisUrl = footer.polaris_url || 'https://github.com/cayzlh/hexo-theme-polaris';
+  %>
+  <% if (customHtml) { %><div class="footer-custom"><%- customHtml %></div><% } %>
+  <div class="footer-inner<%= links.length ? ' footer-inner--split' : '' %>">
     <div class="footer-main">
       <div class="footer-info">
-        <% if (theme.footer && theme.footer.text) { %>
+        <% if (footerText) { %>
           <span class="footer-text">
-            <%- theme.footer.text %>
+            <%- footerText %>
           </span>
         <% } %>
         <span class="footer-copy">
-          <% if (theme.footer && theme.footer.copyright) { %>
-            <%- theme.footer.copyright %>
+          <% if (copyright) { %>
+            <%- copyright %>
           <% } else { %>
             © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
           <% } %>
         </span>
+        <% if (themedBy) { %>
+          <span class="footer-themed">
+            本博客由 <a href="<%= hexoUrl %>" target="_blank" rel="noopener">Hexo</a> 驱动，使用 <a href="<%= polarisUrl %>" target="_blank" rel="noopener">Polaris</a> 主题制作。
+          </span>
+        <% } %>
       </div>
     </div>
-    <% if (footerLinks.length) { %>
+    <% if (links.length) { %>
       <nav class="footer-nav" aria-label="页脚导航">
-        <% footerLinks.forEach(function(link) { %>
+        <% links.forEach(function(link) { %>
           <a href="<%= link.url %>"<% if (link.external) { %> target="_blank" rel="noopener"<% } %>><%= link.name %></a>
         <% }); %>
       </nav>

@@ -514,22 +514,36 @@ html.dark .post-meta a:hover {
 }
 
 /* Footer 链接 */
+/* 页脚链接默认带下划线。
+   正文靠颜色区分链接，页脚字号小、颜色也淡，只有下划线能让人看出「这可点」。
+   用 text-decoration 而不是 border-bottom：它跟随字形基线，不会让行高跳动，
+   窄屏也能直接叠加文字排版规则。 */
 .footer a {
   color: var(--c-text-light);
-  text-decoration: none;
-  border-bottom: 1px solid var(--c-border-strong);
-  transition: color 0.2s, border-color 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--c-border-strong);
+  transition: color 0.2s, text-decoration-color 0.2s;
 }
 .footer a:hover {
   color: var(--c-accent);
-  border-bottom-color: var(--c-accent);
+  text-decoration-color: var(--c-accent);
 }
 html.dark .footer a {
-  border-bottom-color: var(--c-border);
+  text-decoration-color: var(--c-border);
 }
 html.dark .footer a:hover {
   color: var(--c-link);
-  border-bottom-color: var(--c-link);
+  text-decoration-color: var(--c-link);
+}
+
+/* 页脚导航（竖排那一列）靠位置区分，不画下划线 */
+.footer-nav a {
+  text-decoration: none;
+}
+.footer-nav a:hover {
+  text-decoration: none;
 }
 
 /* ===== Post / Page ===== */
@@ -1568,7 +1582,7 @@ html.dark .dossier-start-reading.dossier-start-outline:hover{
 .footer{padding:2rem 1rem 4rem}
 .footer-inner{max-width:var(--mw);margin:0 auto;text-align:center;font-size:0.8rem;color:var(--c-text-muted)}
 .footer-info{display:flex;justify-content:center;gap:0.6em;flex-wrap:wrap;line-height:1.8}
-.footer-text,.footer-copy{display:inline}
+.footer-text,.footer-copy,.footer-themed{display:inline}
 
 .footer-inner--split{
   display:flex;
@@ -1581,9 +1595,13 @@ html.dark .dossier-start-reading.dossier-start-outline:hover{
 .footer-inner--split .footer-info{justify-content:flex-start;display:block}
 /* Each metadata line sits on its own row in split mode. */
 .footer-inner--split .footer-text,
-.footer-inner--split .footer-copy{display:block}
+.footer-inner--split .footer-copy,
+.footer-inner--split .footer-themed{display:block}
 .footer-inner--split .site-runtime{margin-top:0;margin-bottom:0.5em}
 .footer-inner--split .footer-text{margin-bottom:0.35em}
+/* 署名行比版权更次要，颜色再淡一档 */
+.footer-themed{color:var(--c-text-faint);font-size:0.95em}
+.footer-inner--split .footer-themed{margin-top:0.35em}
 
 /* Vertical link rail. A left border on the list reads as a margin rule rather
    than per-item separators, which stays legible when the list grows. */
@@ -1635,119 +1653,6 @@ html.dark .footer-nav a:hover{color:var(--c-link)}
 }
 
 html.dark .footer a:hover{color:var(--c-link)}
-
-/* ===== 十年之约 · 虫洞印章 =====
-   页脚的「头」：一条 hairline 顶开，左=可点的虫洞入口，右=官方成员标识。
-   标识只在这条里出现橙色，是整页唯一的彩色落点——橙色来自官方素材，
-   不参与主题调色板，所以这里一个色值都不新增，全部读 token。
-
-   两个必须显式处理的继承陷阱：
-   1. `.footer a` 给所有页脚链接留了 1px 透明下边框做 hover 动画的占位；
-      印章里的链接要自己收掉，否则基线会整体下沉 1px。
-   2. mobile.css 会给 `.footer a` 加 `text-decoration:underline !important`，
-      只对 `.footer-nav` 网开一面。印章不在 nav 里，必须自己豁免（见 mobile.css）。 */
-.wh-seal{
-  max-width:var(--mw);
-  margin:0 auto 1.75em;
-  padding:1.15em 0 0;
-  border-top:1px solid var(--c-hr-weak);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1.5em;
-  font-size:0.78rem;
-  line-height:1.9;
-  color:var(--c-text-light);
-}
-.wh-seal__links{
-  display:flex;
-  align-items:center;
-  gap:0.55em;
-  flex-wrap:wrap;
-  min-width:0;
-}
-.wh-seal a{
-  border-bottom:none;
-  text-decoration:none;
-}
-.wh-link{
-  display:inline-flex;
-  align-items:center;
-  gap:0.4em;
-  color:inherit;
-  border-bottom:1px solid transparent;
-  transition:color var(--dur-fast) var(--ease-out),
-             border-bottom-color var(--dur-fast) var(--ease-out);
-}
-.wh-link:hover{
-  color:var(--c-accent);
-  border-bottom-color:var(--c-accent-line);
-}
-/* 细线螺旋：笔画粗细对齐 Maple Mono，色取强调色，是主题里自己的图标语言。 */
-.wh-glyph{
-  width:1.1em;
-  height:1.1em;
-  flex:none;
-  color:var(--c-accent);
-  overflow:visible;
-  transition:transform var(--dur-base) var(--ease-out);
-}
-.wh-link:hover .wh-glyph{transform:rotate(-45deg) scale(1.06)}
-.wh-sep{
-  color:var(--c-border-strong);
-  user-select:none;
-}
-
-/* 标识：两枚图按主题切换。选择器必须写 `.wh-mark img.xxx` ——
-   `.wh-mark img` 的优先级高于单独的 `.wh-mark__on-light`，否则两枚会同时显示。 */
-.wh-mark{
-  display:inline-flex;
-  flex:0 0 auto;
-  align-items:center;
-  gap:1em;
-  opacity:0.9;
-  transition:opacity var(--dur-fast) var(--ease-out);
-}
-.wh-mark:hover{opacity:1}
-.wh-mark__art{display:inline-flex;flex:none}
-.wh-mark img{
-  height:26px;
-  width:auto;
-  display:block;
-}
-.wh-mark img.wh-mark__on-dark{display:none}
-html.dark .wh-mark img.wh-mark__on-light{display:none}
-html.dark .wh-mark img.wh-mark__on-dark{display:block}
-
-/* 开往：文本模式和官方徽章模式共用这条印章栏。
-   文本模式的图标由主题自绘（细线地铁车厢），和「穿过虫洞」的螺旋同一套笔画语言，
-   所以它读起来像本站的一部分，而不是贴上去的第三方徽章。 */
-.wh-link--tv .wh-glyph--tv{transition:transform var(--dur-base) var(--ease-out)}
-.wh-link--tv:hover .wh-glyph--tv{transform:translateX(2px)}
-
-/* 官方徽章模式：b.png 是深色字（配浅底），w.png 是浅色字（配深底），
-   都是透明背景。用 `.wh-tv-badge img.xxx` 提高优先级，
-   否则会被 `.wh-tv-badge img` 盖掉，两枚同时显示。 */
-.wh-tv-badge{
-  display:inline-flex;
-  flex:none;
-  align-items:center;
-  border-bottom:none;
-  opacity:0.9;
-  transition:opacity var(--dur-fast) var(--ease-out);
-}
-.wh-tv-badge:hover{opacity:1}
-.wh-tv-badge img{height:22px;width:auto;display:block}
-.wh-tv-badge img.wh-tv-on-dark{display:none}
-html.dark .wh-tv-badge img.wh-tv-on-light{display:none}
-html.dark .wh-tv-badge img.wh-tv-on-dark{display:block}
-
-/* 键盘可达：印章是页脚里唯一的跨站出口，焦点必须看得见。 */
-.wh-seal a:focus-visible{
-  outline:2px solid var(--c-accent);
-  outline-offset:3px;
-  border-radius:2px;
-}
 
 /* ===== 十年之约 · 「今天读什么」挂件 =====
    官方 iframe，独立成块、默认关。外面只加一层标题和间距，
