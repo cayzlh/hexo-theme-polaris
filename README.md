@@ -45,6 +45,18 @@ hexo clean && hexo server
 
 ---
 
+## 制作
+
+> **本主题的全部代码与文档，均由 DSH（DeepSeek Harness）生成。**
+>
+> 覆盖范围：`layout/` 下的模板、`scripts/` 下的生成器与过滤器、`source/` 下的样式与前端脚本、
+> `_config.yml` 的配置项及注释、`tools/` 下的脚本，以及本 README 和完整的主题档案文档。
+>
+> 例外只有一项：`source/fonts/` 内嵌的 **Maple Mono NF CN** 是第三方开源字体，
+> 版权归 The Maple Mono Project Authors，不是 DSH 的产出（详见下方许可）。
+
+---
+
 ## 📖 文档
 
 **完整文档在主题档案里：<https://www.cayzlh.com/dossier/polaris/>**
