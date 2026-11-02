@@ -11,8 +11,11 @@ const voidTag = function(args) {
   return '';
 };
 
-// Tags that wrap content
-const contentTags = ['box', 'note', 'spoiler', 'folding', 'folders', 'banner', 'okr'];
+// Tags that wrap content.
+// 注意：不要把 'folding' 放进来——它需要把标签体当 Markdown 渲染后再输出，
+// 用 noopTag 会让 `<details>` 里的 `**粗体**`、链接、列表原样漏成纯文本。
+// folding 在下面单独注册，与 'fold' 共用同一实现。
+const contentTags = ['box', 'note', 'spoiler', 'folders', 'banner', 'okr'];
 contentTags.forEach(t => {
   hexo.extend.tag.register(t, noopTag, { ends: true });
 });
@@ -98,10 +101,21 @@ hexo.extend.tag.register('timeline', noopTag, { ends: true });
 hexo.extend.tag.register('tl', noopTag, { ends: true });
 
 // folding / details tag
-hexo.extend.tag.register('fold', function(args, content) {
+// 标签体是 Markdown 源码，必须渲染成 HTML 再塞进 <details>，
+// 否则 marked 不会处理 <details> 内部的文本，`**`、`[]()`、列表都会原样输出。
+const detailsTag = function(args, content) {
   var summary = args.join(' ') || 'Details';
-  return '<details><summary>' + summary + '</summary>' + content + '</details>';
-}, { ends: true });
+  var html = content;
+  try {
+    html = hexo.render.renderSync({ text: content, engine: 'markdown' });
+  } catch (e) {
+    // 渲染失败就退回原始内容，至少不丢信息
+  }
+  return '<details class="tag-fold"><summary>' + summary + '</summary>' + html + '</details>';
+};
+
+hexo.extend.tag.register('fold', detailsTag, { ends: true });
+hexo.extend.tag.register('folding', detailsTag, { ends: true });
 
 // friends / sites tags - self-closing data-fetching tags
 hexo.extend.tag.register('friends', function(args) {
