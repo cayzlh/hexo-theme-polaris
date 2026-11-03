@@ -67,3 +67,87 @@ var randomPosts = pool.slice(0, randomCount);
     <% }); %>
   </ul>
 <% } %>
+
+<%
+/* ==========================================================================
+   逛逛博客 — 首页底部的「别人最近写了什么」
+   --------------------------------------------------------------------------
+   数据来自构建期抓的订阅源，与 /subscriptions/ 同一份结果（订阅生成器
+   已经把摘要挂到 theme.config.subscriptions_latest）。
+
+   ★ 兜底是这个模块的第一需求，不是可有可无的补充：
+     站点没配任何订阅源、或者这次构建一个源都没抓到时，整个模块（含标题）
+     都不渲染。首页绝不能出现「逛逛博客」下面空空如也的样子。
+
+   判断依据只有一条：这次构建到底有没有拿到带链接的条目。
+   「配没配订阅」不单独判断——配了但全抓失败（网络问题、源失效）时，
+   结果同样是没内容，两种情况下都该整块消失。
+   ========================================================================== */
+var blogCfg = theme.subscriptions || {};
+var blogShow = blogCfg.home_enable !== false;   /* 默认开启，显式 false 才关 */
+var blogCount = blogCfg.home_count || 3;
+var blogTitle = blogCfg.home_title || '逛逛博客';
+
+var latest = (theme.subscriptions_latest && theme.subscriptions_latest.items) || [];
+/* 只留真正能点的条目：没链接的抓进来也点不动，不如不显示。 */
+var usable = latest.filter(function (it) {
+  return it && it.title && it.link;
+});
+
+/* 按来源交错取，而不是纯按时间取前 N 条。
+   原因很实际：聚合型订阅源（比如「十年之约」每天推多条）一次就能占满
+   前三条，「逛逛博客」就会变成「逛逛某一个博客」，与这个模块的意图相反。
+   这里做一次 round-robin：第一轮每源拿一条、第二轮再各拿一条……
+   源够多时天然就是「三条来自三个博客」；源不够时才允许同源重复。 */
+var bySource = [];
+var bucket = Object.create(null);
+usable.forEach(function (it) {
+  var key = it.sourceName || it.sourceHomepage || '(未知)';
+  if (!bucket[key]) { bucket[key] = []; bySource.push(key); }
+  bucket[key].push(it);
+});
+
+var blogPosts = [];
+var round = 0;
+while (blogPosts.length < blogCount && round < 20) {
+  var added = false;
+  for (var bi = 0; bi < bySource.length && blogPosts.length < blogCount; bi++) {
+    var list = bucket[bySource[bi]];
+    if (list.length > round) {
+      blogPosts.push(list[round]);
+      added = true;
+    }
+  }
+  /* 一轮下来一个都没加 → 所有源都取空了，结束，避免死循环。 */
+  if (!added) break;
+  round++;
+}
+%>
+
+<% if (blogShow && blogPosts.length > 0) { %>
+  <h2 class="section-title"><%= blogTitle %></h2>
+  <ul class="blog-visits">
+    <% blogPosts.forEach(function (it) { %>
+      <li>
+        <%# 日期、标题、来源是 li 的三个平级子元素，按行内顺序自然接续
+            （日期 → 标题 → 来源），标题长时来源跟着折行。不要把日期和标题
+            一起包进 <a>：那样这三段就只剩一个行内盒子，来源无法跟在
+            标题后面单独定位。标题自己仍然是链接，链接只包住可点的文字。 %>
+        <time class="blog-visits-date" datetime="<%= it.pubDate || '' %>">
+          <%= it.pubDate ? fmtDate(it.pubDate) : '' %>
+        </time>
+        <a class="blog-visits-title" href="<%= it.link %>" target="_blank" rel="noopener"><%= it.title %></a>
+        <% if (it.sourceName) { %>
+          <span class="blog-visits-source">
+            <% if (it.sourceIcon) { %><span class="blog-visits-icon" aria-hidden="true"><%= it.sourceIcon %></span><% } %>
+            <% if (it.sourceHomepage) { %>
+              <a href="<%= it.sourceHomepage %>" target="_blank" rel="noopener"><%= it.sourceName %></a>
+            <% } else { %>
+              <%= it.sourceName %>
+            <% } %>
+          </span>
+        <% } %>
+      </li>
+    <% }); %>
+  </ul>
+<% } %>

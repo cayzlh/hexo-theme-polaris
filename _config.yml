@@ -25,6 +25,20 @@ info:
 #   divider  - 仅用于 children，true 表示分割线
 menu: []
 
+# ========================================
+# 导航高亮的兜底
+# ========================================
+# 写一个菜单项的 url。当**没有任何**菜单项匹配当前页面时，把高亮给它。
+#
+# 用途：只在页脚出现、顶栏里没有归属的页面（工具页、独立落地页）。
+# 没有这条时，这类页面打开后整条顶栏一个都不亮，读者会以为走丢了。
+#
+#   menu_active_fallback: '/'      # 兜底到首页
+#   menu_active_fallback: ''       # 不要兜底（默认）
+#
+# 留空默认即不启用，不改变任何现有站点的行为。
+menu_active_fallback: ''
+
 # =============================================
 # Homepage
 # =============================================
@@ -294,6 +308,32 @@ subscriptions:
   # 文章流上方的一句说明；留空则不显示。
   # page_note: '我一直在读的东西，按时间倒序排列。'
 
+  # ---- 首页「逛逛博客」模块 ----
+  # 首页底部展示最近的几条订阅更新。没有可展示的条目时整块（含标题）
+  # 都不渲染，所以不需要额外的开关来防止空模块。
+  home_enable: true
+  home_count: 3
+  home_title: '逛逛博客'
+
+  # ---- 兜底订阅源 ----
+  # 站点没有配置 source/_data/subscriptions.yml（或配成空列表）时，
+  # 用下面这份默认值，让 /subscriptions/ 与首页模块开箱就有内容。
+  # 站点一旦自己配了订阅源，这里的内容不会被采用。
+  #
+  # 默认只放本主题站自己的订阅源：它是最"安全"的默认值——永远存在、
+  # 永远和主题版本同步，也不会替使用者决定该关注谁。
+  # 想看更多来源，自己建 source/_data/subscriptions.yml 即可。
+  #
+  # 字段与数据文件完全一致：
+  #   name / url / homepage / limit / icon / description
+  defaults:
+    - name: Polaris 主题
+      url: https://www.cayzlh.com/atom.xml
+      homepage: https://www.cayzlh.com
+      limit: 3
+      icon: ✦
+      description: 本主题的更新与说明文档
+
 # =============================================
 # Runtime (实时运行时间)
 # =============================================
@@ -328,14 +368,43 @@ footer:
   # ---- 页脚导航（可选）----
   # 配置后页脚变为左右两栏：左=联系方式 + 版权 + 署名，右=竖排导航。
   # 未配置时保持居中单列布局。
-  # links:
-  #   - name: 归档
-  #     url: /archives/
-  #   - name: RSS
-  #     url: /atom.xml
-  #   - name: 访问统计
-  #     url: https://stats.example.com
-  #     external: true
+  #
+  # 两种写法，二选一：
+  #
+  #   1. links —— 单列，最简写法
+  #      links:
+  #        - name: 归档
+  #          url: /archives/
+  #        - name: RSS
+  #          url: /atom.xml
+  #
+  #   2. nav_columns —— 多列，从左到右排列；每列可选 title
+  #      nav_columns:
+  #        - links:                      # 第一列（最左）
+  #            - name: 订阅
+  #              url: /subscriptions/
+  #            - name: 资讯
+  #              url: /news/
+  #        - links:                      # 第二列
+  #            - name: 归档
+  #              url: /archives/
+  #            - name: RSS
+  #              url: /atom.xml
+  #            - name: 访问统计
+  #              url: https://stats.example.com
+  #              external: true
+  #
+  # 两者都配时 nav_columns 优先。列与列之间自动画一道分隔竖线，
+  # 第一列左侧不留线（与单列时的观感一致）。
+
+  # ---- 版权行末尾的 RSS 图标（可选）----
+  # 做成图标而不是文字链接：版权行已经是一串字，再塞一个「RSS」词会把
+  # 这一行读成一堆并列链接；图标把「订阅」这个动作压成一个记号。
+  # 画法与页脚其它图标一致（24×24 描边、currentColor），深浅色自动适配。
+  # url 留空则整块不渲染。
+  # rss:
+  #   url: /atom.xml
+  #   title: RSS 订阅
 
   # ---- 站点自己的挂件（可选）----
   # 友链徽章、公约标识、备案号之类，原样输出到页脚最上方。

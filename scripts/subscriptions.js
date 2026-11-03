@@ -77,6 +77,18 @@ hexo.extend.generator.register('subscriptions', function () {
   var data = hexo.locals.get('data') || {};
   var subscriptions = (data.subscriptions && data.subscriptions.subscriptions) || [];
 
+  /* 兜底默认订阅源：站点没配 source/_data/subscriptions.yml（或配成空列表）
+     时用主题 _config.yml 里的 defaults 顶上，让 /subscriptions/ 与首页
+     「逛逛博客」开箱就有内容，而不是两个空页面。
+     站点自己配了就完全以站点为准，默认值不会混进来。 */
+  if (!subscriptions.length) {
+    var defaults = (cfg.defaults || []);
+    if (Array.isArray(defaults) && defaults.length) {
+      subscriptions = defaults;
+      hexo.log.info('[subscriptions] 未配置订阅源，使用主题默认的 ' + defaults.length + ' 个');
+    }
+  }
+
   var PER_PAGE = 10;
 
   function buildPage(customData) {
@@ -183,6 +195,29 @@ hexo.extend.generator.register('subscriptions', function () {
     });
 
     hexo.log.info('[subscriptions] Done — ' + totalActive + '/' + feeds.length + ' feeds fetched, ' + allItems.length + ' items.');
+
+    /* 把最近几条摘要挂到 theme.config 上，供首页「逛逛博客」模块使用。
+       为什么挂在 theme.config 而不是 hexo.locals：模板能拿到的 site 是
+       所有生成器跑之前拍好的快照，生成器之间又没有结果传递通道；而
+       theme.config 是同一个对象，生成器里写、模板里就能读到。
+       dossier.js 早就用这个方式传 projects，保持一致。
+       注意存的是**拷贝**：下面 buildPages 还要用 allItems / sources，
+       不能把同一个数组的引用交出去，否则模板侧的改动会反向污染。 */
+    if (!hexo.theme.config) hexo.theme.config = {};
+    hexo.theme.config.subscriptions_latest = {
+      items: allItems.slice(0, 20).map(function (it) {
+        return {
+          title: it.title,
+          link: it.link,
+          pubDate: it.pubDate,
+          sourceName: it.sourceName,
+          sourceHomepage: it.sourceHomepage,
+          sourceIcon: it.sourceIcon
+        };
+      }),
+      sources: sources,
+      totalActive: totalActive
+    };
 
     return buildPages(allItems, totalActive, sources);
   }).catch(function (err) {

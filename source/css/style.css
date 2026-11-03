@@ -137,6 +137,77 @@ hr.dash-dot::before,hr.style-dash-dot::before{
 .post-list-date{font-size:.9rem;color:var(--c-text-light);font-variant-numeric:tabular-nums}
 .post-list-title{font-size:var(--fs)}
 
+/* ===== 逛逛博客（首页底部的订阅摘要） =====
+   ★ 这里刻意**不复用** .post-list 的类。
+   最初为了和上两块列表长得一样，直接套了 .post-list，结果 mobile.css 里
+   那条针对首页列表的 `.post-list a{display:block}` 也命中了这一块，把
+   来源署名里的链接变成块级——标题、图标、来源各自占一行，排出来是坏的；
+   而且 <a> 的宽度算出来是 0。
+   用独立的类 + 明确的布局，比去和全站规则比优先级稳得多。视觉上仍然
+   与上两块一致（日期 + 标题 + 小字来源），但那是由样式值保证的，
+   不是靠共享类名。 */
+.blog-visits{
+  list-style:none;
+  padding:0;
+  margin:0 0 2em;
+}
+.blog-visits li{
+  margin-bottom:0.6em;
+  /* 日期 + 标题 + 来源排一行。来源紧跟在标题后面，**不推到行尾**——
+     用 inline 布局而不是 flex: flex 里标题 flex:1 会把来源顶到最右边，
+     三条来源参差不齐地飘在右侧，读起来像三个孤立标签。
+     inline 让它们像一句话那样自然接续，标题长时来源就跟着折到下一行。 */
+  display:block;
+}
+.blog-visits-date{
+  font-size:0.9rem;
+  color:var(--c-text-light);
+  font-variant-numeric:tabular-nums;
+  margin-right:0.5em;
+}
+.blog-visits-date::after{content:''}
+.blog-visits-title{
+  font-size:var(--fs);
+  color:var(--c-text);
+  transition:color 0.2s;
+}
+.blog-visits-title:hover{color:var(--c-link-hover)}
+/* 来源署名：比标题小一档、比日期再淡一点。它是补充信息，
+   不该和标题抢同一行里的视觉重量。 */
+.blog-visits-source{
+  margin-left:0.6em;
+  font-size:0.75rem;
+  color:var(--c-text-light);
+  white-space:nowrap;
+}
+.blog-visits-source a{
+  color:inherit;
+  font-size:inherit;
+  text-decoration:none;
+}
+.blog-visits-source a:hover{color:var(--c-link-hover)}
+.blog-visits-icon{margin-right:0.15em}
+
+/* 窄屏：一行放不下「日期 + 标题 + 来源」，改成上下结构。
+   日期一行、标题一行、来源一行。 */
+@media(max-width:640px){
+  .blog-visits li{
+    display:block;
+  }
+  .blog-visits-date{
+    display:block;
+    font-size:0.8rem;
+  }
+  .blog-visits-title{
+    display:block;
+    margin-top:0.1em;
+  }
+  .blog-visits-source{
+    display:block;
+    margin-top:0.25em;
+  }
+}
+
 /* ===== Archive / Category / Tag ===== */
 .page-heading{font-size:1.5rem;font-weight:400;margin-bottom:1.5em;color:var(--c-text)}
 .archive-list{list-style:none;padding:0}
@@ -1603,18 +1674,43 @@ html.dark .dossier-start-reading.dossier-start-outline:hover{
 .footer-themed{color:var(--c-text-faint);font-size:0.95em}
 .footer-inner--split .footer-themed{margin-top:0.35em}
 
-/* Vertical link rail. A left border on the list reads as a margin rule rather
-   than per-item separators, which stays legible when the list grows. */
+/* Footer nav — 支持多列。
+   每列是一条竖排链接护栏；竖线画在列与列之间，而不是画在第一列左边。
+   这样一列时观感与旧版一致（左边一道 margin rule），加到两三列时它读起来
+   是一组平行的目录列，而不是"一堆竖线"。 */
 .footer-nav{
   flex:0 0 auto;
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  gap:0;
+  margin:0;
+  padding:0;
+  font-size:0.8rem;
+  line-height:1.9;
+}
+.footer-nav__col{
   display:flex;
   flex-direction:column;
   align-items:flex-start;
   gap:0;
-  margin:0;
-  padding:0 0 0 1.25rem;
+  /* 列间距用 padding 而不是 gap：这样分隔竖线可以贴着列内容的左侧，
+     与外层 padding 叠加后列距仍然均匀。 */
+  padding:0 1.25rem;
+}
+/* 分隔竖线：除第一列外的每一列左边一道。 */
+.footer-nav__col + .footer-nav__col{
   border-left:1px solid var(--c-border);
-  font-size:0.8rem;
+}
+/* 第一列不要左内边距：它紧挨着页脚正文，多出来的 1.25rem 会让两栏
+   之间凭空多一段空白。 */
+.footer-nav__col:first-child{
+  padding-left:0;
+}
+.footer-nav__title{
+  color:var(--c-text-faint);
+  font-size:0.92em;
+  letter-spacing:0.04em;
   line-height:1.9;
 }
 .footer-nav a{
@@ -1626,20 +1722,53 @@ html.dark .dossier-start-reading.dossier-start-outline:hover{
   transition:color 0.2s;
 }
 .footer-nav a:hover{color:var(--c-accent)}
-html.dark .footer-nav{border-left-color:var(--c-border)}
+html.dark .footer-nav__col + .footer-nav__col{border-left-color:var(--c-border)}
+html.dark .footer-nav__title{color:var(--c-text-muted)}
 html.dark .footer-nav a{color:var(--c-text-muted)}
 html.dark .footer-nav a:hover{color:var(--c-link)}
 .footer-text a,.footer-copy a{color:var(--c-text-muted)}
 .footer-text a:hover,.footer-copy a:hover{color:var(--c-link-hover)}
 
+/* ===== 版权行末尾的 RSS 图标 =====
+   一个描边小图标，不是文字链接：版权行已经是一串字，再塞一个「RSS」
+   词会把这一行读成一堆并列的链接；图标把"订阅"这个动作压成一个记号。
+   画法与页脚其它图标（wh-glyph）一致：24×24 描边、currentColor、
+   round 线帽，所以深浅色与 hover 都自动跟着走，不用单独配色。 */
+.footer-rss{
+  display:inline-flex;
+  align-items:center;
+  margin-left:0.45em;
+  vertical-align:-0.16em;
+  color:var(--c-text-light);
+  transition:color var(--dur-base) var(--ease-out);
+}
+.footer-rss:hover{color:var(--c-accent)}
+.footer-rss__glyph{
+  width:1.05em;
+  height:1.05em;
+  overflow:visible;
+  /* 细弧线在小尺寸下容易被像素网格吃掉，稍微加一点描边让它立住。 */
+  transition:transform var(--dur-base) var(--ease-out);
+}
+.footer-rss:hover .footer-rss__glyph{transform:scale(1.12)}
+html.dark .footer-rss{color:var(--c-text-muted)}
+html.dark .footer-rss:hover{color:var(--c-link)}
+
+/* 键盘可达：图标链接没有文字，靠 focus-visible 给出明确的焦点环。 */
+.footer-rss:focus-visible{
+  outline:2px solid var(--c-accent);
+  outline-offset:2px;
+  border-radius:2px;
+}
+
 /* Fallback for sites that keep the old centred layout without links. */
+/* 没有 links 时（footer-inner 不带 --split）导航居中横排。
+   多列时同样把各列排成一行，列分隔线保留。 */
 .footer-inner:not(.footer-inner--split) .footer-nav{
   flex-direction:row;
   justify-content:center;
-  align-items:center;
+  align-items:flex-start;
   margin:0 auto 0.85em;
-  padding-left:0;
-  border-left:none;
 }
 .footer-inner:not(.footer-inner--split) .footer-nav a{padding:0 0.75em}
 .footer-inner:not(.footer-inner--split) .footer-nav a+a{border-left:1px solid var(--c-border-strong)}

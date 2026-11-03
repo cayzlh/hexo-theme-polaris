@@ -905,6 +905,10 @@
     gap: 0.85rem;
     font-size: 0.74rem;
     align-items: flex-start;
+    /* 多列导航在手机上会占掉半屏宽，留给左侧文案的余量太少，
+       「所有未竟之言，皆可寄往此处」会被压成一行三四个字。
+       所以窄屏改成上下堆叠：文案在上、导航在下并排展开。 */
+    flex-direction: column;
   }
 
   .footer-inner--split .footer-main {
@@ -915,8 +919,24 @@
   .footer-nav {
     flex: 0 1 auto;
     font-size: 0.75rem;
-    padding-left: 0.7rem;
     line-height: 2.2;
+    /* 窄屏下多列会互相挤压，所以列距收窄；列分隔线保留，
+       它比空白更能说明"这里是两列"。 */
+    gap: 0;
+  }
+
+  .footer-nav {
+    /* 堆叠之后导航占满整行，两列并排放在一起，不再与文案抢宽度。 */
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .footer-nav__col {
+    padding: 0 0.7rem;
+  }
+
+  .footer-nav__col:first-child {
+    padding-left: 0;
   }
 
   /* 窄屏下计时行允许换行，不再被导航挤成一词一行。 */

@@ -12,21 +12,45 @@
     <!-- ======== 第二行：导航菜单 ======== -->
     <div class="header-bottom">
       <nav class="nav">
-        <% if (theme.menu) { theme.menu.forEach(function(item) {
+        <%
+        /* 顶栏高亮的兜底逻辑。
+           菜单项命中逻辑写在一处（下面的 itemActive），但"要不要用兜底"
+           必须先知道所有项的结果，所以先扫一遍、再渲染——模板里直接写
+           forEach 的话，拿不到"有没有命中的总结果"。
+
+           场景：数独这类只出现在页脚的工具页。它不属于任何一级菜单，
+           没有兜底时整条顶栏都不亮，读者会以为当前页没有归属。
+           配置 menu_active_fallback（写菜单里的 url，通常是 '/'）之后，
+           没有任何项命中时就把高亮给它。 */
+        var fallbackUrl = theme.menu_active_fallback || '';
+
+        function itemActive(item) {
           var itemPath = item.url ? item.url.replace(/^\//, '').replace(/\/$/, '') : '';
-          var isActive = (item.url === '/' && is_home()) || (item.url && item.url !== '/' && page.path.startsWith(itemPath + '/'));
-          if (item.url === '/archives/' && is_post()) isActive = true;
+          var hit = (item.url === '/' && is_home()) || (item.url && item.url !== '/' && page.path.startsWith(itemPath + '/'));
+          if (item.url === '/archives/' && is_post()) hit = true;
           // 如果有子菜单，子菜单项匹配时父级也高亮
-          if (!isActive && item.children && item.children.length > 0) {
+          if (!hit && item.children && item.children.length > 0) {
             item.children.forEach(function(child) {
               if (child.url && !child.divider) {
                 var childPath = child.url.replace(/^\//, '').replace(/\/$/, '');
                 if (page.path.startsWith(childPath + '/') || page.path === childPath) {
-                  isActive = true;
+                  hit = true;
                 }
               }
             });
           }
+          return hit;
+        }
+
+        var anyActive = false;
+        if (theme.menu) {
+          theme.menu.forEach(function(item) { if (itemActive(item)) anyActive = true; });
+        }
+        %>
+        <% if (theme.menu) { theme.menu.forEach(function(item) {
+          var isActive = itemActive(item);
+          /* 一项都没命中 → 兜底项亮起来（通常就是首页）。 */
+          if (!anyActive && fallbackUrl && item.url === fallbackUrl) isActive = true;
         %>
           <% if (item.children && item.children.length > 0) { %>
           <div class="nav-item dropdown">
@@ -64,20 +88,12 @@
   <!-- 移动端导航抽屉（移动端显示） -->
   <div class="nav-drawer" id="navDrawer">
     <% if (theme.menu) { theme.menu.forEach(function(item) {
-      var itemPath = item.url ? item.url.replace(/^\//, '').replace(/\/$/, '') : '';
-      var isActive = (item.url === '/' && is_home()) || (item.url && item.url !== '/' && page.path.startsWith(itemPath + '/'));
-      if (item.url === '/archives/' && is_post()) isActive = true;
-      // 如果有子菜单，子菜单项匹配时父级也高亮
-      if (!isActive && item.children && item.children.length > 0) {
-        item.children.forEach(function(child) {
-          if (child.url && !child.divider) {
-            var childPath = child.url.replace(/^\//, '').replace(/\/$/, '');
-            if (page.path.startsWith(childPath + '/') || page.path === childPath) {
-              isActive = true;
-            }
-          }
-        });
-      }
+      /* 与桌面版同一套判断，包括 menu_active_fallback 兜底：
+         itemActive / anyActive / fallbackUrl 在上面的 <nav class="nav"> 里
+         已经算过，这里直接复用——抽屉和顶栏的高亮必须一致，否则同一个
+         页面在宽屏和窄屏上会亮不同的项。 */
+      var isActive = itemActive(item);
+      if (!anyActive && fallbackUrl && item.url === fallbackUrl) isActive = true;
     %>
       <% if (item.children && item.children.length > 0) { %>
       <div class="drawer-item">

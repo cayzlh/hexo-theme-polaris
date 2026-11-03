@@ -8,12 +8,45 @@
        themed_by    「本博客由 Hexo 驱动，使用 Polaris 主题制作」署名，默认开启
        text         联系方式等自定义 HTML（原样输出），留空则不渲染
        copyright    版权行；留空则自动生成 © {年份} {站点标题}
-       links        页脚导航（配了就变成左右两栏）
+       rss          版权行末尾的 RSS 图标入口（url / title），留空不渲染
+       nav_columns  页脚导航，可以有多列；第一列渲染在最左边
+       links        单列页脚导航的旧写法，等价于只有一列的 nav_columns
        custom_html  任意自定义 HTML，渲染在页脚最上方，用于站点自己的挂件
                     （友链徽章、公约章等——这些属于站点，不属于主题）
+
+     为什么同时留着 links 和 nav_columns：老站点的配置里只有 links，
+     那是一种一列就够用的写法，不该为了加多列能力强迫所有人改配置。
+     这里先归一化成 columns，模板只认归一化之后的结构——分支只有一处。
      ========================================================================== */
   var footer = theme.footer || {};
-  var links = footer.links || [];
+
+  /* 归一化：nav_columns 优先，否则把旧的 links 包成单列。
+     每列形如 { title?, links: [...] }；顺手丢掉空列，免得渲染出一道
+     只有竖线、没有任何链接的空栏。 */
+  var columns = [];
+  var navColumns = footer.nav_columns;
+  if (Array.isArray(navColumns) && navColumns.length) {
+    navColumns.forEach(function (col) {
+      if (!col) return;
+      /* 允许把一列直接写成数组（更短的写法），也允许写成 { links: [...] }。 */
+      var colLinks = Array.isArray(col) ? col : (col.links || []);
+      if (!colLinks.length) return;
+      columns.push({
+        title: (Array.isArray(col) ? '' : (col.title || '')),
+        links: colLinks
+      });
+    });
+  } else if (Array.isArray(footer.links) && footer.links.length) {
+    columns.push({ title: '', links: footer.links });
+  }
+
+  var hasNav = columns.length > 0;
+
+  /* 版权行末尾的 RSS 图标。url 留空就整块不渲染——没有订阅源的站点
+     不该看到一个点进去是 404 的图标。 */
+  var rss = footer.rss || {};
+  var rssUrl = rss.url || '';
+  var rssTitle = rss.title || 'RSS';
   var footerText = footer.text || '';
   var copyright = footer.copyright || '';
   var customHtml = footer.custom_html || '';
@@ -25,7 +58,7 @@
   var polarisUrl = footer.polaris_url || 'https://github.com/cayzlh/hexo-theme-polaris';
   %>
   <% if (customHtml) { %><div class="footer-custom"><%- customHtml %></div><% } %>
-  <div class="footer-inner<%= links.length ? ' footer-inner--split' : '' %>">
+  <div class="footer-inner<%= hasNav ? ' footer-inner--split' : '' %>">
     <div class="footer-main">
       <div class="footer-info">
         <% if (footerText) { %>
@@ -39,6 +72,9 @@
           <% } else { %>
             © <%= date(new Date(), 'YYYY') %> <a href="<%= url_for('/') %>"><%= config.author || config.title %></a>
           <% } %>
+          <% if (rssUrl) { %>
+            <a class="footer-rss" href="<%= url_for(rssUrl) %>" title="<%= rssTitle %>" aria-label="<%= rssTitle %>"><svg class="footer-rss__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 11a9 9 0 0 1 9 9" stroke-width="1.8"/><path d="M4 4a16 16 0 0 1 16 16" stroke-width="1.8"/><circle cx="5" cy="19" r="1.6" fill="currentColor" stroke="none"/></svg></a>
+          <% } %>
         </span>
         <% if (themedBy) { %>
           <span class="footer-themed">
@@ -47,10 +83,17 @@
         <% } %>
       </div>
     </div>
-    <% if (links.length) { %>
+    <% if (hasNav) { %>
       <nav class="footer-nav" aria-label="页脚导航">
-        <% links.forEach(function(link) { %>
-          <a href="<%= link.url %>"<% if (link.external) { %> target="_blank" rel="noopener"<% } %>><%= link.name %></a>
+        <% columns.forEach(function(col) { %>
+          <div class="footer-nav__col">
+            <% if (col.title) { %>
+              <span class="footer-nav__title"><%= col.title %></span>
+            <% } %>
+            <% col.links.forEach(function(link) { %>
+              <a href="<%= link.url %>"<% if (link.external) { %> target="_blank" rel="noopener"<% } %>><%= link.name %></a>
+            <% }); %>
+          </div>
         <% }); %>
       </nav>
     <% } %>
