@@ -207,6 +207,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
        ============================== -->
   <div class="daily-footer">
     <span>更新于 <time id="update-time"><%= displayTimeShort %></time></span>
+    <span class="daily-note">资讯经数据源与本站构建双重缓存，正常会比实时内容晚数小时；上游偶发延迟时可能更久。</span>
   </div>
 
   <% } else { %>
@@ -418,7 +419,9 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   }
   function htmlFooter(updated) {
     return '<div class="daily-footer"><span>更新于 <time id="update-time">' +
-      esc(updated) + '</time></span></div>';
+      esc(updated) + '</time></span>' +
+      '<span class="daily-note">资讯经数据源与本站构建双重缓存，正常会比实时内容晚数小时；上游偶发延迟时可能更久。</span>' +
+      '</div>';
   }
 
   /* ---------- 整页重渲染 ---------- */

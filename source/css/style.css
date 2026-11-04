@@ -2371,6 +2371,18 @@ html.dark .search-highlight {
   text-align: center;
   font-size: 0.75rem;
   color: var(--c-text-light);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+/* 延迟说明：比「更新于」更弱一档，不抢视线但能读到 */
+.daily-note {
+  font-size: 0.72rem;
+  line-height: 1.6;
+  opacity: 0.75;
+  max-width: 34em;
+  margin: 0 auto;
 }
 
 /* ---- empty ---- */
