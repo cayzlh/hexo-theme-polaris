@@ -23,7 +23,7 @@
   var groupIndex = {};
   (page.items || []).forEach(function (item) {
     var d = item.pubDate ? new Date(item.pubDate) : null;
-    var key = (d && !isNaN(d.getTime())) ? date(d, 'YYYY-MM-DD') : '未知日期';
+    var key = (d && !isNaN(d.getTime())) ? date(d, 'YYYY-MM-DD') : tr('subscriptions.unknown_date');
     if (!(key in groupIndex)) {
       groupIndex[key] = groups.length;
       groups.push({ date: key, items: [] });
@@ -42,8 +42,8 @@
   <%# ===== 2. 文章流 ===== %>
   <% if (page.isEmpty || !page.items || page.items.length === 0) { %>
     <div class="subs-empty">
-      <p class="subs-empty__text">暂时没有抓到更新</p>
-      <p class="subs-empty__hint">可能是订阅源暂时不可达，下次构建会自动重试。</p>
+      <p class="subs-empty__text"><%= tr('subscriptions.empty_title') %></p>
+      <p class="subs-empty__hint"><%= tr('subscriptions.empty_hint') %></p>
     </div>
   <% } else { %>
     <% groups.forEach(function (group) { %>
@@ -52,7 +52,7 @@
       <ul class="subs-day__list">
         <% group.items.forEach(function (item) { %>
         <li class="subs-entry">
-          <a class="subs-entry__title" href="<%= item.link || '#' %>" target="_blank" rel="noopener"><%= item.title || '无标题' %></a>
+          <a class="subs-entry__title" href="<%= item.link || '#' %>" target="_blank" rel="noopener"><%= item.title || tr('subscriptions.untitled') %></a>
           <a class="subs-entry__source" href="<%= item.sourceHomepage || '#' %>" target="_blank" rel="noopener"><span class="subs-entry__icon" aria-hidden="true"><%= item.sourceIcon || '📡' %></span><%= item.sourceName %></a>
         </li>
         <% }); %>
@@ -62,17 +62,17 @@
 
     <%# ===== 分页 ===== %>
     <% if (page.total > 1) { %>
-    <nav class="subs-pager" aria-label="翻页">
+    <nav class="subs-pager" aria-label="<%= tr('subscriptions.pager') %>">
       <% if (page.prev) { %>
-        <a class="subs-pager__btn" href="<%= url_for(page.prev_link) %>" rel="prev">‹ 上一页</a>
+        <a class="subs-pager__btn" href="<%= url_for(page.prev_link) %>" rel="prev">‹ <%= tr('common.prev_page') %></a>
       <% } else { %>
-        <span class="subs-pager__btn is-disabled">‹ 上一页</span>
+        <span class="subs-pager__btn is-disabled">‹ <%= tr('common.prev_page') %></span>
       <% } %>
       <span class="subs-pager__info"><%= page.current %> / <%= page.total %></span>
       <% if (page.next) { %>
-        <a class="subs-pager__btn" href="<%= url_for(page.next_link) %>" rel="next">下一页 ›</a>
+        <a class="subs-pager__btn" href="<%= url_for(page.next_link) %>" rel="next"><%= tr('common.next_page') %> ›</a>
       <% } else { %>
-        <span class="subs-pager__btn is-disabled">下一页 ›</span>
+        <span class="subs-pager__btn is-disabled"><%= tr('common.next_page') %> ›</span>
       <% } %>
     </nav>
     <% } %>
@@ -81,7 +81,7 @@
   <%# ===== 3. 正在关注（页脚区） ===== %>
   <% if (sources.length) { %>
   <section class="subs-follow" aria-labelledby="subs-follow-title">
-    <h2 class="subs-follow__title" id="subs-follow-title">正在关注 · <%= sources.length %> 个源</h2>
+    <h2 class="subs-follow__title" id="subs-follow-title"><%= tr('subscriptions.following', sources.length) %></h2>
     <ul class="subs-follow__list">
       <% sources.forEach(function (src, i) { %>
       <li class="subs-follow__item<%= src.error ? ' is-error' : '' %>">
@@ -91,11 +91,11 @@
           <span class="subs-follow__desc"><%= src.description %></span>
         <% } %>
         <% if (src.error) { %>
-          <span class="subs-follow__err">抓取失败</span>
+          <span class="subs-follow__err"><%= tr('subscriptions.fetch_failed') %></span>
         <% } else { %>
           <code class="subs-follow__url" id="subs-feed-<%= i %>"><%= src.url %></code>
           <button class="subs-follow__copy" type="button" data-copy-target="subs-feed-<%= i %>"
-                  aria-label="复制 <%= src.name %> 的订阅地址">复制</button>
+                  aria-label="<%= tr('subscriptions.copy_feed_aria', src.name) %>"><%= tr('subscriptions.copy_feed') %></button>
         <% } %>
       </li>
       <% }); %>
@@ -116,7 +116,7 @@
 
       function done() {
         var old = btn.textContent;
-        btn.textContent = '已复制';
+        btn.textContent = window.tr('common.copied');
         btn.classList.add('is-done');
         setTimeout(function () {
           btn.textContent = old;

@@ -24,10 +24,10 @@ function renderTocPanel(items) {
 }
 %>
 <div class="toc-panel-overlay"></div>
-<div class="toc-panel" id="tocPanel" role="dialog" aria-modal="true" aria-label="目录">
+<div class="toc-panel" id="tocPanel" role="dialog" aria-modal="true" aria-label="<%= tr('toc.title') %>">
   <div class="toc-panel-header">
-    <span class="toc-panel-title">目录</span>
-    <button class="toc-panel-close" aria-label="关闭目录">✕</button>
+    <span class="toc-panel-title"><%= tr('toc.title') %></span>
+    <button class="toc-panel-close" aria-label="<%= tr('toc.close') %>">✕</button>
   </div>
   <div class="toc-panel-body">
     <ul class="toc-list"><%- renderTocPanel(page.toc) %></ul>

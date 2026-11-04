@@ -29,7 +29,7 @@ var bodyHtml = page.content_html || render_md(page.content);
           <ul class="dossier-nav-list dossier-nav-index">
             <li class="dossier-nav-item <%= page.type === 'project_home' ? 'active' : '' %>">
               <a href="/dossier/<%= page.project_id %>/" class="dossier-nav-link <%= page.type === 'project_home' ? 'active' : '' %>">
-                <span class="dossier-nav-icon">📖</span> <%= page.project.title || '项目概览' %>
+                <span class="dossier-nav-icon">📖</span> <%= page.project.title || tr('dossier.project_overview') %>
               </a>
             </li>
           </ul>
@@ -99,7 +99,7 @@ var bodyHtml = page.content_html || render_md(page.content);
          if (page.project.firstArticleUrl && dcard.show_start_button !== false) { %>
       <div class="dossier-home-footer">
         <a href="<%= page.project.firstArticleUrl %>" class="dossier-start-reading<%= dcard.start_button_style === 'minimal' ? ' dossier-start-minimal' : (dcard.start_button_style === 'outline' ? ' dossier-start-outline' : '') %>">
-          <span class="start-label"><%= dcard.start_button_text || '开始阅读' %></span>
+          <span class="start-label"><%= tr_cfg(dcard.start_button_text, 'dossier.start_reading') %></span>
           <span class="start-arrow">→</span>
         </a>
       </div>
@@ -108,7 +108,7 @@ var bodyHtml = page.content_html || render_md(page.content);
       <h1 class="post-title"><%= page.title %></h1>
       <% if (page.updated) { %>
         <div class="dossier-page-meta">
-          <span class="dossier-page-updated">更新于：<%= page.updated %></span>
+          <span class="dossier-page-updated"><%= tr('dossier.updated_at', page.updated) %></span>
         </div>
       <% } %>
       <div class="post-body">
@@ -130,25 +130,25 @@ var bodyHtml = page.content_html || render_md(page.content);
     <nav class="dossier-pagination">
       <% if (page.prev) { %>
         <a href="<%= page.prev.url %>" class="dossier-prev">
-          <span class="nav-label">← 上一篇</span>
+          <span class="nav-label"><%= tr('dossier.prev_doc') %></span>
           <span class="nav-title"><%= page.prev.title %></span>
         </a>
       <% } else { %>
         <span class="dossier-prev disabled">
-          <span class="nav-label">← 上一篇</span>
-          <span class="nav-title">没有了</span>
+          <span class="nav-label"><%= tr('dossier.prev_doc') %></span>
+          <span class="nav-title"><%= tr('dossier.no_more') %></span>
         </span>
       <% } %>
 
       <% if (page.next) { %>
         <a href="<%= page.next.url %>" class="dossier-next">
-          <span class="nav-label">下一篇 →</span>
+          <span class="nav-label"><%= tr('dossier.next_doc') %></span>
           <span class="nav-title"><%= page.next.title %></span>
         </a>
       <% } else { %>
         <span class="dossier-next disabled">
-          <span class="nav-label">下一篇 →</span>
-          <span class="nav-title">没有了</span>
+          <span class="nav-label"><%= tr('dossier.next_doc') %></span>
+          <span class="nav-title"><%= tr('dossier.no_more') %></span>
         </span>
       <% } %>
     </nav>
@@ -159,16 +159,16 @@ var bodyHtml = page.content_html || render_md(page.content);
   <aside class="dossier-toc" id="dossier-toc">
     <div class="toc-fixed">
       <div class="toc-wrapper<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
-        <div class="toc-title">目录</div>
+        <div class="toc-title"><%= tr('toc.title') %></div>
         <% if (!isHome && page.toc && page.toc.length > 0) { %>
           <%- render_toc(page.toc) %>
           <div class="toc-footer">
             <button class="toc-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'});var tc=document.querySelector('.dossier-toc .toc-fixed');if(tc)tc.scrollTop=0;return false">
-              <span class="toc-back-icon">↑</span> 回到顶部
+              <span class="toc-back-icon">↑</span> <%= tr('common.back_to_top') %>
             </button>
           </div>
         <% } else { %>
-          <div class="toc-empty">— 暂无目录 —</div>
+          <div class="toc-empty"><%= tr('dossier.empty_toc') %></div>
         <% } %>
       </div>
     </div>

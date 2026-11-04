@@ -118,9 +118,9 @@
     // Update count
     if (countEl) {
       if (trimmed === '') {
-        countEl.textContent = '共 ' + totalCount + ' 篇文章';
+        countEl.textContent = window.tr('archive.count_all', totalCount);
       } else {
-        countEl.textContent = '找到 ' + matchCount + ' 篇文章';
+        countEl.textContent = window.tr('archive.count_found', matchCount);
       }
     }
 

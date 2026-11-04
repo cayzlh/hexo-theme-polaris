@@ -20,10 +20,10 @@ var dockStyle = '--dock-x:' + (dockCfg.offset_x != null ? dockCfg.offset_x : 16)
   + '--dock-icon:' + (dockCfg.icon_size != null ? dockCfg.icon_size : 22) + 'px';
 %>
 <% if (dockEnabled) { %>
-<div class="dock" id="dock" role="group" aria-label="页面工具栏" style="<%- dockStyle %>">
+<div class="dock" id="dock" role="group" aria-label="<%= tr('toc.page_toolbar') %>" style="<%- dockStyle %>">
   <% if (showToc) { %>
   <button type="button" class="dock-btn" id="dockToc"
-          aria-label="打开目录" aria-controls="tocPanel" aria-expanded="false">
+          aria-label="<%= tr('toc.open') %>" aria-controls="tocPanel" aria-expanded="false">
     <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M10.4 6.5h9.8M10.4 12h9.8M10.4 17.5h9.8"/>
       <path d="M3.9 6.3h1.3v3.9m-1.7 0h2.1"/>
@@ -32,7 +32,7 @@ var dockStyle = '--dock-x:' + (dockCfg.offset_x != null ? dockCfg.offset_x : 16)
   </button>
   <% } %>
   <button type="button" class="dock-btn" id="dockNav"
-          aria-label="打开站点导航" aria-controls="navDrawer" aria-expanded="false">
+          aria-label="<%= tr('header.open_site_nav') %>" aria-controls="navDrawer" aria-expanded="false">
     <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/>
       <path d="M5.5 10h6m-5 4h4m4.5 7V3"/>

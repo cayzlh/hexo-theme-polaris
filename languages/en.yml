@@ -1,0 +1,144 @@
+# Polaris — English
+# ---------------------------------------------------------------------------
+# Missing keys fall back to zh-CN (the base language), so a half-translated
+# file still renders. Placeholders use printf style: %s / %d.
+
+common:
+  home: Home
+  back_to_top: Back to top
+  prev_page: Prev
+  next_page: Next
+  copy: Copy
+  copied: Copied
+  copy_failed: Failed
+  copy_link: Copy link
+  copy_all: Copy all
+  download: Download
+  updated_at: Updated
+  update_unknown: Unknown
+  loading: Loading…
+
+header:
+  site_nav: Site navigation
+  open_site_nav: Open site navigation
+  toggle_submenu: Toggle submenu
+  dark_mode: Dark mode
+  toggle_dark_mode: Toggle dark mode
+
+toc:
+  title: Contents
+  empty: — No headings —
+  open: Open table of contents
+  close: Close table of contents
+  page_toolbar: Page toolbar
+
+footer:
+  nav: Footer navigation
+  rss: RSS
+  themed_by: Powered by %s, themed with %s.
+
+home:
+  recent_posts: 'Recent posts:'
+  random_posts: 'Random posts:'
+  visiting: From the blogs I follow
+  runtime: Running quietly for <b>%d</b> days
+  now: 'now <b>%s</b>'
+
+archive:
+  search_placeholder: Search post titles...
+  search_aria: Search posts
+  count_all: '%d posts in total'
+  count_found: '%d posts found'
+  empty_title: No matching posts
+  empty_hint: Try another keyword
+  month_label: '%d'
+  year_month_label: '%s·%d'
+
+taxonomy:
+  category: 'Category: %s'
+  tag: 'Tag: %s'
+
+subscriptions:
+  empty_title: Nothing fetched yet
+  empty_hint: The feeds may be unreachable right now; the next build retries automatically.
+  untitled: Untitled
+  unknown_source: Unknown source
+  unknown_date: Unknown date
+  pager: Pagination
+  following: 'Following · %d sources'
+  copy_feed: Copy feed URL
+  copy_feed_aria: Copy the feed URL of %s
+  fetch_failed: Fetch failed
+  page_title: Subscriptions
+
+dossier:
+  page_title: Dossier
+  all: All
+  project_overview: Overview
+  start_reading: Start reading
+  updated_at: 'Updated: %s'
+  prev_doc: '← Previous'
+  next_doc: 'Next →'
+  no_more: Nothing more
+  doc_count: '%d docs'
+  empty_toc: — No headings —
+
+daily:
+  page_title: Daily News
+  weekend_in: '%s days to the weekend'
+  luck: '🍀 Luck %s'
+  zaobao: 📰 Daily Brief
+  ai_news: 🤖 AI News
+  today_in_history: 📅 Today in History
+  birth: Born
+  death: Died
+  hot_list: 🔥 Trending
+  zhihu_hot: 💡 Zhihu Hot
+  weibo_hot: 🔥 Weibo Hot
+  hacker_news: 🌐 Hacker News
+  hn_score: '%s points · by %s'
+  expand_all: 'Show all %d items ▾'
+  collapse: 'Collapse ▴'
+  answer_count: '%s answers'
+  empty_title: Loading today's digest…
+  empty_hint: Please check back later
+  note: News is cached both at the data source and at build time, so it usually runs a few hours behind; upstream delays can make it later.
+  date_display: '%d/%d'
+  # 英文没有「万」这个计数单位，置空 → fmtHot 改成输出完整数字+千分位
+  unit_ten_thousand: ''
+
+curio:
+  epic_free_title: 🎮 Free this week
+  epic_free_now: 🎉 Free now
+  epic_free_soon: 🕐 Free soon
+  epic_original_price: 'was %s'
+
+links:
+  title: Bookmarks
+
+code:
+  copy_code: Copy code
+  copy: Copy
+  copied: Copied!
+  failed: Failed
+
+not_found:
+  title: Page not found
+  message: The page you are looking for is not here.
+  back_home: Go back home
+
+seo:
+  category_suffix: '%s category'
+  tag_suffix: '%s tag'
+  archive: Archive
+  archive_year: '%s'
+  archive_year_month: '%s/%d'
+  tag_desc: '%d posts about "%s" on %s: %s%s.'
+  category_desc: '%d posts in the "%s" category on %s: %s%s.'
+  archive_desc: '%d posts published on %s in %s: %s%s.'
+  archive_all_desc: 'All posts on %s, organised by year and month.'
+  dossier_base: "The dossier of %s"
+  dossier_desc_projects: '%s — %d technical series organised by chapter, meant to be read end to end.'
+  dossier_desc_plain: '%s — technical notes organised by topic.'
+  more_suffix: ' and more'
+  list_separator: ', '

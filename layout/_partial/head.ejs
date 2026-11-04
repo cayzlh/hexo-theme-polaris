@@ -157,6 +157,22 @@
   <!-- Clone detection & utilities -->
   <script>
     window.__POLARIS = window.__POLARIS || {};
+    <%# 界面文案词典：前端脚本（复制按钮、归档搜索、资讯页重渲染…）统一从这里取词。
+        服务端已把回落做完（本语言缺的键由 zh-CN 补），前端不必再判语言。
+        词典必须在 main.js 之前就位，所以跟着 head 的内联脚本走。 %>
+    window.__POLARIS_I18N = <%- tr_dict() %>;
+    window.tr = function (key) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      var str = window.__POLARIS_I18N[key];
+      if (str == null) return '';
+      var i = 0;
+      return String(str).replace(/%(s|d|%)/g, function (m, kind) {
+        if (kind === '%') return '%';
+        if (i >= args.length) return m;
+        var v = args[i++];
+        return String(v == null ? '' : v);
+      });
+    };
     <% if (theme.canonical && theme.canonical.originalHost) { %>
     window.__POLARIS.originalHost = '<%= theme.canonical.originalHost %>';
     window.__POLARIS.officialHosts = <%- JSON.stringify(theme.canonical.officialHosts || []) %>;

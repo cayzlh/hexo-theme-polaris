@@ -3,7 +3,31 @@
 
 info:
   name: Polaris
-  version: 0.3.3
+  version: 0.4.0
+
+# =============================================
+# 界面语言（i18n）
+# =============================================
+# 主题自带的界面文案（按钮、aria-label、空状态、<title> 后缀、页脚署名…）
+# 跟着这里的语言走。**文章正文不归它管**——正文语言由你写的 Markdown 决定。
+#
+# 可选值：auto | zh-CN | zh-TW | en
+#   auto   跟随站点 _config.yml 的 language（取数组第一项），推荐
+#   zh-CN  简体中文（基准语言；其它语言缺的键都回落到它）
+#   zh-TW  繁體中文（台灣用語）
+#   en     English
+#
+# 语言包在主题的 languages/ 目录：languages/zh-CN.yml 等。
+# 想改某一句文案，两种办法：
+#   1. 改语言包（影响整站，升级主题时会被覆盖，谨慎）；
+#   2. 用下面那些原有的配置项覆盖单条（toc.back_to_top_text、
+#      archive.search_placeholder、subscriptions.page_title…），
+#      配置项优先级始终高于语言包。
+#
+# 加新语言：放一个 languages/<code>.yml，再把 code 加到 scripts/lib/i18n-core.js
+# 的 LANG_ALIAS 里即可。缺失的键自动回落中文，不必一次翻完。
+i18n:
+  lang: auto
 
 # 主标题 & 副标题（来自站点 _config.yml 的 title / subtitle）
 # title 显示在 header 左侧，subtitle 显示在 header 右侧
@@ -52,9 +76,12 @@ intro: |
   — Your Name
 
 recent_posts_count: 5
-recent_posts_title: 'Recent Posts:'
+# 这两个标题留空 = 用语言包里的文案（languages/<lang>.yml 的 home.recent_posts）。
+# 在这里写死会压过语言包——主题以前写死了英文，切到中文的站点也得看见
+# "Recent Posts:"。要固定某个说法时再填。
+recent_posts_title: ''
 random_posts_count: 5
-random_posts_title: 'Random posts:'
+random_posts_title: ''
 
 # =============================================
 # 分割线（<hr>）
@@ -209,7 +236,8 @@ toc:
   mobile_default: collapsed
   # 是否显示「回到顶部」按钮
   show_back_to_top: true
-  back_to_top_text: 回到顶部
+  # 按钮文字。留空 = 用语言包（common.back_to_top）
+  back_to_top_text: ''
   # 自动折叠：只展开当前所在章节，其余子层级收起
   auto_collapse: true
   # 滚动时高亮当前阅读的标题
@@ -242,7 +270,8 @@ dossier:
     description_lines: 2
     # 项目首页底部的「开始阅读」入口
     show_start_button: true
-    start_button_text: 开始阅读
+    # 按钮文字。留空 = 用语言包（dossier.start_reading）
+    start_button_text: ''
     # 按钮样式：'default'（实心）| 'minimal'（纯文字）| 'outline'（描边）
     start_button_style: default
 
@@ -301,8 +330,9 @@ subscriptions:
   default_limit: 3
   # 是否显示订阅源描述
   show_description: true
-  # 页面标题（仅用于 <title>/SEO，页面上不渲染大标题）
-  page_title: 订阅
+  # 页面标题（仅用于 <title>/SEO，页面上不渲染大标题）。
+  # 留空 = 用语言包（subscriptions.page_title）
+  page_title: ''
   # 请求超时（毫秒）
   timeout: 10000
   # 文章流上方的一句说明；留空则不显示。
@@ -313,7 +343,8 @@ subscriptions:
   # 都不渲染，所以不需要额外的开关来防止空模块。
   home_enable: true
   home_count: 3
-  home_title: '逛逛博客'
+  # 模块标题。留空 = 用语言包（home.visiting）
+  home_title: ''
 
   # ---- 兜底订阅源 ----
   # 站点没有配置 source/_data/subscriptions.yml（或配成空列表）时，
@@ -418,8 +449,8 @@ footer:
 archive:
   # 是否启用搜索功能
   search_enable: true
-  # 搜索框占位文字
-  search_placeholder: 搜索文章标题...
+  # 搜索框占位文字。留空 = 用语言包（archive.search_placeholder）
+  search_placeholder: ''
   # 搜索防抖延迟（毫秒）
   search_debounce: 200
   # 是否高亮匹配关键词

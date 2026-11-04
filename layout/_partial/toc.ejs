@@ -20,11 +20,11 @@ function renderToc(items) {
 <!-- Mobile TOC toggle -->
 <div class="toc-mobile<%= theme.toc.mobile_default === 'collapsed' ? ' toc-mobile-collapsed' : '' %>">
   <button class="toc-toggle" onclick="this.parentElement.classList.toggle('toc-mobile-collapsed')">
-    📑 目录
+    📑 <%= tr('toc.title') %>
   </button>
   <div class="toc-mobile-body">
     <div class="toc-wrapper">
-      <div class="toc-title">目录</div>
+      <div class="toc-title"><%= tr('toc.title') %></div>
       <ul class="toc-list"><%- renderToc(page.toc) %></ul>
     </div>
   </div>
@@ -40,12 +40,12 @@ var tocPos = (theme.toc && theme.toc.position) || 'right';
 <div class="toc<%= tocPos === 'left' ? ' toc-left' : '' %>"<% if (tocW) { %> style="--toc-w:<%= tocW %>"<% } %>>
   <div class="toc-fixed">
     <div class="toc-wrapper<%= (theme.toc.show_tree_line === false) ? ' toc-no-tree-line' : '' %>">
-      <div class="toc-title">目录</div>
+      <div class="toc-title"><%= tr('toc.title') %></div>
       <ul class="toc-list"><%- renderToc(page.toc) %></ul>
       <% if (theme.toc.show_back_to_top !== false) { %>
       <div class="toc-footer">
         <button class="toc-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">
-          <span class="toc-back-icon">↑</span> <%= theme.toc.back_to_top_text || '回到顶部' %>
+          <span class="toc-back-icon">↑</span> <%= tr_cfg(theme.toc.back_to_top_text, 'common.back_to_top') %>
         </button>
       </div>
       <% } %>

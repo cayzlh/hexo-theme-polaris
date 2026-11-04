@@ -1,6 +1,6 @@
 <% var dp = theme.dossier.path || 'dossier'; %>
 <nav class="dossier-tabs">
-  <a href="/<%= dp %>/" class="dossier-tab <%= !page.filter ? 'active' : '' %>">All</a>
+  <a href="/<%= dp %>/" class="dossier-tab <%= !page.filter ? 'active' : '' %>"><%= tr('dossier.all') %></a>
   <% if (page.allTags) {
     var sorted = Object.keys(page.allTags).sort();
     for (var t = 0; t < sorted.length; t++) {
@@ -46,7 +46,7 @@
           <p class="project-desc<%= dcfg.description_lines ? ' project-desc-clamp' : '' %>"<% if (dcfg.description_lines) { %> style="-webkit-line-clamp:<%= dcfg.description_lines %>"<% } %>><%= proj.description %></p>
         <% } %>
         <% if (dcfg.show_count !== false && pageCount > 0) { %>
-          <span class="project-count"><%= pageCount %> 篇文档</span>
+          <span class="project-count"><%= tr('dossier.doc_count', pageCount) %></span>
         <% } %>
       </a>
     </div>

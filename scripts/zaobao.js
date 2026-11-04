@@ -1,5 +1,8 @@
 'use strict';
 
+/* 界面文案取词器（提到模块级以复用词典缓存）。 */
+var tr = require('./lib/i18n-core')(hexo).tr;
+
 /**
  * Daily News Generator (60s-API)
  *
@@ -190,7 +193,7 @@ function buildData(raw) {
     data.zhihu = {
       news: (Array.isArray(zData) ? zData : []).map(function (item) {
         var hint = item.hot_value_desc || '';
-        if (item.answer_cnt) hint = (hint ? hint + ' · ' : '') + item.answer_cnt + '回答';
+        if (item.answer_cnt) hint = (hint ? hint + ' · ' : '') + tr('daily.answer_count', item.answer_cnt);
         return {
           title: item.title || '',
           url: safeLink(item.link),
@@ -259,7 +262,7 @@ function formatDateDisplay(dateStr) {
   if (!dateStr) return '';
   var p = dateStr.split('-');
   if (p.length !== 3) return dateStr;
-  return parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
+  return tr('daily.date_display', parseInt(p[1], 10), parseInt(p[2], 10));
 }
 
 /* ===== Page builder ===== */
@@ -269,7 +272,7 @@ function formatPage(data, newsDate, updateTime) {
     path: PAGE_PATH,
     layout: 'daily',
     data: {
-      title: '每日资讯',
+      title: tr('daily.page_title'),
       newsDate: newsDate,
       updateTime: updateTime,
       daily: data.daily || {},
@@ -426,7 +429,7 @@ function emptyPage() {
     path: PAGE_PATH,
     layout: 'daily',
     data: {
-      title: '每日资讯',
+      title: tr('daily.page_title'),
       newsDate: '',
       updateTime: '',
       daily: {},

@@ -1,11 +1,11 @@
 <% if (page.total > 1) { %>
   <div class="paginator">
     <% if (page.prev !== false) { %>
-      <a href="<%= url_for(page.prev_link) %>">&larr; Prev</a>
+      <a href="<%= url_for(page.prev_link) %>">&larr; <%= tr('common.prev_page') %></a>
     <% } %>
     <span><%= page.current %> / <%= page.total %></span>
     <% if (page.next !== false) { %>
-      <a href="<%= url_for(page.next_link) %>">Next &rarr;</a>
+      <a href="<%= url_for(page.next_link) %>"><%= tr('common.next_page') %> &rarr;</a>
     <% } %>
   </div>
 <% } %>

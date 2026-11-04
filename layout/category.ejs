@@ -1,4 +1,4 @@
-<h1 class="page-heading">分类：<%= page.category %></h1>
+<h1 class="page-heading"><%= tr('taxonomy.category', page.category) %></h1>
 <ul class="archive-list">
   <% page.posts.each(function(post) { %>
     <li>

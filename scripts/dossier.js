@@ -1,4 +1,9 @@
 'use strict';
+
+/* 界面文案取词器。放在顶部：helper 拿不到，脚本只能 require 共享核心；
+   提到模块级是为了让词典缓存全程复用，而不是每次调用重建一份。 */
+var tr = require('./lib/i18n-core')(hexo).tr;
+
 /**
  * Polaris Dossier System v4
  * Auto-scans source/dossier/ directory tree, registers routes, builds nav tree.
@@ -428,7 +433,7 @@ hexo.extend.generator.register('dossier_routes', function(locals) {
     layout: ['index_dossier'],
     data: {
       layout: 'index_dossier',
-      title: '档案',
+      title: tr('dossier.page_title'),
       projects: projects,
       allTags: allTags,
       filter: false

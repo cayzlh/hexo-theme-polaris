@@ -26,7 +26,7 @@
     if (date !== lastDate) {
       // Extract year and month from "YYYY-MM"
       var parts = date.split('-');
-      var label = parts[0] + '·' + (+parts[1]) + '月';
+      var label = (window.tr('archive.year_month_label', parts[0], +parts[1]) || (parts[0] + '·' + (+parts[1]) + '月'));
       groups.push({
         date: date,
         label: label,

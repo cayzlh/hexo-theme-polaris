@@ -2,6 +2,11 @@
 
 // SEO Helpers for Polaris theme
 // Generates title, description, keywords, JSON-LD
+//
+// <title> 和 meta description 也是主题产出的界面文案：它们不该硬编码中文，
+// 否则站点切到英文后，浏览器标签仍是「归档 · 站点名」。因此统一走 tr()。
+
+var tr = require('../lib/i18n-core')(hexo).tr;
 
 function stripHtml(str) {
   if (!str) return '';
@@ -49,21 +54,21 @@ hexo.extend.helper.register('seo_title', function(page) {
   if (page.layout === 'post' && page.title) return page.title + sep + site;
 
   // Category pages
-  if (page.category) return page.category + ' 分类' + sep + site;
+  if (page.category) return tr('seo.category_suffix', page.category) + sep + site;
 
   // Tag pages
-  if (page.tag) return page.tag + ' 标签' + sep + site;
+  if (page.tag) return tr('seo.tag_suffix', page.tag) + sep + site;
 
   // Archive pages: the year (and month) is the only thing distinguishing them,
   // and without it every archive shares the bare site title.
   var archiveMatch = /^archives\/(\d{4})(?:\/(\d{2}))?/.exec(page.path || '');
   if (archiveMatch) {
     var when = archiveMatch[2]
-      ? archiveMatch[1] + ' 年 ' + parseInt(archiveMatch[2], 10) + ' 月'
-      : archiveMatch[1] + ' 年';
-    return when + '归档' + sep + site;
+      ? tr('seo.archive_year_month', archiveMatch[1], parseInt(archiveMatch[2], 10))
+      : tr('seo.archive_year', archiveMatch[1]);
+    return when + tr('seo.archive') + sep + site;
   }
-  if (page.path === 'archives/index.html' || page.path === 'archives/') return '归档' + sep + site;
+  if (page.path === 'archives/index.html' || page.path === 'archives/') return tr('seo.archive') + sep + site;
 
   // Other pages with title
   if (page.title) return page.title + sep + site;
@@ -95,19 +100,19 @@ function listingDescription(page, config, siteName) {
   });
 
   var count = posts.length;
-  var preview = titles.slice(0, 3).join('、');
-  var more = count > 3 ? ' 等' : '';
+  var preview = titles.slice(0, 3).join(tr('seo.list_separator'));
+  var more = count > 3 ? tr('seo.more_suffix') : '';
 
   if (page.tag) {
     return truncate(
-      siteName + ' 上关于「' + page.tag + '」的 ' + count + ' 篇文章：' + preview + more + '。',
+      tr('seo.tag_desc', siteName, page.tag, count, preview, more),
       160
     );
   }
 
   if (page.category) {
     return truncate(
-      siteName + ' 的「' + page.category + '」分类下共 ' + count + ' 篇文章：' + preview + more + '。',
+      tr('seo.category_desc', siteName, page.category, count, preview, more),
       160
     );
   }
@@ -115,9 +120,9 @@ function listingDescription(page, config, siteName) {
   // Archive pages carry a year (and sometimes a month) in the path.
   var m = /^archives\/(\d{4})(?:\/(\d{2}))?/.exec(page.path || '');
   if (m) {
-    var when = m[2] ? m[1] + ' 年 ' + parseInt(m[2], 10) + ' 月' : m[1] + ' 年';
+    var when = m[2] ? tr('seo.archive_year_month', m[1], parseInt(m[2], 10)) : tr('seo.archive_year', m[1]);
     return truncate(
-      siteName + ' 在 ' + when + ' 发布的 ' + count + ' 篇文章：' + preview + more + '。',
+      tr('seo.archive_desc', siteName, when, count, preview, more),
       160
     );
   }
@@ -133,10 +138,7 @@ function indexPageDescription(page, siteName) {
   var path = page.path || '';
 
   if (path === 'archives/' || path === 'archives/index.html') {
-    return truncate(
-      siteName + ' 的全部文章归档，按年份和月份整理，可快速翻阅往期内容。',
-      160
-    );
+    return truncate(tr('seo.archive_all_desc', siteName), 160);
   }
 
   if (path === 'dossier/' || path === 'dossier/index.html') {
@@ -152,11 +154,11 @@ function indexPageDescription(page, siteName) {
     } catch (e) {
       projects = 0;
     }
-    var base = siteName + ' 的档案库';
+    var base = tr('seo.dossier_base', siteName);
     return truncate(
       projects > 0
-        ? base + '，收录 ' + projects + ' 个技术专题的系列笔记，按章节组织，适合系统性地读。'
-        : base + '，按主题整理的系列技术笔记。',
+        ? tr('seo.dossier_desc_projects', base, projects)
+        : tr('seo.dossier_desc_plain', base),
       160
     );
   }

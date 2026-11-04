@@ -18,6 +18,12 @@
 
 'use strict';
 
+/**
+ * 代码块里的「复制」按钮文案要跟界面语言走，而 Hexo 脚本（loadPlugin 的 vm）
+ * **拿不到模板 helper**，所以从共享核心取词。
+ */
+var tr = require('./lib/i18n-core')(hexo).tr;
+
 /* ==========================================
    before_post_render
    - 将 ```lang filename.ext 格式转为 Hexo codeblock tag
@@ -168,7 +174,7 @@ function buildDeepSeekBlock(lang, filename, body) {
   html += '    <span class="code-filename">' + (filename ? escapeHtml(filename) : '') + '</span>';
   html += '    <div class="code-header-right">';
   html += '      <span class="code-lang-badge">' + langSafe + '</span>';
-  html += '      <button class="code-copy-btn" title="复制代码"><span class="copy-icon">📋</span> <span class="copy-text">Copy</span></button>';
+  html += '      <button class="code-copy-btn" title="' + escapeAttr(tr('code.copy_code')) + '"><span class="copy-icon">📋</span> <span class="copy-text">' + escapeAttr(tr('code.copy')) + '</span></button>';
   html += '    </div>';
   html += '  </figcaption>';
   html += '  <div class="code-body"><pre><code>' + codeContent + '</code></pre></div>';

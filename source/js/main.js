@@ -29,10 +29,10 @@
 
       var doCopy = function(t) {
         navigator.clipboard.writeText(t).then(function() {
-          btn.querySelector('.copy-text').textContent = 'Copied!';
+          btn.querySelector('.copy-text').textContent = window.tr('code.copied');
           btn.classList.add('copied');
           setTimeout(function() {
-            btn.querySelector('.copy-text').textContent = 'Copy';
+            btn.querySelector('.copy-text').textContent = window.tr('code.copy');
             btn.classList.remove('copied');
           }, 2000);
         }).catch(function() {
@@ -41,12 +41,12 @@
           document.body.appendChild(ta); ta.select();
           try {
             document.execCommand('copy');
-            btn.querySelector('.copy-text').textContent = 'Copied!';
+            btn.querySelector('.copy-text').textContent = window.tr('code.copied');
           } catch(e) {
-            btn.querySelector('.copy-text').textContent = 'Failed';
+            btn.querySelector('.copy-text').textContent = window.tr('code.failed');
           }
           setTimeout(function() {
-            btn.querySelector('.copy-text').textContent = 'Copy';
+            btn.querySelector('.copy-text').textContent = window.tr('code.copy');
           }, 2000);
           document.body.removeChild(ta);
         });

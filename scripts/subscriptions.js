@@ -26,6 +26,9 @@
  *       description: 简介                       # 可选
  */
 
+var i18n = require('./lib/i18n-core')(hexo);
+var tr = i18n.tr;
+
 var Parser, parser;
 try {
   Parser = require('rss-parser');
@@ -56,8 +59,8 @@ hexo.extend.generator.register('subscriptions', function () {
     if (cfg[k] === undefined) cfg[k] = themeCfg[k];
   }
 
-  var pageTitle = cfg.page_title || '订阅';
-  var pageSubtitle = cfg.page_subtitle || '正在关注 %d 个博客';
+  var pageTitle = i18n.pick(cfg.page_title, 'subscriptions.page_title');
+  var pageSubtitle = cfg.page_subtitle || '';
   var defaultLimit = cfg.default_limit || 3;
   var showDesc = cfg.show_description !== false;
   var showCount = cfg.show_count !== false;
@@ -240,14 +243,14 @@ function fetchFeed(sub, defaultLimit, timeout) {
 
   if (!url) {
     return Promise.resolve({
-      name: sub.name || '未知来源',
+      name: sub.name || tr('subscriptions.unknown_source'),
       url: '',
       icon: sub.icon || '⚠️',
       description: sub.description || '',
       homepage: sub.homepage || '',
       items: [],
       error: true,
-      errorMsg: '未配置订阅源 URL'
+      errorMsg: tr('subscriptions.fetch_failed')
     });
   }
 
@@ -263,7 +266,7 @@ function fetchFeed(sub, defaultLimit, timeout) {
   return Promise.race([fetchPromise, timeoutPromise]).then(function (feed) {
     var items = (feed.items || []).slice(0, limit).map(function (item) {
       return {
-        title: item.title || '无标题',
+        title: item.title || tr('subscriptions.untitled'),
         link: item.link || '#',
         pubDate: item.pubDate || item.isoDate || '',
         content: (item.contentSnippet || item.content || '').substring(0, 200)
@@ -271,7 +274,7 @@ function fetchFeed(sub, defaultLimit, timeout) {
     });
 
     return {
-      name: sub.name || feed.title || '未知来源',
+      name: sub.name || feed.title || tr('subscriptions.unknown_source'),
       url: sub.url,
       icon: sub.icon || '📡',
       description: sub.description || '',
@@ -284,7 +287,7 @@ function fetchFeed(sub, defaultLimit, timeout) {
   }).catch(function (err) {
     hexo.log.warn('[subscriptions] Failed to fetch: ' + sub.url + ' — ' + err.message);
     return {
-      name: sub.name || '未知来源',
+      name: sub.name || tr('subscriptions.unknown_source'),
       url: sub.url,
       icon: sub.icon || '⚠️',
       description: sub.description || '',

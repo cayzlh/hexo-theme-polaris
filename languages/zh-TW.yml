@@ -1,0 +1,144 @@
+# Polaris — 繁體中文（台灣用語）
+# ---------------------------------------------------------------------------
+# 缺的鍵會回落到 zh-CN，所以不必逐字對齊。用語以台灣習慣為主：
+#   目錄 / 回到頂部 / 訂閱 / 資訊 / 檔案 / 專案 / 網路 / 連結 / 載入中 / 收合
+# 佔位符沿用 printf 風格：%s / %d。
+
+common:
+  home: 首頁
+  back_to_top: 回到頂部
+  prev_page: 上一頁
+  next_page: 下一頁
+  copy: 複製
+  copied: 已複製
+  copy_failed: 複製失敗
+  copy_link: 複製連結
+  copy_all: 複製全部
+  download: 下載
+  updated_at: 更新於
+  update_unknown: 未知時間
+  loading: 載入中…
+
+header:
+  site_nav: 網站導覽
+  open_site_nav: 開啟網站導覽
+  toggle_submenu: 展開子選單
+  dark_mode: 深色模式
+  toggle_dark_mode: 切換深色模式
+
+toc:
+  title: 目錄
+  empty: — 暫無目錄 —
+  open: 開啟目錄
+  close: 關閉目錄
+  page_toolbar: 頁面工具列
+
+footer:
+  nav: 頁尾導覽
+  rss: RSS
+  themed_by: 本部落格由 %s 驅動，使用 %s 主題製作。
+
+home:
+  recent_posts: '近日所思：'
+  random_posts: '舊文拾遺：'
+  visiting: 逛逛部落格
+  runtime: 這串程式碼已靜靜運行 <b>%d</b> 天
+  now: 此刻 <b>%s</b>
+
+archive:
+  search_placeholder: 你在找什麼…?
+  search_aria: 搜尋文章
+  count_all: 共 %d 篇文章
+  count_found: 找到 %d 篇文章
+  empty_title: 沒有找到符合的文章
+  empty_hint: 換個關鍵字試試
+  month_label: '%d月'
+  year_month_label: '%s·%d月'
+
+taxonomy:
+  category: '分類：%s'
+  tag: '標籤：%s'
+
+subscriptions:
+  empty_title: 暫時沒有抓到更新
+  empty_hint: 可能是訂閱來源暫時無法連線，下次建置會自動重試。
+  untitled: 無標題
+  unknown_source: 未知來源
+  unknown_date: 未知日期
+  pager: 翻頁
+  following: 正在關注 · %d 個來源
+  copy_feed: 複製訂閱位址
+  copy_feed_aria: 複製 %s 的訂閱位址
+  fetch_failed: 抓取失敗
+  page_title: 訂閱
+
+dossier:
+  page_title: 檔案
+  all: 全部
+  project_overview: 專案概覽
+  start_reading: 開始閱讀
+  updated_at: 更新於：%s
+  prev_doc: ← 上一篇
+  next_doc: 下一篇 →
+  no_more: 沒有了
+  doc_count: '%d 篇文件'
+  empty_toc: — 暫無目錄 —
+
+daily:
+  page_title: 每日資訊
+  weekend_in: 週末還有 %s 天
+  luck: 🍀 運勢 %s
+  zaobao: 📰 每日早報
+  ai_news: 🤖 AI 資訊
+  today_in_history: 📅 歷史上的今天
+  birth: 誕辰
+  death: 逝世
+  hot_list: 🔥 熱搜榜
+  zhihu_hot: 💡 知乎熱榜
+  weibo_hot: 🔥 微博熱搜
+  hacker_news: 🌐 Hacker News
+  hn_score: '%s 分 · by %s'
+  expand_all: 展開全部 %d 條 ▾
+  collapse: 收合 ▴
+  answer_count: '%s回答'
+  empty_title: 今日資訊載入中…
+  empty_hint: 請稍後再來
+  note: 資訊經資料來源與本站建置雙重快取，正常會比即時內容晚數小時；上游偶發延遲時可能更久。
+  date_display: '%d月%d日'
+  unit_ten_thousand: 萬
+
+curio:
+  epic_free_title: 🎮 本週免費遊戲
+  epic_free_now: 🎉 本週免費
+  epic_free_soon: 🕐 即將免費
+  epic_original_price: 原價 %s
+
+links:
+  title: 收藏網站
+
+code:
+  copy_code: 複製程式碼
+  copy: 複製
+  copied: 已複製！
+  failed: 複製失敗
+
+not_found:
+  title: 找不到頁面
+  message: 你要找的頁面不在這裡。
+  back_home: 返回首頁
+
+seo:
+  category_suffix: '%s 分類'
+  tag_suffix: '%s 標籤'
+  archive: 封存
+  archive_year: '%s 年'
+  archive_year_month: '%s 年 %d 月'
+  tag_desc: '%s 上關於「%s」的 %d 篇文章：%s%s。'
+  category_desc: '%s 的「%s」分類下共 %d 篇文章：%s%s。'
+  archive_desc: '%s 在 %s 發布的 %d 篇文章：%s%s。'
+  archive_all_desc: '%s 的全部文章封存，按年份和月份整理，可快速翻閱往期內容。'
+  dossier_base: '%s 的檔案庫'
+  dossier_desc_projects: '%s，收錄 %d 個技術專題的系列筆記，按章節組織，適合系統性地讀。'
+  dossier_desc_plain: '%s，按主題整理的系列技術筆記。'
+  more_suffix: 等
+  list_separator: '、'

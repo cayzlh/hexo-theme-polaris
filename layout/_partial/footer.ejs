@@ -78,13 +78,15 @@
         </span>
         <% if (themedBy) { %>
           <span class="footer-themed">
-            本博客由 <a href="<%= hexoUrl %>" target="_blank" rel="noopener">Hexo</a> 驱动，使用 <a href="<%= polarisUrl %>" target="_blank" rel="noopener">Polaris</a> 主题制作。
+            <%- tr('footer.themed_by',
+                  '<a href="' + hexoUrl + '" target="_blank" rel="noopener">Hexo</a>',
+                  '<a href="' + polarisUrl + '" target="_blank" rel="noopener">Polaris</a>') %>
           </span>
         <% } %>
       </div>
     </div>
     <% if (hasNav) { %>
-      <nav class="footer-nav" aria-label="页脚导航">
+      <nav class="footer-nav" aria-label="<%= tr('footer.nav') %>">
         <% columns.forEach(function(col) { %>
           <div class="footer-nav__col">
             <% if (col.title) { %>

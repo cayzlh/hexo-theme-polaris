@@ -24,15 +24,15 @@ page.posts.each(function(post) {
       <input
         type="text"
         class="archive-search-input"
-        placeholder="<%= theme.archive.search_placeholder || '搜索文章标题...' %>"
-        aria-label="搜索文章"
+        placeholder="<%= tr_cfg(theme.archive.search_placeholder, 'archive.search_placeholder') %>"
+        aria-label="<%= tr('archive.search_aria') %>"
         autocomplete="off"
         data-debounce="<%= theme.archive.search_debounce || 200 %>"
         data-highlight="<%= theme.archive.highlight_match !== false ? 'true' : 'false' %>"
       >
     </div>
     <% if (theme.archive.show_match_count !== false) { %>
-      <div class="archive-search-count">共 <%= page.posts.length %> 篇文章</div>
+      <div class="archive-search-count"><%= tr('archive.count_all', page.posts.length) %></div>
     <% } %>
   <% } %>
 
@@ -68,8 +68,8 @@ page.posts.each(function(post) {
           <line x1="8" y1="11" x2="14" y2="11"/>
         </svg>
       </div>
-      <p class="archive-empty-text">没有找到匹配的文章</p>
-      <p class="archive-empty-hint">试试其他关键词吧</p>
+      <p class="archive-empty-text"><%= tr('archive.empty_title') %></p>
+      <p class="archive-empty-hint"><%= tr('archive.empty_hint') %></p>
     </div>
   <% } %>
 

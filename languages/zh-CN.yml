@@ -1,0 +1,163 @@
+# Polaris — 简体中文（默认语言）
+# ---------------------------------------------------------------------------
+# 这是「基准语言」：其它语言缺失的键会回落到这里，所以新增文案先加进本文件。
+#
+# 取值约定：
+#   · 纯文本，不要写 HTML（模板会把值原样插入属性里，如 aria-label / title）
+#   · 需要插值的地方用 printf 风格占位符，例如 "%s" / "%d"，模板侧用 tr(key, arg)
+#   · 想改某一条文案，优先改站点侧的 theme 配置（如 toc.back_to_top_text），
+#     配置项优先级高于语言包——语言包只是默认值
+
+# ---- 通用 ----
+common:
+  home: 首页
+  back_to_top: 回到顶部
+  prev_page: 上一页
+  next_page: 下一页
+  copy: 复制
+  copied: 已复制
+  copy_failed: 复制失败
+  copy_link: 复制链接
+  copy_all: 复制全部
+  download: 下载
+  updated_at: 更新于
+  update_unknown: 未知时间
+  loading: 加载中…
+
+# ---- 站点头 / 导航 ----
+header:
+  site_nav: 站点导航
+  open_site_nav: 打开站点导航
+  toggle_submenu: 展开子菜单
+  dark_mode: 深色模式
+  toggle_dark_mode: 切换深色模式
+
+# ---- 目录 ----
+toc:
+  title: 目录
+  empty: — 暂无目录 —
+  open: 打开目录
+  close: 关闭目录
+  page_toolbar: 页面工具栏
+
+# ---- 页脚 ----
+footer:
+  nav: 页脚导航
+  rss: RSS
+  themed_by: 本博客由 %s 驱动，使用 %s 主题制作。
+
+# ---- 首页 ----
+home:
+  recent_posts: 'Recent Posts:'
+  random_posts: 'Random posts:'
+  visiting: 逛逛博客
+  runtime: 这串代码已安静运行 <b>%d</b> 天
+  now: 此刻 <b>%s</b>
+
+# ---- 归档页 ----
+archive:
+  search_placeholder: 搜索文章标题...
+  search_aria: 搜索文章
+  count_all: 共 %d 篇文章
+  count_found: 找到 %d 篇文章
+  empty_title: 没有找到匹配的文章
+  empty_hint: 试试其他关键词吧
+  month_label: '%d月'
+  year_month_label: '%s·%d月'
+
+# ---- 分类 / 标签 ----
+taxonomy:
+  category: '分类：%s'
+  tag: '标签：%s'
+
+# ---- 订阅页 ----
+subscriptions:
+  empty_title: 暂时没有抓到更新
+  empty_hint: 可能是订阅源暂时不可达，下次构建会自动重试。
+  untitled: 无标题
+  unknown_source: 未知来源
+  unknown_date: 未知日期
+  pager: 翻页
+  following: 正在关注 · %d 个源
+  copy_feed: 复制订阅地址
+  copy_feed_aria: 复制 %s 的订阅地址
+  fetch_failed: 抓取失败
+  page_title: 订阅
+
+# ---- 档案（dossier） ----
+dossier:
+  page_title: 档案
+  all: 全部
+  project_overview: 项目概览
+  start_reading: 开始阅读
+  updated_at: 更新于：%s
+  prev_doc: ← 上一篇
+  next_doc: 下一篇 →
+  no_more: 没有了
+  doc_count: '%d 篇文档'
+  empty_toc: — 暂无目录 —
+
+# ---- 资讯页（daily） ----
+daily:
+  page_title: 每日资讯
+  weekend_in: 周末还有 %s 天
+  luck: 🍀 运势 %s
+  zaobao: 📰 每日早报
+  ai_news: 🤖 AI 资讯
+  today_in_history: 📅 历史上的今天
+  birth: 诞辰
+  death: 逝世
+  hot_list: 🔥 热搜榜
+  zhihu_hot: 💡 知乎热榜
+  weibo_hot: 🔥 微博热搜
+  hacker_news: 🌐 Hacker News
+  hn_score: '%s 分 · by %s'
+  expand_all: 展开全部 %d 条 ▾
+  collapse: 收起 ▴
+  answer_count: '%s回答'
+  empty_title: 今日资讯加载中…
+  empty_hint: 请稍后再来
+  note: 资讯经数据源与本站构建双重缓存，正常会比实时内容晚数小时；上游偶发延迟时可能更久。
+  date_display: '%d月%d日'
+  unit_ten_thousand: 万
+
+# ---- 拾遗页（curio） ----
+curio:
+  epic_free_title: 🎮 本周免费游戏
+  epic_free_now: 🎉 本周免费
+  epic_free_soon: 🕐 即将免费
+  epic_original_price: 原价 %s
+
+# ---- 收藏站点 / 友链 ----
+links:
+  title: 收藏站点
+
+# ---- 代码块 ----
+code:
+  copy_code: 复制代码
+  copy: 复制
+  copied: 已复制
+  failed: 复制失败
+
+# ---- 404 ----
+not_found:
+  title: 页面不存在
+  message: 你要找的页面不在这里。
+  back_home: 返回首页
+
+# ---- SEO（<title> / meta description） ----
+seo:
+  category_suffix: '%s 分类'
+  tag_suffix: '%s 标签'
+  archive: 归档
+  archive_year: '%s 年'
+  archive_year_month: '%s 年 %d 月'
+  tag_desc: '%s 上关于「%s」的 %d 篇文章：%s%s。'
+  category_desc: '%s 的「%s」分类下共 %d 篇文章：%s%s。'
+  archive_desc: '%s 在 %s 发布的 %d 篇文章：%s%s。'
+  archive_all_desc: '%s 的全部文章归档，按年份和月份整理，可快速翻阅往期内容。'
+  dossier_base: '%s 的档案库'
+  dossier_desc_projects: '%s，收录 %d 个技术专题的系列笔记，按章节组织，适合系统性地读。'
+  dossier_desc_plain: '%s，按主题整理的系列技术笔记。'
+  more_suffix: 等
+  list_separator: '、'

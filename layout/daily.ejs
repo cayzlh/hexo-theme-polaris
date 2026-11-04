@@ -16,8 +16,11 @@ function trunc(s, n) { return s && s.length > n ? s.slice(0, n) + '…' : s || '
 function fmtHot(n) {
   if (n == null || n === '') return '';
   n = Number(n);
-  if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '万';
-  return String(n);
+  /* 「万」是中文特有的计数单位。语言包里没有这个单位时（英文），
+     退回完整数字加千分位，而不是硬凑一个 1.2 出来。 */
+  var unit = tr('daily.unit_ten_thousand');
+  if (unit && n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + unit;
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 // ===== Extract data =====
@@ -59,10 +62,10 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
       </div>
       <div class="dm-badges" id="dm-badges">
         <% if (daily.nextWeekend != null) { %>
-        <span class="dm-badge" id="b-weekend">周末还有 <%= daily.nextWeekend %> 天</span>
+        <span class="dm-badge" id="b-weekend"><%= tr('daily.weekend_in', daily.nextWeekend) %></span>
         <% } %>
         <% if (daily.luckRank != null) { %>
-        <span class="dm-badge" id="b-luck">🍀 运势 <%= daily.luckRank %></span>
+        <span class="dm-badge" id="b-luck"><%= tr('daily.luck', daily.luckRank) %></span>
         <% } %>
       </div>
     </div>
@@ -77,8 +80,8 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   <% if (hasZaobao) { %>
   <section class="ds">
     <h2 class="ds-title">
-        📰 每日早报
-        <button class="ds-copy" id="copy-zaobao" title="复制全部"></button>
+        <%= tr('daily.zaobao') %>
+        <button class="ds-copy" id="copy-zaobao" title="<%= tr('common.copy_all') %>"></button>
       </h2>
     <ol class="dz-list" id="z-list">
       <% for (var i = 0; i < zaobao.news.length; i++) { %>
@@ -86,7 +89,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
       <% } %>
     </ol>
     <% if (zaobao.news.length > 5) { %>
-    <button class="dm-toggle" id="z-toggle">展开全部 <%= zaobao.news.length %> 条 ▾</button>
+    <button class="dm-toggle" id="z-toggle"><%= tr('daily.expand_all', zaobao.news.length) %></button>
     <% } %>
   </section>
   <% } %>
@@ -96,7 +99,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
        ============================== -->
   <% if (hasAi) { %>
   <section class="ds">
-    <h2 class="ds-title">🤖 AI 资讯</h2>
+    <h2 class="ds-title"><%= tr('daily.ai_news') %></h2>
     <div class="dai" id="ai-list">
       <% for (var i = 0; i < Math.min(aiNews.news.length, 4); i++) {
         var item = aiNews.news[i];
@@ -116,13 +119,13 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
        ============================== -->
   <% if (hasHistory) { %>
   <section class="ds">
-    <h2 class="ds-title">📅 历史上的今天</h2>
+    <h2 class="ds-title"><%= tr('daily.today_in_history') %></h2>
     <div class="dtl" id="dtl-list">
       <% for (var i = 0; i < Math.min(history.length, 5); i++) {
         var ev = history[i];
         var tag = '';
-        if (ev.event_type === 'birth') tag = '诞辰';
-        else if (ev.event_type === 'death') tag = '逝世';
+        if (ev.event_type === 'birth') tag = tr('daily.birth');
+        else if (ev.event_type === 'death') tag = tr('daily.death');
       %>
       <div class="dtl-item">
         <time class="dtl-year"><%= ev.year %></time>
@@ -142,11 +145,11 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
        ============================== -->
   <% if (hasZhihu || hasWeibo) { %>
   <section class="ds">
-    <h2 class="ds-title">🔥 热搜榜</h2>
+    <h2 class="ds-title"><%= tr('daily.hot_list') %></h2>
     <div class="dgrid" id="dgrid">
       <% if (hasZhihu) { %>
       <div class="dgrid-col" id="zhihu-col">
-        <h3 class="dgrid-ct">💡 知乎热榜</h3>
+        <h3 class="dgrid-ct"><%= tr('daily.zhihu_hot') %></h3>
         <ol class="dgrid-list">
           <% for (var i = 0; i < Math.min(zhihu.news.length, 8); i++) {
             var item = zhihu.news[i];
@@ -163,7 +166,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
       <% } %>
       <% if (hasWeibo) { %>
       <div class="dgrid-col" id="weibo-col">
-        <h3 class="dgrid-ct">🔥 微博热搜</h3>
+        <h3 class="dgrid-ct"><%= tr('daily.weibo_hot') %></h3>
         <ol class="dgrid-list">
           <% for (var i = 0; i < Math.min(weibo.news.length, 10); i++) {
             var item = weibo.news[i];
@@ -188,14 +191,14 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
        ============================== -->
   <% if (page.hackerNews && page.hackerNews.news && page.hackerNews.news.length > 0) { %>
   <section class="ds">
-    <h2 class="ds-title">🌐 Hacker News</h2>
+    <h2 class="ds-title"><%= tr('daily.hacker_news') %></h2>
     <div class="dhn" id="hn-list">
       <% for (var i = 0; i < Math.min(page.hackerNews.news.length, 8); i++) {
         var hn = page.hackerNews.news[i];
       %>
       <div class="dhn-item">
         <a href="<%= hn.link || '#' %>" target="_blank" rel="noopener" class="dhn-title"><%= hn.title %></a>
-        <span class="dhn-meta"><%= hn.score %> 分 · by <%= hn.author %></span>
+        <span class="dhn-meta"><%= tr('daily.hn_score', hn.score, hn.author) %></span>
       </div>
       <% } %>
     </div>
@@ -206,16 +209,16 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
        Footer
        ============================== -->
   <div class="daily-footer">
-    <span>更新于 <time id="update-time"><%= displayTimeShort %></time></span>
-    <span class="daily-note">资讯经数据源与本站构建双重缓存，正常会比实时内容晚数小时；上游偶发延迟时可能更久。</span>
+    <span><%= tr('common.updated_at') %> <time id="update-time"><%= displayTimeShort %></time></span>
+    <span class="daily-note"><%= tr('daily.note') %></span>
   </div>
 
   <% } else { %>
   <!-- Empty -->
   <div class="daily-empty">
     <div class="daily-empty-icon">&#128235;</div>
-    <p class="daily-empty-text">今日资讯加载中…</p>
-    <p class="daily-empty-hint">请稍后再来</p>
+    <p class="daily-empty-text"><%= tr('daily.empty_title') %></p>
+    <p class="daily-empty-hint"><%= tr('daily.empty_hint') %></p>
   </div>
   <% } %>
 </div>
@@ -252,7 +255,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
       toggle.addEventListener('click', function() {
         var isOpen = !zList.classList.contains('collapsed');
         zList.classList.toggle('collapsed');
-        this.textContent = isOpen ? ('展开全部 ' + zList.children.length + ' 条 ▾') : '收起 ▴';
+        this.textContent = isOpen ? window.tr('daily.expand_all', zList.children.length) : window.tr('daily.collapse');
       });
     }
   }
@@ -287,14 +290,15 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   function fmtHot(n) {
     if (n == null || n === '') return '';
     n = Number(n);
-    if (n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + '万';
-    return String(n);
+    var unit = window.tr('daily.unit_ten_thousand');
+    if (unit && n >= 10000) return (n / 10000).toFixed(1).replace(/\.0$/, '') + unit;
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
   function fmtDateDisplay(ds) {
     if (!ds) return '';
     var p = String(ds).split('-');
     if (p.length !== 3) return ds;
-    return parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
+    return window.tr('daily.date_display', parseInt(p[1], 10), parseInt(p[2], 10));
   }
   /* "2026/11/01 05:33" 或 "2026/11/01 09:37:14" -> "11-01 05:33" */
   function fmtUpdated(s) {
@@ -321,10 +325,10 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
     h += '</span></div>';
     h += '<div class="dm-badges" id="dm-badges">';
     if (daily.nextWeekend != null) {
-      h += '<span class="dm-badge" id="b-weekend">周末还有 ' + esc(daily.nextWeekend) + ' 天</span>';
+      h += '<span class="dm-badge" id="b-weekend">' + esc(window.tr('daily.weekend_in', daily.nextWeekend)) + '</span>';
     }
     if (daily.luckRank != null) {
-      h += '<span class="dm-badge" id="b-luck">🍀 运势 ' + esc(daily.luckRank) + '</span>';
+      h += '<span class="dm-badge" id="b-luck">' + esc(window.tr('daily.luck', daily.luckRank)) + '</span>';
     }
     h += '</div></div>';
     if (daily.tip) h += '<blockquote class="dm-tip" id="dm-tip">“' + esc(daily.tip) + '”</blockquote>';
@@ -333,22 +337,22 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   }
   function htmlZaobao(news) {
     if (!news || !news.length) return '';
-    var h = '<section class="ds"><h2 class="ds-title">📰 每日早报';
-    h += '<button class="ds-copy" id="copy-zaobao" title="复制全部"></button></h2>';
+    var h = '<section class="ds"><h2 class="ds-title">' + esc(window.tr('daily.zaobao'));
+    h += '<button class="ds-copy" id="copy-zaobao" title="' + esc(window.tr('common.copy_all')) + '"></button></h2>';
     h += '<ol class="dz-list" id="z-list">';
     for (var i = 0; i < news.length; i++) {
       h += '<li class="dz-item"' + (i >= 5 ? ' aria-hidden="true"' : '') + '>' + esc(news[i]) + '</li>';
     }
     h += '</ol>';
     if (news.length > 5) {
-      h += '<button class="dm-toggle" id="z-toggle">展开全部 ' + news.length + ' 条 ▾</button>';
+      h += '<button class="dm-toggle" id="z-toggle">' + esc(window.tr('daily.expand_all', news.length)) + '</button>';
     }
     h += '</section>';
     return h;
   }
   function htmlAi(news) {
     if (!news || !news.length) return '';
-    var h = '<section class="ds"><h2 class="ds-title">🤖 AI 资讯</h2><div class="dai" id="ai-list">';
+    var h = '<section class="ds"><h2 class="ds-title">' + esc(window.tr('daily.ai_news')) + '</h2><div class="dai" id="ai-list">';
     for (var i = 0; i < Math.min(news.length, 4); i++) {
       var it = news[i];
       h += '<div class="dai-item">';
@@ -362,10 +366,10 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   }
   function htmlHistory(items) {
     if (!items || !items.length) return '';
-    var h = '<section class="ds"><h2 class="ds-title">📅 历史上的今天</h2><div class="dtl" id="dtl-list">';
+    var h = '<section class="ds"><h2 class="ds-title">' + esc(window.tr('daily.today_in_history')) + '</h2><div class="dtl" id="dtl-list">';
     for (var i = 0; i < Math.min(items.length, 5); i++) {
       var ev = items[i];
-      var tag = ev.event_type === 'birth' ? '诞辰' : (ev.event_type === 'death' ? '逝世' : '');
+      var tag = ev.event_type === 'birth' ? window.tr('daily.birth') : (ev.event_type === 'death' ? window.tr('daily.death') : '');
       h += '<div class="dtl-item"><time class="dtl-year">' + esc(ev.year) + '</time>';
       h += '<div class="dtl-body">';
       h += '<a href="' + esc(ev.link || '#') + '" target="_blank" rel="noopener" class="dtl-title">' + esc(ev.title) + '</a>';
@@ -378,9 +382,9 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   }
   function htmlHot(zhihu, weibo) {
     if ((!zhihu || !zhihu.length) && (!weibo || !weibo.length)) return '';
-    var h = '<section class="ds"><h2 class="ds-title">🔥 热搜榜</h2><div class="dgrid" id="dgrid">';
+    var h = '<section class="ds"><h2 class="ds-title">' + esc(window.tr('daily.hot_list')) + '</h2><div class="dgrid" id="dgrid">';
     if (zhihu && zhihu.length) {
-      h += '<div class="dgrid-col" id="zhihu-col"><h3 class="dgrid-ct">💡 知乎热榜</h3><ol class="dgrid-list">';
+      h += '<div class="dgrid-col" id="zhihu-col"><h3 class="dgrid-ct">' + esc(window.tr('daily.zhihu_hot')) + '</h3><ol class="dgrid-list">';
       for (var i = 0; i < Math.min(zhihu.length, 8); i++) {
         var z = zhihu[i];
         h += '<li><a href="' + esc(z.url) + '" target="_blank" rel="noopener">';
@@ -390,7 +394,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
       h += '</ol></div>';
     }
     if (weibo && weibo.length) {
-      h += '<div class="dgrid-col" id="weibo-col"><h3 class="dgrid-ct">🔥 微博热搜</h3><ol class="dgrid-list">';
+      h += '<div class="dgrid-col" id="weibo-col"><h3 class="dgrid-ct">' + esc(window.tr('daily.weibo_hot')) + '</h3><ol class="dgrid-list">';
       for (var j = 0; j < Math.min(weibo.length, 10); j++) {
         var w = weibo[j];
         var hot = fmtHot(w.hot);
@@ -406,21 +410,21 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   }
   function htmlHN(news) {
     if (!news || !news.length) return '';
-    var h = '<section class="ds"><h2 class="ds-title">🌐 Hacker News</h2><div class="dhn" id="hn-list">';
+    var h = '<section class="ds"><h2 class="ds-title">' + esc(window.tr('daily.hacker_news')) + '</h2><div class="dhn" id="hn-list">';
     for (var i = 0; i < Math.min(news.length, 8); i++) {
       var n = news[i];
       h += '<div class="dhn-item">';
       h += '<a href="' + esc(n.link) + '" target="_blank" rel="noopener" class="dhn-title">' + esc(n.title) + '</a>';
-      h += '<span class="dhn-meta">' + esc(n.score) + ' 分 · by ' + esc(n.author) + '</span>';
+      h += '<span class="dhn-meta">' + esc(window.tr('daily.hn_score', n.score, n.author)) + '</span>';
       h += '</div>';
     }
     h += '</div></section>';
     return h;
   }
   function htmlFooter(updated) {
-    return '<div class="daily-footer"><span>更新于 <time id="update-time">' +
+    return '<div class="daily-footer"><span>' + esc(window.tr('common.updated_at')) + ' <time id="update-time">' +
       esc(updated) + '</time></span>' +
-      '<span class="daily-note">资讯经数据源与本站构建双重缓存，正常会比实时内容晚数小时；上游偶发延迟时可能更久。</span>' +
+      '<span class="daily-note">' + esc(window.tr('daily.note')) + '</span>' +
       '</div>';
   }
 
@@ -434,8 +438,8 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
     if (!html) {
       appEl.innerHTML = '<div class="daily-empty">' +
         '<div class="daily-empty-icon">&#128235;</div>' +
-        '<p class="daily-empty-text">今日资讯加载中…</p>' +
-        '<p class="daily-empty-hint">请稍后再来</p></div>';
+        '<p class="daily-empty-text">' + esc(window.tr('daily.empty_title')) + '</p>' +
+        '<p class="daily-empty-hint">' + esc(window.tr('daily.empty_hint')) + '</p></div>';
       return;
     }
     appEl.innerHTML = html + htmlFooter(fmtUpdated(daily.published));
@@ -454,11 +458,11 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
     }
     var wb = doc.getElementById('b-weekend');
     if (wb && moyu && moyu.nextWeekend && moyu.nextWeekend.daysUntil != null) {
-      wb.textContent = '周末还有 ' + moyu.nextWeekend.daysUntil + ' 天';
+      wb.textContent = window.tr('daily.weekend_in', moyu.nextWeekend.daysUntil);
     }
     var lb = doc.getElementById('b-luck');
     if (lb && luck && luck.luck_rank != null) {
-      lb.textContent = '🍀 运势 ' + luck.luck_rank;
+      lb.textContent = window.tr('daily.luck', luck.luck_rank);
     }
   }
 
@@ -504,7 +508,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
         history: (r[0] && r[0].items) || [],
         zhihu: ((r[1] || [])).map(function(x) {
           var hint = x.hot_value_desc || '';
-          if (x.answer_cnt) hint = (hint ? hint + ' · ' : '') + x.answer_cnt + '回答';
+          if (x.answer_cnt) hint = (hint ? hint + ' · ' : '') + window.tr('daily.answer_count', x.answer_cnt);
           return {
             title: x.title || '',
             url: x.link || '',

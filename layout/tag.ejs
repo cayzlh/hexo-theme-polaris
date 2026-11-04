@@ -1,4 +1,4 @@
-<h1 class="page-heading">标签：<%= page.tag %></h1>
+<h1 class="page-heading"><%= tr('taxonomy.tag', page.tag) %></h1>
 <ul class="archive-list">
   <% page.posts.each(function(post) { %>
     <li>

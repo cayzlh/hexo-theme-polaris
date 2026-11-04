@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="<%= page.lang || config.language %>">
+<%# lang 走 tr_html_lang：显式配置的 i18n.lang 压过 Hexo 自动填的 page.lang，
+    否则页面文字已经全变繁体、属性却还写着 zh-CN。未显式配置时保持原行为
+    （用 page.lang，也就是站点 config.language 的第一项）。 %>
+<html lang="<%= tr_html_lang(page.lang) %>">
 <%
 /* 目录相关的三个判断都在这里算一次，模板各段共用，避免出现
    「有按钮、没面板」或「有面板、没按钮」的死键。
