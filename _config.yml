@@ -1,5 +1,5 @@
 # Polaris Theme — Minimal and elegant Hexo theme
-# https://github.com/the-cayzlh/hexo-theme-polaris
+# https://github.com/cayzlh/hexo-theme-polariss
 
 info:
   name: Polaris
@@ -430,7 +430,7 @@ footer:
   # 两个产品名自动带超链接。不想显示这一行就设 false。
   # themed_by: false
   # hexo_url: 'https://hexo.io/'
-  # polaris_url: 'https://github.com/the-cayzlh/hexo-theme-polaris'
+  # polaris_url: 'https://github.com/cayzlh/hexo-theme-polariss'
 
   # ---- 页脚导航（可选）----
   # 配置后页脚变为左右两栏：左=联系方式 + 版权 + 署名，右=竖排导航。
