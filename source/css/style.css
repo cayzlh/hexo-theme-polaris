@@ -2885,3 +2885,37 @@ html.dark .search-highlight {
   color: var(--c-text-light);
 }
 
+/* ==========================================================================
+   打印样式（@media print）
+   --------------------------------------------------------------------------
+   打印走的是 paged media，纸张可打印宽度只有大约 703px（A4 210mm 减两侧页边距），
+   比手机断点 768px 还窄。所以移动端那套 @media 规则如果只写 max-width，
+   在打印时也会命中——悬浮球、抽屉、面板这些「屏幕专属」的浮层就跟着印到纸上。
+   移动端样式已统一收进 @media screen（见 mobile.css），这里再把浮层显式关掉，
+   当第二道防线：导出 PDF、另存网页、第三方打印库都不会把导航印出来。
+   ========================================================================== */
+@media print {
+  .dock,
+  .nav-drawer,
+  .nav-overlay,
+  .toc-panel,
+  .toc-panel-overlay,
+  .dark-toggle-wrapper {
+    display: none !important;
+  }
+
+  /* 站点导航不进纸面。以前这条隐身效果是 mobile.css 里
+     `@media (max-width: 768px) .header .nav .nav-link{display:none}`
+     顺带给的（A4 可打印宽度 703px 落进断点），收进 screen 之后就没了，
+     所以在这里补回来——打印一篇文章时，顶栏那排导航只是噪音。 */
+  .header .nav {
+    display: none !important;
+  }
+
+  /* 深色模式下的纸面仍是白纸黑字，别把深色底印成整页墨块。 */
+  html,
+  body {
+    background: #fff !important;
+    animation: none !important;
+  }
+}
