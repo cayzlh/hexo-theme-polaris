@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Polaris — 界面文案多语言（i18n）
+ * Vellum — 界面文案多语言（i18n）
  *
  * 目标很小：让主题自己产出的**界面文案**（按钮、aria-label、空状态、SEO 标题…
  * 这些不属于文章内容的东西）跟着语言走。文章正文不归这里管。
@@ -31,7 +31,7 @@
  *
  * 前端脚本里怎么用
  * ----------------
- * head.ejs 会把整本词典塞进 window.__POLARIS_I18N，并提供 window.tr(key, ...)。
+ * head.ejs 会把整本词典塞进 window.__VELLUM_I18N，并提供 window.tr(key, ...)。
  * source/js/*.js 直接调 window.tr 即可，服务端不必为每个脚本单独开配置口子。
  *
  * Hexo 脚本（scripts/*.js）里怎么用
@@ -83,7 +83,7 @@ hexo.extend.helper.register('tr_html_lang', function (pageLang) {
   return i18n.htmlLang(pageLang);
 });
 
-/** 整本词典的 JSON，注入前端的 window.__POLARIS_I18N */
+/** 整本词典的 JSON，注入前端的 window.__VELLUM_I18N */
 hexo.extend.helper.register('tr_dict', function () {
   return i18n.dictJson();
 });
@@ -98,7 +98,7 @@ hexo.extend.filter.register('before_generate', function () {
 
   var raw = (hexo.theme.config.i18n || {}).lang;
   if (raw && raw !== 'auto' && raw !== true) {
-    hexo.log.warn('[polaris:i18n] 不认识的语言 "' + raw + '"，界面文案回落到 ' +
+    hexo.log.warn('[vellum:i18n] 不认识的语言 "' + raw + '"，界面文案回落到 ' +
       i18n.resolveLang() + '（内置：' + i18n.SHIPPED_LANGS.join(' / ') + '）');
   }
   return;

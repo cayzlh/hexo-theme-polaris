@@ -1,8 +1,8 @@
-# Polaris
+# Vellum
 
 > 一个为 [Hexo](https://hexo.io/) 打造的极简博客主题。重心在**阅读体验**、**构建性能**和**可配置性**。
 
-![Version](https://img.shields.io/badge/version-0.3.4-blue.svg)
+![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)
 ![Hexo](https://img.shields.io/badge/hexo-6.x%20%7C%207.x%20%7C%208.x-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -29,16 +29,16 @@
 cd your-hexo-site
 
 # 跟随主干
-git clone https://github.com/cayzlh/hexo-theme-polariss.git themes/polaris
+git clone https://github.com/cayzlh/hexo-theme-vellum.git themes/vellum
 
 # 或者锁定到某个版本（推荐，升级前先看 Releases 的版本说明）
-git clone --branch v0.3.4 --depth 1 https://github.com/cayzlh/hexo-theme-polariss.git themes/polaris
+git clone --branch v0.4.0 --depth 1 https://github.com/cayzlh/hexo-theme-vellum.git themes/vellum
 ```
 
 站点 `_config.yml` 里指定主题：
 
 ```yaml
-theme: polaris
+theme: vellum
 ```
 
 ```bash
@@ -65,7 +65,7 @@ hexo clean && hexo server
 
 ## 📖 文档
 
-**完整文档在主题档案里：<https://www.cayzlh.com/dossier/polaris/>**
+**完整文档在主题档案里：<https://www.cayzlh.com/dossier/vellum/>**
 
 每一处配置、每个功能点、常见报错的排查，都在那边。README 只保留「这是什么 + 怎么装」。
 
@@ -86,7 +86,7 @@ language: zh-CN
 也可以强制指定，忽略站点配置：
 
 ```yaml
-# themes/polaris/_config.yml
+# themes/vellum/_config.yml
 i18n:
   lang: zh-TW      # auto | zh-CN | zh-TW | en
 ```
@@ -112,7 +112,7 @@ recent_posts_title:
 改完之后跑一下自检，它会揪出漏译和占位符对不上的键：
 
 ```bash
-node themes/polaris/tools/test-i18n.js
+node themes/vellum/tools/test-i18n.js
 ```
 
 ---
@@ -127,7 +127,7 @@ node themes/polaris/tools/test-i18n.js
 **默认关闭**。不打开时完全不发这个请求，`/subscriptions/` 的产物与没有这个功能时一致。
 
 ```yaml
-# themes/polaris/_config.yml（或站点侧 _config.<theme>.yml，站点配置优先）
+# themes/vellum/_config.yml（或站点侧 _config.<theme>.yml，站点配置优先）
 subscriptions:
   remote:
     enable: true
@@ -169,7 +169,7 @@ subscriptions:
 自测：
 
 ```bash
-node themes/polaris/tools/test-subscription-merge.js
+node themes/vellum/tools/test-subscription-merge.js
 ```
 
 ---

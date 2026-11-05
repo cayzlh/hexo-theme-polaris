@@ -1,9 +1,9 @@
-# Polaris Theme — Minimal and elegant Hexo theme
-# https://github.com/cayzlh/hexo-theme-polariss
+# Vellum Theme — Minimal and elegant Hexo theme
+# https://github.com/cayzlh/hexo-theme-vellum
 
 info:
-  name: Polaris
-  version: 0.3.4
+  name: Vellum
+  version: 0.4.0
 
 # =============================================
 # 界面语言（i18n）
@@ -394,7 +394,7 @@ subscriptions:
   # 字段与数据文件完全一致：
   #   name / url / homepage / limit / icon / description
   defaults:
-    - name: Polaris 主题
+    - name: Vellum 主题
       url: https://www.cayzlh.com/atom.xml
       homepage: https://www.cayzlh.com
       limit: 3
@@ -413,7 +413,7 @@ runtime:
 # Footer
 # =============================================
 # 默认页脚只有一行署名：
-#   本博客由 Hexo 驱动，使用 Polaris 主题制作。
+#   本博客由 Hexo 驱动，使用 Vellum 主题制作。
 # 下面每一项都是可选的，按需打开。
 footer:
   # ---- 联系方式（可选）----
@@ -426,11 +426,11 @@ footer:
   # copyright: '© 2020–2026 Your Name'
 
   # ---- 驱动 / 主题署名（默认开启）----
-  # 「本博客由 Hexo 驱动，使用 Polaris 主题制作。」
+  # 「本博客由 Hexo 驱动，使用 Vellum 主题制作。」
   # 两个产品名自动带超链接。不想显示这一行就设 false。
   # themed_by: false
   # hexo_url: 'https://hexo.io/'
-  # polaris_url: 'https://github.com/cayzlh/hexo-theme-polariss'
+  # vellum_url: 'https://github.com/cayzlh/hexo-theme-vellum'
 
   # ---- 页脚导航（可选）----
   # 配置后页脚变为左右两栏：左=联系方式 + 版权 + 署名，右=竖排导航。

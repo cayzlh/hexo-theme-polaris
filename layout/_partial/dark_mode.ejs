@@ -24,18 +24,18 @@
     setInterval(checkTime, 60000);
   } else if (dm.mode === 'manual') {
     // Toggle with localStorage
-    var stored = localStorage.getItem('polaris-theme');
+    var stored = localStorage.getItem('vellum-theme');
     var isDark = stored === 'dark';
     setDark(isDark);
     if (toggle) {
       toggle.addEventListener('click', function() {
         root.classList.toggle('dark');
-        localStorage.setItem('polaris-theme', root.classList.contains('dark') ? 'dark' : 'light');
+        localStorage.setItem('vellum-theme', root.classList.contains('dark') ? 'dark' : 'light');
       });
     }
   } else if (dm.mode === 'system') {
     // System preference only — no localStorage, no toggle override
-    localStorage.removeItem('polaris-theme');
+    localStorage.removeItem('vellum-theme');
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
     setDark(mq.matches);
     mq.addEventListener('change', function(e) {

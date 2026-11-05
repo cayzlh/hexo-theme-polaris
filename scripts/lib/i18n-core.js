@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Polaris — i18n 取词核心（脚本间共享）
+ * Vellum — i18n 取词核心（脚本间共享）
  *
  * 为什么单独抽一个文件：主题里的「文案消费者」有两类，
  *   1. EJS 模板 —— 通过 hexo.extend.helper 注册的 tr() 取词；
@@ -99,7 +99,7 @@ module.exports = function createI18n(hexo) {
         if (typeof v === 'string' && v !== '') merged[k] = v;
       });
     } catch (e) {
-      hexo.log.warn('[polaris:i18n] 读取语言包失败（' + lang + '）: ' + e.message);
+      hexo.log.warn('[vellum:i18n] 读取语言包失败（' + lang + '）: ' + e.message);
     }
 
     dictCache[lang] = merged;
@@ -131,7 +131,7 @@ module.exports = function createI18n(hexo) {
     var raw = dictFor(lang)[key];
     if (raw == null) {
       if (hexo.env && hexo.env.debug) {
-        hexo.log.debug('[polaris:i18n] 缺少文案 key: ' + key + '（' + lang + '）');
+        hexo.log.debug('[vellum:i18n] 缺少文案 key: ' + key + '（' + lang + '）');
       }
       return '';
     }
@@ -189,7 +189,7 @@ module.exports = function createI18n(hexo) {
     return tr(key);
   }
 
-  /** 整本词典的 JSON，注入前端 window.__POLARIS_I18N */
+  /** 整本词典的 JSON，注入前端 window.__VELLUM_I18N */
   function dictJson() {
     return JSON.stringify(dictFor(resolveLang()));
   }

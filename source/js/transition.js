@@ -1,5 +1,5 @@
 /**
- * Polaris — Page transition animation
+ * Vellum — Page transition animation
  *
  * Primary:   View Transitions API (modern browsers, native)
  * Fallback:  JS-controlled fade-out/fade-in

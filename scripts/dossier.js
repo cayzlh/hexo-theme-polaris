@@ -5,7 +5,7 @@
 var tr = require('./lib/i18n-core')(hexo).tr;
 
 /**
- * Polaris Dossier System v4
+ * Vellum Dossier System v4
  * Auto-scans source/dossier/ directory tree, registers routes, builds nav tree.
  * Features:
  * - index.md as project README (required, supplies project config via front-matter)

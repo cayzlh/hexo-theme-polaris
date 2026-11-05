@@ -29,7 +29,7 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const LAYOUT = path.join(ROOT, 'layout', 'daily.ejs');
 const FIXTURE_DIR = path.join(__dirname, 'fixtures', 'daily');
-/* 与主题默认值保持一致（themes/polaris/_config.yml 的 daily.api_base）。
+/* 与主题默认值保持一致（themes/vellum/_config.yml 的 daily.api_base）。
  * 自部署实例用环境变量覆盖，避免把任何私有域名写进脚本。 */
 const API = (process.env.DAILY_API_BASE || 'https://60s.viki.moe').replace(/\/+$/, '');
 

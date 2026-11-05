@@ -191,7 +191,7 @@ section('[2] 模板里不应有写死的用户可见文案');
 var WHITELIST = [
   'Dossier',   // 主题给「档案」系统的产品名，中英文都叫这个
   'Hexo',      // 上游产品名
-  'Polaris',   // 主题名
+  'Vellum',   // 主题名
   'RSS',       // 协议名
   'Hacker News'
 ];

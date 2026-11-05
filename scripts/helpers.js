@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Polaris Helpers
+ * Vellum Helpers
  *
  * Shared template helper functions.
  */

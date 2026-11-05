@@ -1,4 +1,4 @@
-# Polaris — English
+# Vellum — English
 # ---------------------------------------------------------------------------
 # Missing keys fall back to zh-CN (the base language), so a half-translated
 # file still renders. Placeholders use printf style: %s / %d.

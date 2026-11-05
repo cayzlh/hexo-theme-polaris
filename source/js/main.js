@@ -1,12 +1,12 @@
 /**
- * Polaris — Clone detection + Code block copy (DeepSeek style)
+ * Vellum — Clone detection + Code block copy (DeepSeek style)
  */
 (function() {
   // === Clone detection ===
-  var POLARIS = window.__POLARIS;
-  if (POLARIS && POLARIS.originalHost) {
-    var originalHost = POLARIS.originalHost;
-    var officialHosts = POLARIS.officialHosts || [];
+  var VELLUM = window.__VELLUM;
+  if (VELLUM && VELLUM.originalHost) {
+    var originalHost = VELLUM.originalHost;
+    var officialHosts = VELLUM.officialHosts || [];
     var currentHost = window.location.hostname;
     var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|::1|\[::1\]|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(currentHost);
     if (!isLocal && currentHost !== originalHost && officialHosts.indexOf(currentHost) === -1) {

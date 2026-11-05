@@ -6,7 +6,7 @@
  * Fetches RSS/Atom feeds during `hexo generate` and renders them
  * on a /subscriptions/ page.
  *
- * Configuration (themes/polaris/_config.yml):
+ * Configuration (themes/vellum/_config.yml):
  *   subscriptions:
  *     default_limit: 3       # 每个源默认抓取条数
  *     page_title: 订阅        # 页面标题
@@ -48,7 +48,7 @@ try {
   parser = new Parser({
     timeout: 10000,
     headers: {
-      'User-Agent': 'Polaris-Subscriptions/1.0'
+      'User-Agent': 'Vellum-Subscriptions/1.0'
     }
   });
 } catch (e) {
@@ -68,7 +68,7 @@ function requireRssParser() {
 
 /* 兜底默认值都写在这里，配置里缺什么就补什么。
    为什么不在读配置时就依赖主题 _config.yml 的默认块：CI 构建会先
-   `rm -f themes/polaris/_config.yml`，主题自带配置根本不存在于线上
+   `rm -f themes/vellum/_config.yml`，主题自带配置根本不存在于线上
    环境；默认值只能写在代码里，才不会「本地好好的、线上全挂」。 */
 var REMOTE_DEFAULTS = {
   enable: false,
@@ -153,7 +153,7 @@ function fetchRemoteSubscriptions(remote) {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
-      'User-Agent': 'Polaris-Subscriptions/1.0'
+      'User-Agent': 'Vellum-Subscriptions/1.0'
     },
     signal: controller.signal
   }).then(function (res) {

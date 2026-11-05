@@ -1,6 +1,6 @@
 'use strict';
 
-// SEO Helpers for Polaris theme
+// SEO Helpers for Vellum theme
 // Generates title, description, keywords, JSON-LD
 //
 // <title> 和 meta description 也是主题产出的界面文案：它们不该硬编码中文，

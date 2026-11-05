@@ -15,7 +15,7 @@ var tr = require('./lib/i18n-core')(hexo).tr;
  *   - 摸鱼进度  /v2/moyu
  *   - 今日运势  /v2/luck
  *
- * Configuration (themes/polaris/_config.yml 或站点 _config.polaris.yml):
+ * Configuration (themes/vellum/_config.yml 或站点 _config.vellum.yml):
  *   daily:
  *     enable: true
  *     api_base: 'https://60s.viki.moe'   # 任何兼容 60s-API 的实例

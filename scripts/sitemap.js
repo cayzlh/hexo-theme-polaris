@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Complete sitemap generator for the Polaris theme.
+ * Complete sitemap generator for the Vellum theme.
  *
  * The stock hexo-generator-sitemap only knows about posts, pages, tags and
  * categories. That left two gaps on this site:
@@ -74,7 +74,7 @@ function isExcluded(path, page) {
   return false;
 }
 
-hexo.extend.generator.register('polaris_sitemap', function (locals) {
+hexo.extend.generator.register('vellum_sitemap', function (locals) {
   var config = this.config;
   var siteUrl = (config.url || '').replace(/\/+$/, '');
   var entries = new Map();

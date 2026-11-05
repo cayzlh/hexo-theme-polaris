@@ -1,5 +1,5 @@
 /**
- * Polaris — Archive right-side timeline ruler
+ * Vellum — Archive right-side timeline ruler
  * Reads archive-item positions, builds a vertical ruler with year/month labels
  * on the right edge. Labels are subtle by default, active on scroll or hover.
  */

@@ -1,5 +1,5 @@
 /**
- * Polaris — 移动端专有 JavaScript
+ * Vellum — 移动端专有 JavaScript
  *
  * 所有逻辑通过 matchMedia 或 window.innerWidth 判断设备类型，
  * 仅在移动端（< 768px）执行，不对 PC 端产生任何影响。

@@ -1,5 +1,5 @@
 /**
- * Polaris — Archive search
+ * Vellum — Archive search
  * Real-time filtering of archive articles.
  * Supports continuous timeline (.archive-item) and list (.archive-list li) modes.
  */
