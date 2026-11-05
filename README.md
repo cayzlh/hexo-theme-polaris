@@ -29,10 +29,10 @@
 cd your-hexo-site
 
 # 跟随主干
-git clone https://github.com/cayzlh/hexo-theme-polaris.git themes/polaris
+git clone https://github.com/the-cayzlh/hexo-theme-polaris.git themes/polaris
 
 # 或者锁定到某个版本（推荐，升级前先看 Releases 的版本说明）
-git clone --branch v0.3.4 --depth 1 https://github.com/cayzlh/hexo-theme-polaris.git themes/polaris
+git clone --branch v0.3.4 --depth 1 https://github.com/the-cayzlh/hexo-theme-polaris.git themes/polaris
 ```
 
 站点 `_config.yml` 里指定主题：
