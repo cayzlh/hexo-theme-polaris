@@ -12,7 +12,7 @@
 
 - **档案系统（Dossier）** —— 把一个项目或系列写成一个目录树，自动生成导航、卡片索引、上下篇
 - **每日资讯** —— 构建期从 [60s-API](https://github.com/vikiboss/60s) 抓取早报 / 知乎 / 微博 / Hacker News，生成静态 `/news/`
-- **订阅页** —— 构建期聚合你关注的 RSS/Atom，生成静态 `/subscriptions/`
+- **订阅页** —— 构建期聚合你关注的 RSS/Atom，生成静态 `/subscriptions/`；支持从远程接口叠加订阅列表
 - **SEO 优先** —— canonical、Open Graph、JSON-LD、完整 sitemap，全部自实现，不依赖插件
 - **深浅色** —— 手动 / 跟随系统 / 按日出日落自动切换，两套独立色板
 - **目录** —— 桌面侧栏跟随高亮 + 手机底部面板，没标题的页面不出现死键
@@ -113,6 +113,63 @@ recent_posts_title:
 
 ```bash
 node themes/polaris/tools/test-i18n.js
+```
+
+---
+
+## 订阅页 · 远程订阅列表
+
+订阅源默认来自站点的 `source/_data/subscriptions.yml`。还可以再叠加一份**远程列表**：
+构建期向一个公开只读接口要一份 JSON，和本地 yml 合并后一起抓取。典型用法是自己
+有个小服务（比如 Cloudflare Worker + 一个 Chrome 插件），随手存一个新源，下次部署
+页面就自动多一条——不用回来改 yml、不用重新提交。
+
+**默认关闭**。不打开时完全不发这个请求，`/subscriptions/` 的产物与没有这个功能时一致。
+
+```yaml
+# themes/polaris/_config.yml（或站点侧 _config.<theme>.yml，站点配置优先）
+subscriptions:
+  remote:
+    enable: true
+    api_base: 'https://hub.example.com'   # 不带结尾斜杠
+    path: '/api/subscriptions/public'     # 默认值，一般不用改
+    timeout: 5000                         # 拉列表的超时，超时就退回本地
+    merge: remote-first                   # remote-first | local-first | remote-only
+```
+
+接口形状（只读公开，**不带凭据**）：
+
+```json
+{
+  "version": 1,
+  "updatedAt": 1762345678901,
+  "subscriptions": [
+    { "id": 1, "name": "示例博客", "url": "https://example.com/atom.xml",
+      "homepage": "https://example.com", "icon": "📡",
+      "description": "一句话简介", "limit": 3, "sort": 0 }
+  ]
+}
+```
+
+**合并规则**（同一 URL 归一化后只保留一条；归一化 = 协议与主机小写、去尾部斜杠、
+去 fragment，所以 `https://a.com/feed` 与 `https://a.com/feed/` 是同一条）：
+
+| 模式 | 顺序 | 同 URL 时 |
+| --- | --- | --- |
+| `remote-first`（默认） | 远程按 `sort`→`id` 排在前，本地独有接在后 | 远程记录优先；远程留空的 `name` / `description` / `icon` / `limit` / `homepage` 用本地补 |
+| `local-first` | 本地（yml 顺序）在前，远程独有接在后 | 本地记录优先，远程补空 |
+| `remote-only` | 只用远程 | 本地 yml 完全不参与 |
+
+**失败兜底**：超时、非 2xx、JSON 解析失败、Node 太老没有全局 `fetch`——一律只打一行
+`warn`，然后拿本地 yml 继续构建。**网络问题永远不会让整站构建失败。**
+
+`merge` 写错（拼错、大小写混着写）会回落到 `remote-first`，不会报错。
+
+合并逻辑抽在 `scripts/lib/subscription-merge.js` 里（纯函数，无 hexo 依赖），
+自测：
+
+```bash
+node themes/polaris/tools/test-subscription-merge.js
 ```
 
 ---

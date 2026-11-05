@@ -324,6 +324,7 @@ mobile:
 # 在 hexo generate 时抓取 RSS/Atom 订阅源，生成 /subscriptions/ 页面
 #
 # 数据来源：source/_data/subscriptions.yml
+#   可选再叠加一份远程列表（见下方 remote 段），两者合并后一起抓取。
 #
 subscriptions:
   # 每个源默认抓取条数
@@ -345,6 +346,41 @@ subscriptions:
   home_count: 3
   # 模块标题。留空 = 用语言包（home.visiting）
   home_title: ''
+
+  # ---- 远程订阅列表（可选）----
+  # 构建期额外拉一份订阅列表，和本地 yml 合并后再抓 feed。
+  # 典型场景：用 Chrome 插件/hub 随手存一个新源，下次部署就自动出现在页面上，
+  # 不必回来改 yml、不必重新提交。
+  #
+  # **默认关闭**。不打开时完全不发这个请求，/subscriptions/ 的产物与没有
+  # 这个功能时逐字节一致——老站点不需要做任何事。
+  #
+  # 接口是只读公开的，不带任何凭据（订阅列表本来就整页公开渲染，
+  # 公开可读不增加暴露面）。契约见 hub 仓库 docs/01-api-contract.md：
+  #   GET {api_base}{path}
+  #   { "version": 1, "updatedAt": 1234567890, "subscriptions": [ … ] }
+  #
+  # **失败不影响构建**：超时 / 非 2xx / JSON 解析失败 / Node 太老没有
+  # 全局 fetch，一律只 warn 一行，然后拿本地 yml 继续构建。
+  remote:
+    # 总开关。必须是 true（或配置里写字符串 'true'）；
+    # 写成 'false' 之类的字符串一律当关闭处理，避免手滑。
+    enable: false
+    # hub 的地址，不带结尾斜杠。开了 enable 却没配这个，会 warn 并跳过远程拉取。
+    # api_base: 'https://hub.cayzlh.com'
+    # 公开只读接口路径，默认值一般不用改。
+    # path: '/api/subscriptions/public'
+    # 拉列表的超时（毫秒）。超时就退回本地配置——构建机没耐心等太久，
+    # 这个值和下面抓 feed 的 timeout 是两回事。
+    # timeout: 5000
+    # 合并模式：
+    #   remote-first（默认） 远程记录在前，远程留空的 name/description/icon/
+    #                        limit/homepage 用本地补，本地独有源接在后
+    #   local-first          镜像规则：本地在前，远程补空
+    #   remote-only          只用远程，忽略本地 yml
+    # 同一 URL 只保留一条；URL 按「协议与主机小写、去尾部斜杠、去 fragment」
+    # 归一化后比较，所以 https://a.com/feed 与 https://a.com/feed/ 是同一条。
+    # merge: remote-first
 
   # ---- 兜底订阅源 ----
   # 站点没有配置 source/_data/subscriptions.yml（或配成空列表）时，
