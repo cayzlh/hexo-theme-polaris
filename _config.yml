@@ -3,7 +3,7 @@
 
 info:
   name: Vellum
-  version: 0.4.1
+  version: 0.4.2
 
 # =============================================
 # 界面语言（i18n）
@@ -80,6 +80,8 @@ recent_posts_count: 5
 # 在这里写死会压过语言包——主题以前写死了英文，切到中文的站点也得看见
 # "Recent Posts:"。要固定某个说法时再填。
 recent_posts_title: ''
+# 「旧文拾遗」的条数。**配 0 或 false 会整块关掉**（含标题），
+# 不是「回退到默认 5 条」——模板里先判 `!= null`，再判真假值。
 random_posts_count: 5
 random_posts_title: ''
 
