@@ -15,6 +15,9 @@ var introLines = (theme.intro || '').split('\n').filter(function(l){ return l.tr
 var recentCount = theme.recent_posts_count || 5;
 var allPosts = site.posts.sort('date', -1).toArray();
 var recentPosts = allPosts.slice(0, recentCount);
+/* 「近日所思」右下角「查看文章」的去处，默认指归档页——那里是全部文章。
+   配成 '' 或 false 则不显示这个入口。 */
+var recentMoreUrl = theme.recent_more_url === undefined ? '/archives/' : theme.recent_more_url;
 
 // Random posts (exclude the recent ones)
 /* random_posts_count 的三种语义要分开：
@@ -63,6 +66,11 @@ var randomPosts = randomCount > 0 ? pool.slice(0, randomCount) : [];
     </li>
   <% }); %>
 </ul>
+<% if (recentMoreUrl) { %>
+  <div class="list-more">
+    <a href="<%= url_for(recentMoreUrl) %>"><%= tr('home.recent_more') %></a>
+  </div>
+<% } %>
 
 <% if (randomPosts.length > 0) { %>
   <h2 class="section-title"><%= tr_cfg(theme.random_posts_title, 'home.random_posts') %></h2>
@@ -168,8 +176,9 @@ while (blogPosts.length < blogCount && round < 20) {
   </ul>
   <% if (blogMoreUrl) { %>
     <%# 入口放在列表右下方：与列表同宽的一行，链接靠右。
-        不塞进最后一个 <li>，否则它会被 li 的 margin-bottom 一起带走。 %>
-    <div class="blog-visits-more">
+        不塞进最后一个 <li>，否则它会被 li 的 margin-bottom 一起带走。
+        与「近日所思」的入口共用 .list-more 样式。 %>
+    <div class="list-more">
       <a href="<%= url_for(blogMoreUrl) %>"><%= tr('home.visiting_more') %></a>
     </div>
   <% } %>

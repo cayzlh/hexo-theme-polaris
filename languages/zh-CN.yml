@@ -49,6 +49,7 @@ footer:
 # ---- 首页 ----
 home:
   recent_posts: 'Recent Posts:'
+  recent_more: 查看文章
   random_posts: 'Random posts:'
   visiting: 逛逛博客
   visiting_more: 查看更多

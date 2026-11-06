@@ -188,23 +188,24 @@ hr.dash-dot::before,hr.style-dash-dot::before{
 .blog-visits-source a:hover{color:var(--c-link-hover)}
 .blog-visits-icon{margin-right:0.15em}
 
-/* 「查看更多」：列表右下角的一行，链接靠右。
+/* ===== 列表右下角的「查看更多 / 查看文章」入口 =====
+   「近日所思」（→ /archives/）与「逛逛博客」（→ /subscriptions/）共用。
    刻意做得比正文轻——它是个出口，不是内容，抢了视觉重量反而打断列表。
-   右边距和 li 的日期列对齐留白视觉上更稳，所以右对齐到容器边缘即可。 */
-.blog-visits-more{
+   用同一个类而不是各写一份：两处入口长得不一样会显得像两套设计。 */
+.list-more{
   margin-top:-1.2em;      /* 抵掉上一个 li 的 margin-bottom，别多出一截空隙 */
   margin-bottom:2em;
   text-align:right;
 }
-.blog-visits-more a{
+.list-more a{
   font-size:0.85rem;
   color:var(--c-text-light);
   text-decoration:none;
   transition:color 0.2s;
 }
-.blog-visits-more a:hover{color:var(--c-link-hover)}
+.list-more a:hover{color:var(--c-link-hover)}
 /* 箭头跟着文字一起变色，用 currentColor 就不必单独配 */
-.blog-visits-more a::after{
+.list-more a::after{
   content:'→';
   margin-left:0.3em;
   font-size:0.9em;
