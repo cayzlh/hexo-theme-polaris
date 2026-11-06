@@ -174,13 +174,39 @@ function buildDeepSeekBlock(lang, filename, body) {
   html += '    <span class="code-filename">' + (filename ? escapeHtml(filename) : '') + '</span>';
   html += '    <div class="code-header-right">';
   html += '      <span class="code-lang-badge">' + langSafe + '</span>';
-  html += '      <button class="code-copy-btn" title="' + escapeAttr(tr('code.copy_code')) + '"><span class="copy-icon">📋</span> <span class="copy-text">' + escapeAttr(tr('code.copy')) + '</span></button>';
+  html += '      <button type="button" class="code-copy-btn" title="' + escapeAttr(tr('code.copy_code')) + '">' + copyIcon() + checkIcon() + errorIcon() + '<span class="copy-text">' + escapeAttr(tr('code.copy')) + '</span></button>';
   html += '    </div>';
   html += '  </figcaption>';
   html += '  <div class="code-body"><pre><code>' + codeContent + '</code></pre></div>';
   html += '</figure>';
 
   return html;
+}
+
+/* ==========================================
+   图标 — 24 栅格线性描边，和站内 dock / footer 的图标同一套语言
+   （fill:none + stroke:currentColor + 1.6 描边），所以它在 Maple Mono 的
+   正文字形旁边不会显得比正文重。两个图标都常驻 DOM，由 CSS 按 .copied
+   交叉淡入淡出，JS 不需要改 innerHTML。
+   ========================================== */
+function copyIcon() {
+  return '<svg class="copy-icon copy-icon--copy" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<rect x="8.75" y="8.75" width="11.5" height="11.5" rx="2.6"/>' +
+    '<path d="M15.25 5.9A2.9 2.9 0 0 0 12.4 3.75H6.65A2.9 2.9 0 0 0 3.75 6.65v5.75a2.9 2.9 0 0 0 2.15 2.85"/>' +
+    '</svg>';
+}
+
+function checkIcon() {
+  return '<svg class="copy-icon copy-icon--check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<path d="M4.75 12.9 9.5 17.65 19.25 6.35"/>' +
+    '</svg>';
+}
+
+/* 失败态图标：同样是 24 栅格 1.6 描边，画一个叉 */
+function errorIcon() {
+  return '<svg class="copy-icon copy-icon--error" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<path d="M6.4 6.4 17.6 17.6M17.6 6.4 6.4 17.6"/>' +
+    '</svg>';
 }
 
 /* ==========================================

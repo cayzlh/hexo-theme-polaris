@@ -355,14 +355,19 @@
     font-size: 11px;
   }
 
+  /* 触屏：44px 触摸目标保留，但不再用左右均等的 padding 把按钮撑成一个
+     空心胶囊——右侧贴边对齐头部 padding，视觉重量仍和桌面一致。
+     style.css 的 max-width:768 块里不再重复这套值，这里是移动端唯一的出口。 */
   .code-copy-btn {
-    padding: 6px 10px;
+    padding: 6px 9px 6px 8px;
+    margin-right: -9px;
     min-height: 44px;
-    min-width: 44px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 11.5px;
+  }
+
+  .code-copy-btn .copy-icon {
+    width: 15px;
+    height: 15px;
   }
 
   .post-body code {

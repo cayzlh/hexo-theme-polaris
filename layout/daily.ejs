@@ -43,6 +43,19 @@ var hasAny    = hasZaobao || hasHistory || hasZhihu || hasWeibo || hasAi;
 // 未配置时回落到官方公共实例 https://60s.viki.moe。
 var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   .replace(/\/+$/, '');
+
+// ===== 「复制全部」按钮的两个图标 =====
+// 复制 / 对勾都常驻 DOM，状态只切 .done 类由 CSS 交叉淡入淡出。
+// 首屏（服务端渲染）和前端增量重渲染（renderAll）必须产出完全相同的结构，
+// 否则刷新后按钮会退化成空按钮，所以图标只在这里定义一次。
+var COPY_ICONS = ''
+  + '<svg class="ds-copy__icon ds-copy__icon--copy" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+  +   '<rect x="8.75" y="8.75" width="11.5" height="11.5" rx="2.6"/>'
+  +   '<path d="M15.25 5.9A2.9 2.9 0 0 0 12.4 3.75H6.65A2.9 2.9 0 0 0 3.75 6.65v5.75a2.9 2.9 0 0 0 2.15 2.85"/>'
+  + '</svg>'
+  + '<svg class="ds-copy__icon ds-copy__icon--check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+  +   '<path d="M4.75 12.9 9.5 17.65 19.25 6.35"/>'
+  + '</svg>';
 %>
 
 <div class="daily-page" id="daily-app">
@@ -81,7 +94,7 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   <section class="ds">
     <h2 class="ds-title">
         <%= tr('daily.zaobao') %>
-        <button class="ds-copy" id="copy-zaobao" title="<%= tr('common.copy_all') %>"></button>
+        <button class="ds-copy" id="copy-zaobao" title="<%= tr('common.copy_all') %>" aria-label="<%= tr('common.copy_all') %>"><%- COPY_ICONS %></button>
       </h2>
     <ol class="dz-list" id="z-list">
       <% for (var i = 0; i < zaobao.news.length; i++) { %>
@@ -230,6 +243,9 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
 (function(doc) {
   'use strict';
 
+  /* 和首屏 markup 同一份图标串（见文件顶部的 COPY_ICONS）。 */
+  var DS_COPY_ICONS = <%- JSON.stringify(COPY_ICONS) %>;
+
   /* ---- 交互（重渲染后需要重新绑定，故抽成函数） ---- */
   function bindInteractions() {
     var copyBtn = doc.getElementById('copy-zaobao');
@@ -338,7 +354,8 @@ var API_BASE = ((theme.daily && theme.daily.api_base) || 'https://60s.viki.moe')
   function htmlZaobao(news) {
     if (!news || !news.length) return '';
     var h = '<section class="ds"><h2 class="ds-title">' + esc(window.tr('daily.zaobao'));
-    h += '<button class="ds-copy" id="copy-zaobao" title="' + esc(window.tr('common.copy_all')) + '"></button></h2>';
+    h += '<button class="ds-copy" id="copy-zaobao" title="' + esc(window.tr('common.copy_all')) +
+         '" aria-label="' + esc(window.tr('common.copy_all')) + '">' + DS_COPY_ICONS + '</button></h2>';
     h += '<ol class="dz-list" id="z-list">';
     for (var i = 0; i < news.length; i++) {
       h += '<li class="dz-item"' + (i >= 5 ? ' aria-hidden="true"' : '') + '>' + esc(news[i]) + '</li>';

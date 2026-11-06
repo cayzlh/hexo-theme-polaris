@@ -770,33 +770,104 @@ html.dark .post-body code {
   line-height: 1.5;
 }
 
-/* 复制按钮 */
+/* ========================================
+   复制按钮
+   ------------------------------------------------------------------
+   头部右侧是「语言徽标 + 复制」两个同级元件，所以复制按钮不给描边、
+   不给常驻底色：一有框就会和语言胶囊抢注意力，把一行元信息读成工具栏。
+   默认只是弱化的图标 + 等宽小字，悬停时浮出一层比头部略深的底色
+   （--c-code-chip-hover），点击后整格换成 accent 洗色 + 对勾，见 .copied。
+   ======================================== */
 .code-copy-btn {
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
   background: none;
-  border: 1px solid transparent;
-  color: var(--c-text-light);
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  border: 0;
+  /* --c-text-light 在浅色头部底（#EDEDED）上只有 4.18:1，11.5px 的小字读着吃力；
+     --c-text-muted 是 5.12 / 4.57（浅 / 深），和文件名、语言徽标同一档墨色，
+     头部右侧三项才是一个层级的元信息。 */
+  color: var(--c-text-muted);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  padding: 3px 7px 3px 6px;
+  margin-right: -7px; /* 右侧留白和头部 padding 对齐，不让文字贴边 */
+  border-radius: var(--radius-md);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-family: inherit;
+  gap: 5px;
   line-height: 1.5;
+  transition: color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
 }
-.code-copy-btn:hover {
-  color: var(--c-accent);
-  background: var(--c-hover-bg);
-  border-color: var(--c-border-strong);
-}
-.code-copy-btn.copied {
-  color: #22c55e;
-}
+
+/* 图标：24 栅格描边，1.6 笔画，和文末 dock / footer 的图标同一套线条 */
 .code-copy-btn .copy-icon {
-  font-size: 13px;
-  line-height: 1;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+.code-copy-btn:hover {
+  color: var(--c-text);
+  background: var(--c-code-chip-hover);
+}
+
+.code-copy-btn:active {
+  background: var(--c-border-strong);
+}
+
+.code-copy-btn:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+/* 状态：三态图标交叉替换，文字**保持"复制"不变**。
+   ------------------------------------------------------------------------
+   曾经的成功态是把文字改成"已复制"——实测按钮宽度 60.1px → 74.1px，
+   语言徽标被推左 14px，整行元信息跟着抖一下（英文更明显：Copy 60.5 →
+   Copied! 81.9）。所以改成文案恒定、只换图标和底色，宽度就锁死了；
+   状态变化由 aria-live 区域播报给读屏器，视觉上由图标 + 底色承担。
+   三个图标都常驻 DOM，切换只是 display 换位，不产生重新布局的额外代价。 */
+.code-copy-btn .copy-icon--check,
+.code-copy-btn .copy-icon--error {
+  display: none;
+}
+
+.code-copy-btn.copied {
+  color: var(--c-accent);
+  background: var(--c-accent-soft);
+}
+
+.code-copy-btn.copied .copy-icon--copy,
+.code-copy-btn.copied .copy-icon--error {
+  display: none;
+}
+
+.code-copy-btn.copied .copy-icon--check {
+  display: block;
+}
+
+.code-copy-btn.failed {
+  color: var(--c-code-chip-error);
+  background: transparent;
+}
+
+.code-copy-btn.failed .copy-icon--copy,
+.code-copy-btn.failed .copy-icon--check {
+  display: none;
+}
+
+.code-copy-btn.failed .copy-icon--error {
+  display: block;
 }
 
 /* 代码内容区 */
@@ -943,17 +1014,9 @@ html.dark .code-lang-badge {
   border: 1px solid var(--c-code-border);
 }
 
-html.dark .code-copy-btn {
-  color: var(--c-text-muted);
-}
-html.dark .code-copy-btn:hover {
-  color: var(--c-text-light);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--c-border-strong);
-}
-html.dark .code-copy-btn.copied {
-  color: #4ADE80;
-}
+/* 夜间模式不用另写一套：文字色、悬停底、成功态全部走 tokens 里
+   已经分模式定义过的变量（--c-text-light / --c-code-chip-hover /
+   --c-accent / --c-accent-soft），对比度在两种底色上都够。 */
 
 html.dark .code-body pre {
   color: var(--c-text);
@@ -1084,10 +1147,8 @@ html.dark .post-body pre:not(.highlight):not(.code-block pre) {
     font-size: 10px;
     padding: 1px 8px;
   }
-  .code-copy-btn {
-    padding: 6px 8px;
-    min-height: 36px;
-  }
+  /* 复制按钮的移动端尺寸统一由 mobile.css 里的那一处给（它在这个断点上
+     唯一且后加载），这里不再重复定义 min-height / padding，避免两套值打架。 */
 }
 
 /* ===== Tables ===== */
@@ -2084,44 +2145,71 @@ html.dark .search-highlight {
   gap: 8px;
 }
 
+/* 「复制全部」—— 标题右侧的图形按钮。
+   ------------------------------------------------------------------------
+   它挂在 h2 的行尾，和正文标题共用一条视觉线：常驻描边方框会让每个小节
+   都多出一个「按钮块」，读起来像工具栏。所以这里和正文里的代码复制按钮
+   同一套语言 —— 无框、弱色、悬停才浮出底色；28px 的点击面积靠 padding
+   撑开而不是靠边框。成功态同样换成对勾 + accent 洗色。 */
 .ds-copy {
   margin-left: auto;
   flex-shrink: 0;
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid var(--c-border);
-  border-radius: 6px;
+  border: 0;
+  border-radius: var(--radius-md);
   background: transparent;
+  /* 和代码块的复制按钮同一档墨色（5.99:1 on 白底 / 4.75:1 on 深底）。
+     纯图标按钮没有文字辅助识别，用 --c-text-faint（4.16:1）会太虚。 */
+  color: var(--c-text-muted);
   cursor: pointer;
-  position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 0.2s, background 0.2s;
+  transition: color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out);
 }
 
-.ds-copy::before {
-  content: '📋';
-  font-size: 0.78rem;
-  line-height: 1;
+/* 图标：和代码块的复制按钮同尺寸同笔画，两处读起来是一个元件 */
+.ds-copy__icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+.ds-copy__icon--check {
+  display: none;
 }
 
 .ds-copy:hover {
-  border-color: var(--c-text-light);
-  background: var(--c-bg-tertiary);
+  color: var(--c-text);
+  background: var(--c-hover-bg);
+}
+
+.ds-copy:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
 }
 
 .ds-copy.done {
-  border-color: var(--c-text-light);
+  color: var(--c-accent);
+  background: var(--c-accent-soft);
   pointer-events: none;
 }
 
-.ds-copy.done::before {
-  content: '✓';
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--c-text);
+.ds-copy.done .ds-copy__icon--copy {
+  display: none;
+}
+
+.ds-copy.done .ds-copy__icon--check {
+  display: block;
 }
 
 /* ---- 早报 ---- */

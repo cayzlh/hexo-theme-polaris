@@ -21,37 +21,68 @@
   }
 
   // === Code block copy (DeepSeek 风格 — 服务端已生成结构，仅绑事件) ===
+  // 三态图标（.copy-icon--copy / --check / --error）常驻 DOM，状态只切
+  // .copied / .failed 类，由 CSS 换图标和底色。
+  // 文案**始终是"复制"**：换成"已复制"会让按钮变宽 14px、把语言徽标推左，
+  // 整行元信息抖一下。状态改由 aria-live 播报，读屏器听得到、视觉上不跳。
+  var liveRegion = (function() {
+    var el = document.getElementById('code-copy-live');
+    if (!el) {
+      el = document.createElement('span');
+      el.id = 'code-copy-live';
+      el.className = 'sr-only';
+      el.setAttribute('role', 'status');
+      el.setAttribute('aria-live', 'polite');
+      document.body.appendChild(el);
+    }
+    return el;
+  })();
+
   document.querySelectorAll('.code-block .code-copy-btn').forEach(function(btn) {
+    var resetTimer = null;
+
+    function setState(state) {
+      btn.classList.toggle('copied', state === 'copied');
+      btn.classList.toggle('failed', state === 'failed');
+      if (state === 'copied') liveRegion.textContent = window.tr('code.copied');
+      else if (state === 'failed') liveRegion.textContent = window.tr('code.failed');
+      if (resetTimer) clearTimeout(resetTimer);
+      resetTimer = setTimeout(function() {
+        btn.classList.remove('copied');
+        btn.classList.remove('failed');
+        liveRegion.textContent = '';
+        resetTimer = null;
+      }, 2000);
+    }
+
     btn.addEventListener('click', function() {
       var block = btn.closest('.code-block');
       var codeBody = block.querySelector('.code-body code, .code-body pre');
       var text = codeBody ? codeBody.textContent || '' : '';
 
-      var doCopy = function(t) {
-        navigator.clipboard.writeText(t).then(function() {
-          btn.querySelector('.copy-text').textContent = window.tr('code.copied');
-          btn.classList.add('copied');
-          setTimeout(function() {
-            btn.querySelector('.copy-text').textContent = window.tr('code.copy');
-            btn.classList.remove('copied');
-          }, 2000);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          setState('copied');
         }).catch(function() {
-          var ta = document.createElement('textarea');
-          ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
-          document.body.appendChild(ta); ta.select();
-          try {
-            document.execCommand('copy');
-            btn.querySelector('.copy-text').textContent = window.tr('code.copied');
-          } catch(e) {
-            btn.querySelector('.copy-text').textContent = window.tr('code.failed');
-          }
-          setTimeout(function() {
-            btn.querySelector('.copy-text').textContent = window.tr('code.copy');
-          }, 2000);
-          document.body.removeChild(ta);
+          legacyCopy(text);
         });
-      };
-      doCopy(text);
+        return;
+      }
+      legacyCopy(text);
+
+      // 老浏览器 / 非安全上下文（http）没有 Clipboard API，退回 execCommand。
+      function legacyCopy(t) {
+        var ta = document.createElement('textarea');
+        ta.value = t;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        setState(ok ? 'copied' : 'failed');
+      }
     });
   });
 

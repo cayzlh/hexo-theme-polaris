@@ -70,6 +70,12 @@
   --c-code-head: #ededed;
   --c-code-inline: #b8475a;
   --c-code-inline-bg: rgba(184, 71, 90, 0.07);
+  /* "复制"按钮悬停时的顶面：比 code-head 深一档，所以按钮浮起而不是
+     隐进头部底色里。复制成功的青绿洗色直接用 --c-accent-soft。 */
+  --c-code-chip-hover: #e2e2e2;
+  /* 复制失败用的暗红。沿用行内代码的 #b8475a 会让"失败"读起来像语法高亮，
+     所以单独取一个更沉的 #b3394c：浅色头部底上 4.97:1，白底 5.82:1。 */
+  --c-code-chip-error: #b3394c;
 
   /* ---- type ---- */
   --font-mono: 'Maple Mono NF CN', 'JetBrains Mono', 'SF Mono', Menlo, Consolas,
@@ -143,6 +149,9 @@ html.dark {
   --c-code-head: #2a2624;
   --c-code-inline: #e8927c;
   --c-code-inline-bg: rgba(232, 146, 124, 0.1);
+  --c-code-chip-hover: #383230;
+  /* 失败态：深底上要提亮，6.04:1 */
+  --c-code-chip-error: #e08d9c;
 
   color-scheme: dark;
 }
