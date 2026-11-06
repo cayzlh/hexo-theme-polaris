@@ -348,6 +348,9 @@ subscriptions:
   home_count: 3
   # 模块标题。留空 = 用语言包（home.visiting）
   home_title: ''
+  # 列表右下角「查看更多」的去处。默认 /subscriptions/——首页这块是它的
+  # 摘要，整份列表在那边。配成 '' 或 false 则不显示这个入口。
+  # home_more_url: '/subscriptions/'
 
   # ---- 远程订阅列表（可选）----
   # 构建期额外拉一份订阅列表，和本地 yml 合并后再抓 feed。

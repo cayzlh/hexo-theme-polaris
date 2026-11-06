@@ -41,6 +41,7 @@ home:
   recent_posts: 'Recent posts:'
   random_posts: 'Random posts:'
   visiting: From the blogs I follow
+  visiting_more: View all
   runtime: Running quietly for <b>%d</b> days
   now: 'now <b>%s</b>'
 

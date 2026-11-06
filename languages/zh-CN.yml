@@ -51,6 +51,7 @@ home:
   recent_posts: 'Recent Posts:'
   random_posts: 'Random posts:'
   visiting: 逛逛博客
+  visiting_more: 查看更多
   runtime: 这串代码已安静运行 <b>%d</b> 天
   now: 此刻 <b>%s</b>
 

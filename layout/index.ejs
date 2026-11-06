@@ -99,6 +99,10 @@ var blogCfg = theme.subscriptions || {};
 var blogShow = blogCfg.home_enable !== false;   /* 默认开启，显式 false 才关 */
 var blogCount = blogCfg.home_count || 3;
 var blogTitle = tr_cfg(blogCfg.home_title, 'home.visiting');
+/* 「查看更多」的去处。默认指订阅页——首页这一块本来就是它的摘要，
+   整份列表（全部源 + 按时间倒序的文章流）在那里。
+   配成空串或 false 可以不显示这个入口。 */
+var blogMoreUrl = blogCfg.home_more_url === undefined ? '/subscriptions/' : blogCfg.home_more_url;
 
 var latest = (theme.subscriptions_latest && theme.subscriptions_latest.items) || [];
 /* 只留真正能点的条目：没链接的抓进来也点不动，不如不显示。 */
@@ -162,4 +166,11 @@ while (blogPosts.length < blogCount && round < 20) {
       </li>
     <% }); %>
   </ul>
+  <% if (blogMoreUrl) { %>
+    <%# 入口放在列表右下方：与列表同宽的一行，链接靠右。
+        不塞进最后一个 <li>，否则它会被 li 的 margin-bottom 一起带走。 %>
+    <div class="blog-visits-more">
+      <a href="<%= url_for(blogMoreUrl) %>"><%= tr('home.visiting_more') %></a>
+    </div>
+  <% } %>
 <% } %>

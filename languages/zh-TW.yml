@@ -42,6 +42,7 @@ home:
   recent_posts: '近日所思：'
   random_posts: '舊文拾遺：'
   visiting: 逛逛部落格
+  visiting_more: 查看更多
   runtime: 這串程式碼已靜靜運行 <b>%d</b> 天
   now: 此刻 <b>%s</b>
 
