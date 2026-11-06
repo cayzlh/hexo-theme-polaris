@@ -17,6 +17,11 @@
   var subCfg = (theme.subscriptions) || {};
   var sources = page.sources || [];
   var showDesc = subCfg.show_description !== false;
+  /* 页脚区「正在关注」源清单。默认展示（老站点行为不变）；
+     站点明确配 false 时连标题一起不渲染——只留文章流。
+     判据用 `!== false` 而不是真值判断，和 show_description 保持一致：
+     没配 = 展示，只有写死 false 才关。 */
+  var showSources = subCfg.show_sources !== false && sources.length > 0;
 
   /* 按 YYYY-MM-DD 分组，保持原有倒序。 */
   var groups = [];
@@ -79,7 +84,7 @@
   <% } %>
 
   <%# ===== 3. 正在关注（页脚区） ===== %>
-  <% if (sources.length) { %>
+  <% if (showSources) { %>
   <section class="subs-follow" aria-labelledby="subs-follow-title">
     <h2 class="subs-follow__title" id="subs-follow-title"><%= tr('subscriptions.following', sources.length) %></h2>
     <ul class="subs-follow__list">
@@ -105,6 +110,7 @@
 
 </div>
 
+<% if (showSources) { %>
 <script>
 /* 「复制订阅地址」：优先 Clipboard API，失败回退到选中文本的旧办法。 */
 (function () {
@@ -142,3 +148,4 @@
   });
 })();
 </script>
+<% } %>

@@ -336,6 +336,10 @@ subscriptions:
   default_limit: 3
   # 是否显示订阅源描述
   show_description: true
+  # 是否在 /subscriptions/ 页脚展示「正在关注 · N 个源」这块源清单。
+  # 默认 true（老站点行为不变）。配 false 后连标题一起不渲染，
+  # 整页只留文章流——适合「只想让人读文章、不想公开订阅了谁」的场景。
+  show_sources: true
   # 页面标题（仅用于 <title>/SEO，页面上不渲染大标题）。
   # 留空 = 用语言包（subscriptions.page_title）
   page_title: ''
